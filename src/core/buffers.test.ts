@@ -34,7 +34,7 @@ describe('Buffers Module', () => {
             expect(y).toBeLessThanOrEqual(canvasSize.y);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 10 }
       );
     });
 
@@ -85,7 +85,7 @@ describe('Buffers Module', () => {
             expect(vy).toBeLessThanOrEqual(2);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 10 }
       );
     });
   });

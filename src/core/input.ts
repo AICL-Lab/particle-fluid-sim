@@ -22,20 +22,20 @@ export function createMouseHandler(canvas: HTMLCanvasElement): {
     isOnCanvas: false,
   };
 
-  const handleMouseMove = (event: MouseEvent) => {
+  const handleMouseMove = (event: MouseEvent): void => {
     const rect = canvas.getBoundingClientRect();
     state.x = event.clientX - rect.left;
     state.y = event.clientY - rect.top;
     state.isOnCanvas = true;
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = (): void => {
     state.x = -1000;
     state.y = -1000;
     state.isOnCanvas = false;
   };
 
-  const handleTouchMove = (event: TouchEvent) => {
+  const handleTouchMove = (event: TouchEvent): void => {
     event.preventDefault(); // Prevent page scrolling when interacting with canvas
     if (event.touches.length > 0) {
       const touch = event.touches[0];
@@ -46,7 +46,7 @@ export function createMouseHandler(canvas: HTMLCanvasElement): {
     }
   };
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (): void => {
     state.x = -1000;
     state.y = -1000;
     state.isOnCanvas = false;
@@ -60,7 +60,7 @@ export function createMouseHandler(canvas: HTMLCanvasElement): {
 
   return {
     getMousePosition: () => ({ x: state.x, y: state.y }),
-    destroy: () => {
+    destroy: (): void => {
       canvas.removeEventListener('mousemove', handleMouseMove);
       canvas.removeEventListener('mouseleave', handleMouseLeave);
       canvas.removeEventListener('touchmove', handleTouchMove);

@@ -23,7 +23,7 @@ function createFPSCounter(): { update: () => void; element: HTMLElement } {
 
   return {
     element,
-    update: () => {
+    update: (): void => {
       frameCount++;
       const now = performance.now();
       if (now - lastTime >= 1000) {
@@ -79,22 +79,22 @@ async function main(): Promise<void> {
 
   try {
     // Initialize WebGPU
-    console.log('Initializing WebGPU...');
+    console.warn('Initializing WebGPU...');
     const ctx = await initWebGPU(canvas);
-    console.log('WebGPU initialized successfully');
+    console.warn('WebGPU initialized successfully');
 
     // Create buffers
-    console.log('Creating buffers...');
+    console.warn('Creating buffers...');
     const buffers = createBuffers(ctx.device, {
       x: canvas.width,
       y: canvas.height,
     });
-    console.log('Buffers created');
+    console.warn('Buffers created');
 
     // Create pipelines
-    console.log('Creating pipelines...');
+    console.warn('Creating pipelines...');
     const pipelines = createPipelines(ctx.device, ctx.format, buffers);
-    console.log('Pipelines created');
+    console.warn('Pipelines created');
 
     // Remove loading indicator
     loadingDiv.remove();
@@ -118,7 +118,7 @@ async function main(): Promise<void> {
     );
 
     // Handle window resize (single handler, no duplicates)
-    const handleResize = () => {
+    const handleResize = (): void => {
       setupCanvas(canvas);
       ctx.context.configure({
         device: ctx.device,
@@ -129,12 +129,12 @@ async function main(): Promise<void> {
     window.addEventListener('resize', handleResize);
 
     // Start render loop
-    console.log('Starting render loop...');
+    console.warn('Starting render loop...');
     renderer.start();
-    console.log('Particle simulation running!');
+    console.warn('Particle simulation running!');
 
     // Cleanup on page unload
-    window.addEventListener('beforeunload', () => {
+    window.addEventListener('beforeunload', (): void => {
       renderer.stop();
       mouseHandler.destroy();
     });
