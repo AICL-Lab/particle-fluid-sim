@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md)
 
-A high-performance particle fluid simulation using WebGPU compute shaders. This project demonstrates heterogeneous computing with 10,000 particles rendered in real-time with physics simulation, mouse interaction, and visual trail effects.
+A high-performance particle fluid simulation built with WebGPU compute shaders. Physics, color mapping, trails, and presentation are coordinated by TypeScript and WGSL, with adaptive particle counts that scale from lower-end devices up to the default 10,000-particle experience.
 
 [![CI](https://github.com/LessUp/particle-fluid-sim/actions/workflows/ci.yml/badge.svg)](https://github.com/LessUp/particle-fluid-sim/actions/workflows/ci.yml)
 [![Pages](https://github.com/LessUp/particle-fluid-sim/actions/workflows/pages.yml/badge.svg)](https://github.com/LessUp/particle-fluid-sim/actions/workflows/pages.yml)
@@ -13,12 +13,12 @@ A high-performance particle fluid simulation using WebGPU compute shaders. This 
 
 ## Features
 
-- 🚀 **10,000 particles** simulated in real-time using GPU compute shaders
-- 🎯 **Mouse interaction** - particles are repelled by the cursor
-- 🌊 **Physics simulation** - gravity, velocity, and boundary bouncing
-- ✨ **Visual effects** - color gradients based on velocity and trail effects
-- 📱 **Responsive** - fullscreen canvas that adapts to window size
-- 🧪 **Well tested** - property-based testing with fast-check
+- **GPU simulation** - gravity, repulsion, clamping, and bounce all run in a WebGPU compute shader
+- **Adaptive quality** - particle count scales to device capability and viewport size at startup
+- **Frame-rate independent physics** - simulation uses `deltaTime` consistently across CPU tests and GPU execution
+- **Persistent trails** - motion trails render through an offscreen texture and a final present pass
+- **HiDPI-aware canvas** - rendering and input both account for `devicePixelRatio`
+- **Property-based tests** - Vitest + fast-check cover core simulation invariants
 
 ## Requirements
 
@@ -28,117 +28,113 @@ A high-performance particle fluid simulation using WebGPU compute shaders. This 
 ## Quick Start
 
 ```bash
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
-
 # Open http://localhost:5173 in a WebGPU-enabled browser
 ```
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build |
-| `npm test` | Run tests once |
-| `npm run test:watch` | Run tests in watch mode |
-| `npm run test:coverage` | Run tests with coverage report |
-| `npm run test:ui` | Open Vitest UI |
-| `npm run lint` | Run ESLint |
-| `npm run lint:fix` | Fix ESLint errors |
-| `npm run format` | Format code with Prettier |
-| `npm run typecheck` | Run TypeScript type checking |
+| Command                 | Description                         |
+| ----------------------- | ----------------------------------- |
+| `npm run dev`           | Start development server            |
+| `npm run build`         | TypeScript check + production build |
+| `npm run preview`       | Preview production build            |
+| `npm test`              | Run tests once                      |
+| `npm run test:watch`    | Run tests in watch mode             |
+| `npm run test:coverage` | Run tests with coverage report      |
+| `npm run lint`          | Run ESLint                          |
+| `npm run typecheck`     | Run TypeScript type checking        |
 
 ## Project Structure
 
 ```
 src/
-├── core/                 # Core modules
-│   ├── buffers.ts       # GPU buffer management
-│   ├── color.ts         # Velocity-to-color mapping
-│   ├── input.ts         # Mouse input handling
-│   ├── physics.ts       # Physics calculations (testable)
-│   ├── pipelines.ts     # WebGPU pipeline creation
-│   ├── renderer.ts      # Render loop
-│   └── webgpu.ts        # WebGPU initialization
-├── shaders/             # WGSL shaders
-│   ├── compute.wgsl     # Particle physics compute shader
-│   ├── render.wgsl      # Particle rendering shaders
-│   └── trail.wgsl       # Trail effect shader
-├── types.ts             # TypeScript interfaces and constants
-├── main.ts              # Application entry point
-└── style.css            # Styles
+├── config/
+│   └── sim.ts            # Shared simulation constants + WGSL preamble generation
+├── core/
+│   ├── buffers.ts        # GPU buffer creation and particle initialization
+│   ├── color.ts          # CPU reference color mapping
+│   ├── input.ts          # Mouse/touch input mapped to HiDPI canvas coordinates
+│   ├── physics.ts        # CPU reference physics aligned with compute shader behavior
+│   ├── pipelines.ts      # Compute/render/trail/present pipeline creation
+│   ├── quality.ts        # Runtime particle-count heuristics
+│   ├── renderer.ts       # Frame loop, offscreen trail buffer, final presentation
+│   └── webgpu.ts         # WebGPU initialization and canvas setup
+├── shaders/
+│   ├── compute.wgsl      # Physics compute shader
+│   ├── present.wgsl      # Final fullscreen composite pass
+│   ├── render.wgsl       # Particle render shader
+│   └── trail.wgsl        # Trail fade shader
+├── main.ts               # Application entry point
+├── style.css             # UI overlays + fullscreen canvas styles
+└── types.ts              # Shared interfaces and re-exported constants
 ```
 
 ## Architecture
 
-The simulation uses a heterogeneous computing model:
+The app uses a heterogeneous pipeline:
 
-- **CPU (TypeScript)**: Initialization, event handling, data transfer coordination
-- **GPU (WGSL)**: Particle physics computation and rendering
+- **CPU (TypeScript)**: initializes WebGPU, chooses runtime quality, updates uniforms, handles input, and drives the frame loop
+- **GPU (WGSL)**: simulates particles, fades the trail target, renders points, and presents the accumulated frame to the canvas
 
-### Data Flow
+### Render Flow
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        CPU (Host)                           │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
-│  │  Init    │  │  Mouse   │  │  Render  │  │  Data    │   │
-│  │  WebGPU  │  │  Events  │  │  Loop    │  │ Transfer │   │
-│  └──────────┘  └──────────┘  └──────────┘  └──────────┘   │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                       GPU (Device)                          │
-│  ┌─────────────────────┐  ┌─────────────────────────────┐  │
-│  │   Compute Pass      │  │      Render Pass            │  │
-│  │  ┌───────────────┐  │  │  ┌─────────┐  ┌─────────┐  │  │
-│  │  │ Physics       │  │  │  │ Vertex  │  │Fragment │  │  │
-│  │  │ Gravity       │  │  │  │ Shader  │  │ Shader  │  │  │
-│  │  │ Repulsion     │  │  │  └─────────┘  └─────────┘  │  │
-│  │  │ Boundaries    │  │  │                            │  │
-│  │  └───────────────┘  │  │  Trail Effect + Blending   │  │
-│  └─────────────────────┘  └─────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-```
+Each frame executes four GPU passes:
 
-## Testing
+| Pass        | Shader                     | Purpose                                          |
+| ----------- | -------------------------- | ------------------------------------------------ |
+| **Compute** | `src/shaders/compute.wgsl` | Update particle positions and velocities         |
+| **Trail**   | `src/shaders/trail.wgsl`   | Fade the persistent offscreen texture            |
+| **Render**  | `src/shaders/render.wgsl`  | Draw particles into the offscreen texture        |
+| **Present** | `src/shaders/present.wgsl` | Composite the offscreen texture to the swapchain |
 
-The project uses property-based testing with [fast-check](https://github.com/dubzzz/fast-check) to verify correctness properties:
-
-- **Initialization bounds** — All particles spawn within canvas dimensions
-- **Physics update** — Gravity, velocity, and position integration correctness
-- **Boundary bounce** — Particles reflect correctly at canvas edges
-- **Repulsion force** — Mouse repulsion direction and magnitude
-- **Color mapping** — Velocity → color gradient is monotonic
-
-Run tests:
-
-```bash
-npm test
-```
+The trail effect no longer depends on `loadOp: 'load'` against the swapchain texture. Instead, `src/core/renderer.ts` maintains a dedicated offscreen texture, which is more portable across browsers and GPUs.
 
 ## Configuration
 
-### Particle Count
+Shared simulation constants live in `src/config/sim.ts`. That file is the single source of truth for:
 
-Edit `src/types.ts` to change the number of particles:
+- default particle count: `10,000`
+- gravity: `600 px/s²`
+- damping: `0.9`
+- repulsion radius: `200 px`
+- repulsion strength: `3,000 px/s`
+- max speed: `800 px/s`
+- default delta time: `1 / 60 s`
+- trail fade alpha: `0.05`
 
-```typescript
-export const PARTICLE_COUNT = 10000;
-```
+`src/core/pipelines.ts` injects these values into WGSL shader preambles, so TypeScript, tests, and shaders stay aligned.
 
-### Physics Parameters
+### Adaptive Quality
 
-```typescript
-export const GRAVITY: Vec2 = { x: 0.0, y: 0.1 };
-export const DAMPING = 0.9;
-export const REPULSION_RADIUS = 200;
+At startup, `src/core/quality.ts` chooses a runtime particle count based on:
+
+- fallback adapter detection
+- `navigator.deviceMemory` when available
+- `navigator.hardwareConcurrency`
+- viewport pixel count
+- WebGPU storage buffer limits
+
+Typical runtime range is **2,500 to 10,000 particles**. The active count and quality tier are shown in the on-screen overlay.
+
+## Testing
+
+The project uses Vitest and fast-check to verify:
+
+- particle initialization bounds
+- delta-time-aware physics integration
+- boundary bounce behavior
+- repulsion direction and falloff
+- color interpolation behavior
+- runtime quality heuristics
+
+Run the full validation set with:
+
+```bash
+npm run lint
+npm test
+npm run build
 ```
 
 ## Browser Support
@@ -146,12 +142,12 @@ export const REPULSION_RADIUS = 200;
 WebGPU is required. Check [caniuse.com/webgpu](https://caniuse.com/webgpu) for current browser support.
 
 | Browser | Minimum Version |
-|---------|-----------------|
-| Chrome | 113+ |
-| Edge | 113+ |
-| Firefox | Behind flag |
-| Safari | 17+ (macOS 14+) |
+| ------- | --------------- |
+| Chrome  | 113+            |
+| Edge    | 113+            |
+| Firefox | Behind flag     |
+| Safari  | 17+ (macOS 14+) |
 
 ## License
 
-MIT — [Project Page](https://lessup.github.io/particle-fluid-sim/)
+MIT - [Project Page](https://lessup.github.io/particle-fluid-sim/)

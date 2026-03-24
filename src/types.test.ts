@@ -4,8 +4,11 @@ import {
   PARTICLE_SIZE,
   WORKGROUP_SIZE,
   REPULSION_RADIUS,
+  REPULSION_STRENGTH,
   GRAVITY,
   DAMPING,
+  MAX_SPEED,
+  COLOR_MAX_SPEED,
 } from './types';
 
 describe('Types and Constants', () => {
@@ -34,13 +37,19 @@ describe('Types and Constants', () => {
 
     it('should have valid GRAVITY', () => {
       expect(GRAVITY.x).toBe(0);
-      expect(GRAVITY.y).toBe(0.1);
+      expect(GRAVITY.y).toBe(600);
     });
 
     it('should have valid DAMPING', () => {
       expect(DAMPING).toBe(0.9);
       expect(DAMPING).toBeGreaterThan(0);
       expect(DAMPING).toBeLessThanOrEqual(1);
+    });
+
+    it('should have valid repulsion strength and max speed', () => {
+      expect(REPULSION_STRENGTH).toBe(3000);
+      expect(MAX_SPEED).toBe(800);
+      expect(COLOR_MAX_SPEED).toBe(MAX_SPEED);
     });
 
     it('should have PARTICLE_COUNT that works with WORKGROUP_SIZE', () => {

@@ -5,14 +5,7 @@ import { WebGPUContext } from '../types';
  */
 export function showError(message: string): void {
   const errorDiv = document.createElement('div');
-  errorDiv.style.cssText = `
-    position: fixed; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    background: #1a1a2e; color: #ff6b6b;
-    padding: 20px; border-radius: 8px;
-    font-family: monospace; text-align: center;
-    max-width: 80%; z-index: 1000;
-  `;
+  errorDiv.className = 'error-message';
   errorDiv.textContent = message;
   document.body.appendChild(errorDiv);
 }
@@ -73,8 +66,14 @@ export async function initWebGPU(canvas: HTMLCanvasElement): Promise<WebGPUConte
  * Set canvas to current window size (call on init and on resize)
  */
 export function setupCanvas(canvas: HTMLCanvasElement): void {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  const dpr = Math.max(window.devicePixelRatio || 1, 1);
+  const width = Math.max(1, Math.floor(window.innerWidth * dpr));
+  const height = Math.max(1, Math.floor(window.innerHeight * dpr));
+
+  canvas.width = width;
+  canvas.height = height;
+  canvas.style.width = `${window.innerWidth}px`;
+  canvas.style.height = `${window.innerHeight}px`;
 }
 
 /**

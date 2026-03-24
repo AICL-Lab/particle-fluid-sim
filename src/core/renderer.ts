@@ -1,5 +1,15 @@
-import { WebGPUContext, Pipelines, ParticleBuffers, Vec2, PARTICLE_COUNT, WORKGROUP_SIZE } from '../types';
+import {
+  WebGPUContext,
+  Pipelines,
+  ParticleBuffers,
+  Vec2,
+  DEFAULT_DELTA_TIME,
+  MAX_DELTA_TIME,
+  WORKGROUP_SIZE,
+} from '../types';
 import { updateUniformBuffer } from './buffers';
+
+const CLEAR_COLOR: GPUColor = { r: 0, g: 0, b: 0, a: 1 };
 
 /**
  * Renderer class manages the render loop
@@ -13,6 +23,13 @@ export class Renderer {
   private animationId: number | null = null;
   private isRunning = false;
   private lastFrameTime = 0;
+  private presentSampler: GPUSampler;
+  private trailTexture: GPUTexture | null = null;
+  private trailTextureView: GPUTextureView | null = null;
+  private presentBindGroup: GPUBindGroup | null = null;
+  private trailTextureWidth = 0;
+  private trailTextureHeight = 0;
+  private trailTextureInitialized = false;
 
   constructor(
     ctx: WebGPUContext,
@@ -26,6 +43,11 @@ export class Renderer {
     this.buffers = buffers;
     this.getMousePosition = getMousePosition;
     this.onFrame = onFrame;
+    this.presentSampler = ctx.device.createSampler({
+      label: 'Present Sampler',
+      magFilter: 'linear',
+      minFilter: 'linear',
+    });
   }
 
   /**
@@ -50,15 +72,24 @@ export class Renderer {
   }
 
   /**
+   * Destroy renderer-owned GPU resources
+   */
+  destroy(): void {
+    this.stop();
+    this.destroyTrailResources();
+  }
+
+  /**
    * Main render loop
    */
   private loop = (timestamp: number): void => {
     if (!this.isRunning) return;
 
     // Calculate deltaTime in seconds, capped to prevent spiral of death
-    const dt = this.lastFrameTime === 0
-      ? 1.0 / 60.0
-      : Math.min((timestamp - this.lastFrameTime) / 1000.0, 0.05);
+    const dt =
+      this.lastFrameTime === 0
+        ? DEFAULT_DELTA_TIME
+        : Math.min((timestamp - this.lastFrameTime) / 1000.0, MAX_DELTA_TIME);
     this.lastFrameTime = timestamp;
 
     this.render(dt);
@@ -66,13 +97,73 @@ export class Renderer {
     this.animationId = requestAnimationFrame(this.loop);
   };
 
+  private destroyTrailResources(): void {
+    this.trailTexture?.destroy();
+    this.trailTexture = null;
+    this.trailTextureView = null;
+    this.presentBindGroup = null;
+    this.trailTextureWidth = 0;
+    this.trailTextureHeight = 0;
+    this.trailTextureInitialized = false;
+  }
+
+  private ensureTrailResources(): void {
+    const { device, canvas, format } = this.ctx;
+    const width = canvas.width;
+    const height = canvas.height;
+
+    if (
+      width === this.trailTextureWidth &&
+      height === this.trailTextureHeight &&
+      this.trailTextureView
+    ) {
+      return;
+    }
+
+    this.destroyTrailResources();
+
+    this.trailTexture = device.createTexture({
+      label: 'Trail Texture',
+      size: { width, height, depthOrArrayLayers: 1 },
+      format,
+      usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+    });
+    this.trailTextureView = this.trailTexture.createView();
+    this.presentBindGroup = device.createBindGroup({
+      label: 'Present Bind Group',
+      layout: this.pipelines.presentPipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: this.presentSampler },
+        { binding: 1, resource: this.trailTextureView },
+      ],
+    });
+    this.trailTextureWidth = width;
+    this.trailTextureHeight = height;
+  }
+
   /**
    * Render a single frame
    */
   private render(deltaTime: number): void {
     const { device, context, canvas } = this.ctx;
-    const { computePipeline, renderPipeline, trailPipeline, computeBindGroup, renderBindGroup } =
-      this.pipelines;
+    const {
+      computePipeline,
+      renderPipeline,
+      trailPipeline,
+      presentPipeline,
+      computeBindGroup,
+      renderBindGroup,
+    } = this.pipelines;
+
+    if (canvas.width === 0 || canvas.height === 0) {
+      return;
+    }
+
+    this.ensureTrailResources();
+
+    if (!this.trailTextureView || !this.presentBindGroup) {
+      return;
+    }
 
     // Update uniforms with current canvas size, mouse position, and deltaTime
     const mousePos = this.getMousePosition();
@@ -101,17 +192,19 @@ export class Renderer {
     computePass.setPipeline(computePipeline);
     computePass.setBindGroup(0, computeBindGroup);
     // Dispatch enough workgroups to cover all particles
-    const workgroupCount = Math.ceil(PARTICLE_COUNT / WORKGROUP_SIZE);
+    const workgroupCount = Math.ceil(this.buffers.particleCount / WORKGROUP_SIZE);
     computePass.dispatchWorkgroups(workgroupCount);
     computePass.end();
 
-    // === Trail Pass (fade effect) ===
+    // === Trail Pass (fade effect into persistent offscreen texture) ===
+    const trailLoadOp: GPULoadOp = this.trailTextureInitialized ? 'load' : 'clear';
     const trailPass = commandEncoder.beginRenderPass({
       label: 'Trail Pass',
       colorAttachments: [
         {
-          view: textureView,
-          loadOp: 'load', // Keep previous frame
+          view: this.trailTextureView,
+          loadOp: trailLoadOp,
+          clearValue: CLEAR_COLOR,
           storeOp: 'store',
         },
       ],
@@ -125,19 +218,37 @@ export class Renderer {
       label: 'Render Pass',
       colorAttachments: [
         {
-          view: textureView,
-          loadOp: 'load', // Keep trail effect
+          view: this.trailTextureView,
+          loadOp: 'load',
           storeOp: 'store',
         },
       ],
     });
     renderPass.setPipeline(renderPipeline);
     renderPass.setBindGroup(0, renderBindGroup);
-    renderPass.draw(PARTICLE_COUNT); // One vertex per particle
+    renderPass.draw(this.buffers.particleCount); // One vertex per particle
     renderPass.end();
+
+    // === Present Pass ===
+    const presentPass = commandEncoder.beginRenderPass({
+      label: 'Present Pass',
+      colorAttachments: [
+        {
+          view: textureView,
+          loadOp: 'clear',
+          clearValue: CLEAR_COLOR,
+          storeOp: 'store',
+        },
+      ],
+    });
+    presentPass.setPipeline(presentPipeline);
+    presentPass.setBindGroup(0, this.presentBindGroup);
+    presentPass.draw(4);
+    presentPass.end();
 
     // Submit commands
     device.queue.submit([commandEncoder.finish()]);
+    this.trailTextureInitialized = true;
   }
 }
 

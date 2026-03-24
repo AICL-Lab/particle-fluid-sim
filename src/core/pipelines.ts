@@ -1,19 +1,26 @@
 import { Pipelines, ParticleBuffers } from '../types';
+import {
+  buildComputeShaderPreamble,
+  buildRenderShaderPreamble,
+  buildTrailShaderPreamble,
+} from '../config/sim';
 
 // Import shader sources as strings
 import computeShaderSource from '../shaders/compute.wgsl?raw';
 import renderShaderSource from '../shaders/render.wgsl?raw';
 import trailShaderSource from '../shaders/trail.wgsl?raw';
+import presentShaderSource from '../shaders/present.wgsl?raw';
 
 /**
  * Create the compute pipeline for particle physics
  */
-export function createComputePipeline(
-  device: GPUDevice
-): { pipeline: GPUComputePipeline; bindGroupLayout: GPUBindGroupLayout } {
+export function createComputePipeline(device: GPUDevice): {
+  pipeline: GPUComputePipeline;
+  bindGroupLayout: GPUBindGroupLayout;
+} {
   const computeModule = device.createShaderModule({
     label: 'Compute Shader',
-    code: computeShaderSource,
+    code: `${buildComputeShaderPreamble()}\n${computeShaderSource}`,
   });
 
   const bindGroupLayout = device.createBindGroupLayout({
@@ -58,7 +65,7 @@ export function createRenderPipeline(
 ): { pipeline: GPURenderPipeline; bindGroupLayout: GPUBindGroupLayout } {
   const renderModule = device.createShaderModule({
     label: 'Render Shader',
-    code: renderShaderSource,
+    code: `${buildRenderShaderPreamble()}\n${renderShaderSource}`,
   });
 
   const bindGroupLayout = device.createBindGroupLayout({
@@ -125,7 +132,7 @@ export function createTrailPipeline(
 ): GPURenderPipeline {
   const trailModule = device.createShaderModule({
     label: 'Trail Shader',
-    code: trailShaderSource,
+    code: `${buildTrailShaderPreamble()}\n${trailShaderSource}`,
   });
 
   const pipeline = device.createRenderPipeline({
@@ -163,6 +170,36 @@ export function createTrailPipeline(
 }
 
 /**
+ * Create the present pipeline for compositing the persistent trail texture
+ */
+export function createPresentPipeline(
+  device: GPUDevice,
+  format: GPUTextureFormat
+): GPURenderPipeline {
+  const presentModule = device.createShaderModule({
+    label: 'Present Shader',
+    code: presentShaderSource,
+  });
+
+  return device.createRenderPipeline({
+    label: 'Present Pipeline',
+    layout: 'auto',
+    vertex: {
+      module: presentModule,
+      entryPoint: 'vertexMain',
+    },
+    fragment: {
+      module: presentModule,
+      entryPoint: 'fragmentMain',
+      targets: [{ format }],
+    },
+    primitive: {
+      topology: 'triangle-strip',
+    },
+  });
+}
+
+/**
  * Create all pipelines and bind groups
  */
 export function createPipelines(
@@ -174,10 +211,13 @@ export function createPipelines(
   const { pipeline: computePipeline, bindGroupLayout: computeBindGroupLayout } =
     createComputePipeline(device);
 
-  const { pipeline: renderPipeline, bindGroupLayout: renderBindGroupLayout } =
-    createRenderPipeline(device, format);
+  const { pipeline: renderPipeline, bindGroupLayout: renderBindGroupLayout } = createRenderPipeline(
+    device,
+    format
+  );
 
   const trailPipeline = createTrailPipeline(device, format);
+  const presentPipeline = createPresentPipeline(device, format);
 
   // Create bind groups
   const computeBindGroup = device.createBindGroup({
@@ -202,6 +242,7 @@ export function createPipelines(
     computePipeline,
     renderPipeline,
     trailPipeline,
+    presentPipeline,
     computeBindGroup,
     renderBindGroup,
   };

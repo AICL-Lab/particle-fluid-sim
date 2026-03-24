@@ -1,9 +1,9 @@
 // Particle data structure (matches WGSL struct)
 export interface Particle {
-  x: number;      // position x
-  y: number;      // position y
-  vx: number;     // velocity x
-  vy: number;     // velocity y
+  x: number; // position x
+  y: number; // position y
+  vx: number; // velocity x
+  vy: number; // velocity y
 }
 
 // 2D Vector type
@@ -19,7 +19,7 @@ export interface Uniforms {
   mouseX: number;
   mouseY: number;
   deltaTime: number;
-  _pad1: number;  // padding to 16-byte alignment
+  _pad1: number; // padding to 16-byte alignment
   _pad2: number;
   _pad3: number;
 }
@@ -37,6 +37,7 @@ export interface WebGPUContext {
 export interface ParticleBuffers {
   particleBuffer: GPUBuffer;
   uniformBuffer: GPUBuffer;
+  particleCount: number;
 }
 
 // Pipeline collection
@@ -44,6 +45,7 @@ export interface Pipelines {
   computePipeline: GPUComputePipeline;
   renderPipeline: GPURenderPipeline;
   trailPipeline: GPURenderPipeline;
+  presentPipeline: GPURenderPipeline;
   computeBindGroup: GPUBindGroup;
   renderBindGroup: GPUBindGroup;
 }
@@ -55,10 +57,23 @@ export interface Color {
   b: number;
 }
 
-// Constants
-export const PARTICLE_COUNT = 10000;
-export const PARTICLE_SIZE = 16; // 4 floats * 4 bytes
-export const WORKGROUP_SIZE = 64;
-export const REPULSION_RADIUS = 200;
-export const GRAVITY: Vec2 = { x: 0.0, y: 0.1 };
-export const DAMPING = 0.9;
+export {
+  COLOR_MAX_SPEED,
+  CYAN,
+  DAMPING,
+  DEFAULT_DELTA_TIME,
+  GRAVITY,
+  INITIAL_VELOCITY_RANGE,
+  MAX_DELTA_TIME,
+  MAX_SPEED,
+  OFFSCREEN_COORDINATE,
+  PARTICLE_COUNT,
+  PARTICLE_SIZE,
+  PURPLE,
+  REPULSION_RADIUS,
+  REPULSION_STRENGTH,
+  TRAIL_FADE_ALPHA,
+  UNIFORM_BUFFER_SIZE,
+  UNIFORM_FLOAT_COUNT,
+  WORKGROUP_SIZE,
+} from './config/sim';

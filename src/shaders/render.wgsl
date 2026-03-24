@@ -8,6 +8,10 @@ struct Particle {
 struct Uniforms {
   canvasSize: vec2f,
   mousePos: vec2f,
+  deltaTime: f32,
+  _pad1: f32,
+  _pad2: f32,
+  _pad3: f32,
 }
 
 // Vertex shader output
@@ -22,10 +26,7 @@ struct VertexOutput {
 // Uniform buffer
 @group(0) @binding(1) var<uniform> uniforms: Uniforms;
 
-// Color constants
-const CYAN: vec3f = vec3f(0.0, 1.0, 1.0);
-const PURPLE: vec3f = vec3f(0.9, 0.3, 1.0);
-const MAX_SPEED: f32 = 10.0;
+// Render constants are injected from TypeScript at build time.
 
 @vertex
 fn vertexMain(@builtin(vertex_index) vertexIndex: u32) -> VertexOutput {

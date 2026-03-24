@@ -1,5 +1,6 @@
 // Trail effect shader
-// Draws a fullscreen semi-transparent black quad to create fade effect
+// Draws a fullscreen semi-transparent black quad to create fade effect.
+// Fade alpha is injected from TypeScript at build time.
 
 struct VertexOutput {
   @builtin(position) position: vec4f,
@@ -23,7 +24,5 @@ fn vertexMain(@builtin(vertex_index) vertexIndex: u32) -> VertexOutput {
 
 @fragment
 fn fragmentMain() -> @location(0) vec4f {
-  // Semi-transparent black for trail fade effect
-  // Lower alpha = longer trails
-  return vec4f(0.0, 0.0, 0.0, 0.05);
+  return vec4f(0.0, 0.0, 0.0, TRAIL_FADE_ALPHA);
 }

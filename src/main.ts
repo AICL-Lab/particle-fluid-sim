@@ -1,20 +1,30 @@
-import { initWebGPU, setupCanvas, showError } from './core/webgpu';
+import { initWebGPU, reconfigureContext, setupCanvas, showError } from './core/webgpu';
 import { createBuffers } from './core/buffers';
 import { createPipelines } from './core/pipelines';
 import { createMouseHandler } from './core/input';
+import { readRuntimeHeuristics, resolveSimulationSettings } from './core/quality';
 import { createRenderer } from './core/renderer';
-import { PARTICLE_COUNT } from './types';
 import './style.css';
+
+function debugLog(message: string): void {
+  if (import.meta.env.DEV) {
+    console.warn(message);
+  }
+}
 
 /**
  * Create FPS counter element
  */
-function createFPSCounter(): { update: () => void; element: HTMLElement } {
+function createFPSCounter(
+  particleCount: number,
+  qualityTier: string
+): { update: () => void; element: HTMLElement } {
   const element = document.createElement('div');
   element.id = 'fps-counter';
   element.innerHTML = `
     <div class="fps-value">-- FPS</div>
-    <div class="particle-count">${PARTICLE_COUNT.toLocaleString()} particles</div>
+    <div class="particle-count">${particleCount.toLocaleString()} particles</div>
+    <div class="quality-tier">${qualityTier} quality</div>
   `;
   document.body.appendChild(element);
 
@@ -27,7 +37,7 @@ function createFPSCounter(): { update: () => void; element: HTMLElement } {
       frameCount++;
       const now = performance.now();
       if (now - lastTime >= 1000) {
-        const fps = Math.round(frameCount * 1000 / (now - lastTime));
+        const fps = Math.round((frameCount * 1000) / (now - lastTime));
         element.querySelector('.fps-value')!.textContent = `${fps} FPS`;
         frameCount = 0;
         lastTime = now;
@@ -79,22 +89,33 @@ async function main(): Promise<void> {
 
   try {
     // Initialize WebGPU
-    console.warn('Initializing WebGPU...');
+    debugLog('Initializing WebGPU...');
     const ctx = await initWebGPU(canvas);
-    console.warn('WebGPU initialized successfully');
+    debugLog('WebGPU initialized successfully');
+
+    const simulationSettings = resolveSimulationSettings(
+      readRuntimeHeuristics(ctx.adapter, ctx.device)
+    );
+    debugLog(
+      `Using ${simulationSettings.particleCount.toLocaleString()} particles (${simulationSettings.qualityTier} quality)`
+    );
 
     // Create buffers
-    console.warn('Creating buffers...');
-    const buffers = createBuffers(ctx.device, {
-      x: canvas.width,
-      y: canvas.height,
-    });
-    console.warn('Buffers created');
+    debugLog('Creating buffers...');
+    const buffers = createBuffers(
+      ctx.device,
+      {
+        x: canvas.width,
+        y: canvas.height,
+      },
+      simulationSettings.particleCount
+    );
+    debugLog('Buffers created');
 
     // Create pipelines
-    console.warn('Creating pipelines...');
+    debugLog('Creating pipelines...');
     const pipelines = createPipelines(ctx.device, ctx.format, buffers);
-    console.warn('Pipelines created');
+    debugLog('Pipelines created');
 
     // Remove loading indicator
     loadingDiv.remove();
@@ -103,7 +124,10 @@ async function main(): Promise<void> {
     const mouseHandler = createMouseHandler(canvas);
 
     // Create FPS counter
-    const fpsCounter = createFPSCounter();
+    const fpsCounter = createFPSCounter(
+      simulationSettings.particleCount,
+      simulationSettings.qualityTier
+    );
 
     // Create info overlay
     createInfoOverlay();
@@ -120,25 +144,20 @@ async function main(): Promise<void> {
     // Handle window resize (single handler, no duplicates)
     const handleResize = (): void => {
       setupCanvas(canvas);
-      ctx.context.configure({
-        device: ctx.device,
-        format: ctx.format,
-        alphaMode: 'premultiplied',
-      });
+      reconfigureContext(ctx);
     };
     window.addEventListener('resize', handleResize);
 
     // Start render loop
-    console.warn('Starting render loop...');
+    debugLog('Starting render loop...');
     renderer.start();
-    console.warn('Particle simulation running!');
+    debugLog('Particle simulation running!');
 
     // Cleanup on page unload
     window.addEventListener('beforeunload', (): void => {
-      renderer.stop();
+      renderer.destroy();
       mouseHandler.destroy();
     });
-
   } catch (error) {
     loadingDiv.remove();
     console.error('Failed to initialize:', error);

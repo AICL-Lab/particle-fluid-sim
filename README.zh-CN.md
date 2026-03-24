@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文
 
-使用 WebGPU 计算着色器的高性能粒子流体仿真。10,000 个粒子实时渲染，全部物理计算（重力、排斥、边界反弹）在 GPU 上完成，支持鼠标/触屏交互、基于速度的颜色映射和视觉拖尾效果。
+这是一个基于 WebGPU 计算着色器的高性能粒子流体仿真项目。TypeScript 负责初始化、输入、质量选择与帧循环，WGSL 负责物理计算、拖尾淡化、粒子绘制和最终呈现；运行时会根据设备能力在较低粒子数与默认 10,000 粒子之间自适应。
 
 [![CI](https://github.com/LessUp/particle-fluid-sim/actions/workflows/ci.yml/badge.svg)](https://github.com/LessUp/particle-fluid-sim/actions/workflows/ci.yml)
 [![Pages](https://github.com/LessUp/particle-fluid-sim/actions/workflows/pages.yml/badge.svg)](https://github.com/LessUp/particle-fluid-sim/actions/workflows/pages.yml)
@@ -13,14 +13,12 @@
 
 ## 特性
 
-- **GPU 计算物理** — 所有粒子仿真在 WebGPU 计算着色器 (WGSL) 中运行，CPU 零物理开销
-- **帧率无关** — 物理按 `deltaTime` 缩放，任何帧率下行为一致
-- **鼠标 / 触屏交互** — 粒子被光标或触点实时排斥
-- **视觉拖尾效果** — 通过独立的 trail 着色器渲染运动轨迹
-- **速度颜色映射** — 动态 HSL 颜色渐变反映粒子速度
-- **速度钳制** — `MAX_SPEED = 800 px/s` 防止物理爆炸
-- **响应式全屏** — 自适应窗口大小，无内存泄漏的 resize 处理
-- **属性测试** — 使用 [fast-check](https://github.com/dubzzz/fast-check) 验证正确性
+- **GPU 物理仿真** - 重力、排斥、速度钳制、边界反弹全部在 WebGPU compute shader 中执行
+- **自适应质量** - 启动时根据设备能力和视口大小动态选择粒子数量
+- **帧率无关** - CPU 参考实现、测试和 GPU 计算统一使用 `deltaTime`
+- **持久化拖尾** - 使用离屏纹理保存拖尾，再通过 present pass 输出到屏幕
+- **HiDPI 适配** - 渲染尺寸和输入坐标都考虑 `devicePixelRatio`
+- **属性测试** - 用 Vitest + fast-check 验证核心仿真约束
 
 ## 环境要求
 
@@ -32,127 +30,124 @@
 ```bash
 npm install
 npm run dev
-# 在 WebGPU 浏览器中打开 http://localhost:5173
+# 在支持 WebGPU 的浏览器中打开 http://localhost:5173
 ```
 
-## 架构
+## 常用命令
 
-仿真采用 **异构计算模型** — CPU 负责初始化、事件处理和渲染循环协调，GPU 执行所有物理计算和渲染：
-
-```
-┌──────────────────────────────────────────────────────────┐
-│                     CPU  (TypeScript)                      │
-│  初始化 WebGPU  ·  鼠标/触屏  ·  渲染循环  ·  Uniforms   │
-└───────────────────────────┬──────────────────────────────┘
-                            │  Uniform Buffer (deltaTime,
-                            │  鼠标位置, 画布尺寸)
-┌───────────────────────────▼──────────────────────────────┐
-│                      GPU  (WGSL)                          │
-│                                                           │
-│  ┌─────────────────────┐    ┌──────────────────────────┐ │
-│  │   Compute Pass      │    │      Render Pass         │ │
-│  │  ┌───────────────┐  │    │  ┌────────┐ ┌─────────┐ │ │
-│  │  │ 重力 ×dt      │  │    │  │ 顶点   │ │片段     │ │ │
-│  │  │ 排斥力 ×dt    │  │    │  │ 着色器 │ │着色器   │ │ │
-│  │  │ 速度钳制      │  │    │  └────────┘ └─────────┘ │ │
-│  │  │ 边界反弹      │  │    │                         │ │
-│  │  └───────────────┘  │    │  拖尾 Pass + 混合       │ │
-│  └─────────────────────┘    └──────────────────────────┘ │
-└──────────────────────────────────────────────────────────┘
-```
-
-### 渲染管线
-
-每帧按顺序执行三个 GPU pass：
-
-| Pass | 着色器 | 用途 |
-|------|--------|------|
-| **Compute** | `compute.wgsl` | 更新粒子位置和速度 |
-| **Trail** | `trail.wgsl` | 淡化前一帧，产生运动拖尾效果 |
-| **Render** | `render.wgsl` | 绘制粒子点，基于速度着色 |
+| 命令                    | 说明                       |
+| ----------------------- | -------------------------- |
+| `npm run dev`           | 启动开发服务器             |
+| `npm run build`         | TypeScript 检查 + 生产构建 |
+| `npm run preview`       | 预览生产构建               |
+| `npm test`              | 运行测试                   |
+| `npm run test:watch`    | 监听模式测试               |
+| `npm run test:coverage` | 输出覆盖率报告             |
+| `npm run lint`          | 运行 ESLint                |
+| `npm run typecheck`     | 运行 TypeScript 类型检查   |
 
 ## 项目结构
 
 ```
 src/
+├── config/
+│   └── sim.ts            # 共享仿真常量与 WGSL 常量注入
 ├── core/
-│   ├── buffers.ts        # GPU 缓冲区创建与管理
-│   ├── color.ts          # 速度 → HSL 颜色映射
-│   ├── input.ts          # 鼠标和触屏输入处理
-│   ├── physics.ts        # CPU 端物理（可测试参考实现）
-│   ├── pipelines.ts      # WebGPU 计算 + 渲染管线配置
-│   ├── renderer.ts       # 帧循环与 deltaTime 计算
-│   └── webgpu.ts         # WebGPU 设备/适配器初始化
+│   ├── buffers.ts        # GPU 缓冲区创建与粒子初始化
+│   ├── color.ts          # CPU 端颜色映射参考实现
+│   ├── input.ts          # 鼠标/触屏输入与 HiDPI 坐标映射
+│   ├── physics.ts        # 与 compute shader 对齐的 CPU 物理参考实现
+│   ├── pipelines.ts      # Compute / render / trail / present 管线创建
+│   ├── quality.ts        # 运行时粒子数量自适应策略
+│   ├── renderer.ts       # 帧循环、离屏拖尾纹理与最终呈现
+│   └── webgpu.ts         # WebGPU 初始化与画布设置
 ├── shaders/
-│   ├── compute.wgsl      # 粒子物理计算着色器
-│   ├── render.wgsl       # 粒子顶点 + 片段着色器
-│   └── trail.wgsl        # 拖尾淡出效果着色器
-├── types.ts              # 接口、常量、物理参数
+│   ├── compute.wgsl      # 物理计算着色器
+│   ├── present.wgsl      # 最终全屏合成 pass
+│   ├── render.wgsl       # 粒子渲染着色器
+│   └── trail.wgsl        # 拖尾淡化着色器
 ├── main.ts               # 应用入口
-└── style.css             # 全屏画布样式
+├── style.css             # 全屏画布与 UI 覆盖层样式
+└── types.ts              # 共享接口与常量导出
 ```
 
-## 常用命令
+## 架构
 
-| 命令 | 说明 |
-|------|------|
-| `npm run dev` | 启动开发服务器 (Vite) |
-| `npm run build` | TypeScript 检查 + 生产构建 |
-| `npm test` | 运行属性测试 (Vitest) |
-| `npm run test:coverage` | 覆盖率报告 (v8) |
-| `npm run lint` | ESLint 检查 |
-| `npm run typecheck` | TypeScript 严格类型检查 |
-| `npm run format` | Prettier 格式化 |
+项目采用异构计算模型：
+
+- **CPU（TypeScript）**：初始化 WebGPU、选择运行质量、更新 uniforms、处理输入、驱动帧循环
+- **GPU（WGSL）**：更新粒子、淡化拖尾纹理、绘制粒子，并将离屏结果输出到画布
+
+### 渲染流程
+
+每帧依次执行四个 GPU pass：
+
+| Pass        | 着色器                     | 用途                       |
+| ----------- | -------------------------- | -------------------------- |
+| **Compute** | `src/shaders/compute.wgsl` | 更新粒子位置和速度         |
+| **Trail**   | `src/shaders/trail.wgsl`   | 淡化持久化离屏纹理         |
+| **Render**  | `src/shaders/render.wgsl`  | 将粒子绘制到离屏纹理       |
+| **Present** | `src/shaders/present.wgsl` | 将离屏纹理合成到交换链画布 |
+
+拖尾效果不再依赖交换链纹理的跨帧保留行为，而是由 `src/core/renderer.ts` 维护专用离屏纹理，因此在不同浏览器和 GPU 上更稳定。
+
+## 配置
+
+所有共享仿真常量集中在 `src/config/sim.ts`，包括：
+
+- 默认粒子数：`10,000`
+- 重力：`600 px/s²`
+- 阻尼：`0.9`
+- 排斥半径：`200 px`
+- 排斥强度：`3,000 px/s`
+- 最大速度：`800 px/s`
+- 默认 delta time：`1 / 60 s`
+- 拖尾淡化 alpha：`0.05`
+
+`src/core/pipelines.ts` 会把这些常量注入到 WGSL shader 前导代码里，从而保证 TypeScript、测试和 shader 参数一致。
+
+### 自适应质量
+
+`src/core/quality.ts` 会在启动时根据以下因素选择运行时粒子数量：
+
+- fallback adapter
+- `navigator.deviceMemory`（若浏览器支持）
+- `navigator.hardwareConcurrency`
+- 视口像素数量
+- WebGPU storage buffer 限制
+
+通常运行范围在 **2,500 到 10,000 粒子** 之间，实际粒子数和质量等级会显示在页面右上角。
 
 ## 测试
 
-使用 [fast-check](https://github.com/dubzzz/fast-check) 属性测试验证仿真正确性：
+项目使用 Vitest 和 fast-check 验证：
 
-| 属性 | 验证内容 |
-|------|----------|
-| 初始化边界 | 所有粒子在画布范围内生成 |
-| 物理更新 | 重力、速度、位置积分 |
-| 边界反弹 | 粒子在画布边缘正确反射 |
-| 排斥力 | 鼠标排斥方向与强度 |
-| 颜色映射 | 速度 → 颜色梯度单调性 |
+- 粒子初始化边界
+- 基于 delta time 的物理积分
+- 边界反弹行为
+- 排斥力方向与衰减
+- 颜色插值逻辑
+- 运行时质量选择策略
 
-测试文件与源码共存：`buffers.test.ts`、`color.test.ts`、`physics.test.ts`、`types.test.ts`。
+完整校验命令：
 
-## 物理参数
-
-| 参数 | 值 | 单位 |
-|------|-----|------|
-| 粒子数量 | 10,000 | — |
-| 重力加速度 | 600 | px/s² |
-| 阻尼系数 | 0.9 | — |
-| 排斥半径 | 200 | px |
-| 排斥强度 | 3,000 | px/s |
-| 最大速度 | 800 | px/s |
-| DeltaTime 上限 | 50 | ms |
-
-## 技术栈
-
-| 类别 | 技术 |
-|------|------|
-| GPU API | WebGPU + WGSL 计算着色器 |
-| 语言 | TypeScript 5.6（严格模式） |
-| 构建 | Vite 6 |
-| 渲染 | WebGPU 渲染管线 + Canvas |
-| 测试 | Vitest + fast-check（属性测试） |
-| 代码规范 | ESLint + Prettier |
-| CI | GitHub Actions |
+```bash
+npm run lint
+npm test
+npm run build
+```
 
 ## 浏览器兼容性
 
-| 浏览器 | 最低版本 | 状态 |
-|--------|----------|------|
-| Chrome | 113+ | 稳定 |
-| Edge | 113+ | 稳定 |
-| Safari | 17+（macOS 14+） | 稳定 |
-| Firefox | Nightly | 需启用标志 |
+项目依赖 WebGPU。最新支持情况可参考 [caniuse.com/webgpu](https://caniuse.com/webgpu)。
 
-查看 [caniuse.com/webgpu](https://caniuse.com/webgpu) 获取最新支持状态。
+| 浏览器  | 最低版本         |
+| ------- | ---------------- |
+| Chrome  | 113+             |
+| Edge    | 113+             |
+| Firefox | 需启用标志       |
+| Safari  | 17+（macOS 14+） |
 
 ## 许可证
 
-MIT — [项目主页](https://lessup.github.io/particle-fluid-sim/)
+MIT - [项目主页](https://lessup.github.io/particle-fluid-sim/)

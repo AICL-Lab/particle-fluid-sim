@@ -48,6 +48,21 @@ describe('Buffers Module', () => {
       );
     });
 
+    it('should support custom particle counts', () => {
+      fc.assert(
+        fc.property(
+          canvasSizeArb,
+          fc.integer({ min: 1, max: 2048 }),
+          (canvasSize, particleCount) => {
+            const data = initializeParticles(canvasSize, particleCount);
+            expect(data.length).toBe(particleCount * 4);
+            expect(validateParticleData(data, canvasSize, particleCount)).toBe(true);
+          }
+        ),
+        { numRuns: 50 }
+      );
+    });
+
     it('should validate particle data correctly', () => {
       fc.assert(
         fc.property(canvasSizeArb, (canvasSize) => {
@@ -90,7 +105,6 @@ describe('Buffers Module', () => {
     });
   });
 });
-
 
 describe('Buffers Edge Cases', () => {
   describe('initializeParticles edge cases', () => {
@@ -157,7 +171,7 @@ describe('Buffers Edge Cases', () => {
     it('should return true for empty-ish valid data', () => {
       const canvasSize: Vec2 = { x: 800, y: 600 };
       const data = new Float32Array(PARTICLE_COUNT * 4);
-      
+
       // All zeros are valid (within bounds)
       expect(validateParticleData(data, canvasSize)).toBe(true);
     });
@@ -165,47 +179,47 @@ describe('Buffers Edge Cases', () => {
     it('should detect particle at negative x', () => {
       const canvasSize: Vec2 = { x: 800, y: 600 };
       const data = initializeParticles(canvasSize);
-      
+
       data[0] = -1; // First particle x is negative
-      
+
       expect(validateParticleData(data, canvasSize)).toBe(false);
     });
 
     it('should detect particle at negative y', () => {
       const canvasSize: Vec2 = { x: 800, y: 600 };
       const data = initializeParticles(canvasSize);
-      
+
       data[1] = -1; // First particle y is negative
-      
+
       expect(validateParticleData(data, canvasSize)).toBe(false);
     });
 
     it('should detect particle beyond canvas width', () => {
       const canvasSize: Vec2 = { x: 800, y: 600 };
       const data = initializeParticles(canvasSize);
-      
+
       data[0] = 801; // First particle x is beyond width
-      
+
       expect(validateParticleData(data, canvasSize)).toBe(false);
     });
 
     it('should detect particle beyond canvas height', () => {
       const canvasSize: Vec2 = { x: 800, y: 600 };
       const data = initializeParticles(canvasSize);
-      
+
       data[1] = 601; // First particle y is beyond height
-      
+
       expect(validateParticleData(data, canvasSize)).toBe(false);
     });
 
     it('should detect out-of-bounds particle in middle of array', () => {
       const canvasSize: Vec2 = { x: 800, y: 600 };
       const data = initializeParticles(canvasSize);
-      
+
       // Set particle 500 out of bounds
       const offset = 500 * 4;
       data[offset] = 1000;
-      
+
       expect(validateParticleData(data, canvasSize)).toBe(false);
     });
   });

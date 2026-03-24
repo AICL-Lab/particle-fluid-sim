@@ -20,12 +20,7 @@ struct Uniforms {
 // Uniform buffer (read only)
 @group(0) @binding(1) var<uniform> uniforms: Uniforms;
 
-// Constants
-const GRAVITY: vec2f = vec2f(0.0, 600.0);   // pixels/s² (scaled for dt)
-const REPULSION_RADIUS: f32 = 200.0;
-const REPULSION_STRENGTH: f32 = 3000.0;      // pixels/s (scaled for dt)
-const DAMPING: f32 = 0.9;
-const MAX_SPEED: f32 = 800.0;               // max pixels/s to prevent explosion
+// Simulation constants are injected from TypeScript at build time.
 
 @compute @workgroup_size(64)
 fn main(@builtin(global_invocation_id) id: vec3u) {
