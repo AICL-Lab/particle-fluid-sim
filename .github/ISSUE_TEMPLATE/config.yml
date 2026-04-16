@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Ask a Question
+    url: https://github.com/LessUp/particle-fluid-sim/discussions
+    about: Ask questions and discuss with the community
+  - name: 📖 Read the Documentation
+    url: https://lessup.github.io/particle-fluid-sim/
+    about: Check the documentation before opening an issue

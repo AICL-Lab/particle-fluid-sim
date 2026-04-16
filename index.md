@@ -8,51 +8,105 @@ title: Particle Fluid Simulation
 [![CI](https://github.com/LessUp/particle-fluid-sim/actions/workflows/ci.yml/badge.svg)](https://github.com/LessUp/particle-fluid-sim/actions/workflows/ci.yml)
 [![Pages](https://github.com/LessUp/particle-fluid-sim/actions/workflows/pages.yml/badge.svg)](https://github.com/LessUp/particle-fluid-sim/actions/workflows/pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 ![WebGPU](https://img.shields.io/badge/WebGPU-Enabled-005A9C?logo=webgpu&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
 
-A WebGPU particle fluid simulation with shared TypeScript/WGSL constants, adaptive runtime quality, persistent trail rendering, and property-based tests.
+A high-performance GPU-accelerated particle simulation using WebGPU compute shaders. Features adaptive quality scaling, persistent motion trails, and property-based testing.
 
-## Highlights
+---
 
-- GPU physics via WebGPU compute shaders
-- Adaptive particle counts from 2,500 up to the default 10,000
-- Delta-time-based simulation aligned across runtime code and tests
-- Offscreen trail texture plus final present pass
-- HiDPI-aware canvas sizing and pointer mapping
+## Live Demo
+
+**[Open Demo →](https://lessup.github.io/particle-fluid-sim/)**
+
+Move your mouse to interact with particles. They are repelled by the cursor with an inverse-distance force.
+
+---
+
+## Key Features
+
+| Feature | Description |
+|---------|-------------|
+| **GPU Physics** | Gravity, repulsion, bounce computed in parallel via compute shaders |
+| **Adaptive Quality** | 2,500–10,000 particles based on device capabilities |
+| **Frame-Rate Independent** | Consistent simulation using deltaTime |
+| **Motion Trails** | Persistent trails via offscreen texture |
+| **HiDPI Support** | Proper handling of high-DPI displays |
+| **Well Tested** | Property-based tests with fast-check |
+
+---
+
+## Quick Start
+
+```bash
+# Clone and run
+git clone https://github.com/LessUp/particle-fluid-sim.git
+cd particle-fluid-sim
+npm install
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in a WebGPU-enabled browser.
+
+---
 
 ## Render Pipeline
 
-| Pass    | Shader                     | Purpose                                       |
-| ------- | -------------------------- | --------------------------------------------- |
-| Compute | `src/shaders/compute.wgsl` | Update particle positions and velocities      |
-| Trail   | `src/shaders/trail.wgsl`   | Fade the persistent offscreen texture         |
-| Render  | `src/shaders/render.wgsl`  | Draw particles into the offscreen texture     |
-| Present | `src/shaders/present.wgsl` | Composite the offscreen texture to the canvas |
+Each frame executes four GPU passes:
 
-## Shared Configuration
-
-`src/config/sim.ts` is the single source of truth for simulation constants such as particle count, gravity, damping, repulsion, max speed, and trail fade alpha. `src/core/pipelines.ts` injects these values into WGSL shader preambles to keep tests, host code, and shaders aligned.
-
-## Adaptive Quality
-
-`src/core/quality.ts` selects a runtime particle count using:
-
-- fallback adapter detection
-- `navigator.deviceMemory` when available
-- `navigator.hardwareConcurrency`
-- viewport pixel count
-- WebGPU storage buffer limits
-
-The chosen particle count and quality tier are shown in the on-screen HUD.
-
-## Validation
-
-```bash
-npm run lint
-npm test
-npm run build
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   Compute   │ →  │    Trail    │ →  │   Render    │ →  │   Present   │
+│    Pass     │    │    Pass     │    │    Pass     │    │    Pass     │
+├─────────────┤    ├─────────────┤    ├─────────────┤    ├─────────────┤
+│ • Gravity   │    │ • Fade      │    │ • Draw      │    │ • Composite │
+│ • Repulsion │    │   offscreen │    │   particles │    │   to canvas │
+│ • Bounce    │    │   texture   │    │   to texture│    │             │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
 ```
 
-[View on GitHub](https://github.com/LessUp/particle-fluid-sim) · [README](README.md) · [简体中文](README.zh-CN.md)
+---
+
+## Configuration
+
+All constants in `src/config/sim.ts`:
+
+| Parameter | Value |
+|-----------|-------|
+| Particles | 10,000 |
+| Gravity | 600 px/s² |
+| Repulsion Radius | 200 px |
+| Max Speed | 800 px/s |
+| Trail Fade | 0.05 |
+
+---
+
+## Browser Support
+
+| Browser | Version |
+|---------|---------|
+| Chrome | 113+ |
+| Edge | 113+ |
+| Safari | 17+ |
+| Firefox | Flag required |
+
+WebGPU is required. Check [caniuse.com/webgpu](https://caniuse.com/webgpu) for details.
+
+---
+
+## Documentation
+
+- [README.md](README.md) — Full documentation (English)
+- [README.zh-CN.md](README.zh-CN.md) — 中文文档
+- [API Reference](docs/API.md) — API documentation
+- [Performance Benchmarks](docs/PERFORMANCE.md) — Performance data and optimization tips
+- [Troubleshooting](docs/TROUBLESHOOTING.md) — Common issues and solutions
+- [Contributing](CONTRIBUTING.md) — Contribution guidelines
+
+---
+
+## Links
+
+[View on GitHub](https://github.com/LessUp/particle-fluid-sim) · [Report an Issue](https://github.com/LessUp/particle-fluid-sim/issues)

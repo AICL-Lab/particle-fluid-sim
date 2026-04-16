@@ -1,151 +1,249 @@
-# Implementation Plan: WebGPU Particle Fluid Simulation
+# Implementation Tasks
+
+> **Status:** Maintenance Mode  
+> **Last Updated:** 2026-04-16  
+> **Version:** 2.0.0
 
 ## Overview
 
-本实现计划将 WebGPU 粒子流体模拟系统分解为可执行的编码任务。采用增量开发方式，每个任务都建立在前一个任务的基础上，确保代码始终可运行。
+This document tracks the implementation tasks for the WebGPU Particle Fluid Simulation. All tasks have been completed.
 
-使用 Vite + TypeScript 作为开发环境，fast-check 作为属性测试库。
+---
 
-## Tasks
+## Task Checklist
 
-- [x] 1. 项目初始化和基础结构
-  - [x] 1.1 使用 Vite 创建 TypeScript 项目
-    - 运行 `npm create vite@latest . -- --template vanilla-ts`
-    - 安装依赖 `npm install`
-    - 配置 TypeScript 支持 WebGPU 类型
-    - _Requirements: 1.1_
+### Phase 1: Project Setup
 
-  - [x] 1.2 创建项目目录结构
-    - 创建 `src/core/` 目录存放核心模块
-    - 创建 `src/shaders/` 目录存放 WGSL 着色器
-    - 创建 `src/types.ts` 定义类型接口
-    - _Requirements: 1.1_
+- [x] **TASK-1.1** Initialize Vite + TypeScript project
+  - Created project using Vite vanilla-ts template
+  - Configured TypeScript with strict mode
+  - Added @webgpu/types for type definitions
+  - *Validates: REQ-1*
 
-- [x] 2. WebGPU 初始化模块
-  - [x] 2.1 实现 WebGPU 设备初始化
-    - 创建 `src/core/webgpu.ts`
-    - 实现 `initWebGPU()` 函数获取 adapter 和 device
-    - 实现错误处理和用户提示
-    - _Requirements: 1.1, 1.2, 1.4_
+- [x] **TASK-1.2** Create project structure
+  - Created `src/config/` for simulation constants
+  - Created `src/core/` for main modules
+  - Created `src/shaders/` for WGSL files
+  - Created `src/types.ts` for interfaces
+  - *Validates: REQ-1, REQ-2*
 
-  - [x] 2.2 实现 Canvas 配置
-    - 配置 canvas 全屏自适应
-    - 监听 window resize 事件
-    - 配置 GPUCanvasContext
-    - _Requirements: 1.3_
+### Phase 2: WebGPU Initialization
 
-- [x] 3. 粒子数据管理模块
-  - [x] 3.1 实现粒子物理逻辑（可测试模块）
-    - 创建 `src/core/physics.ts`
-    - 实现 `updateParticle()` 纯函数（与 shader 逻辑一致）
-    - 实现 `applyGravity()`, `applyBoundaryBounce()`, `applyRepulsion()` 函数
-    - _Requirements: 3.1, 3.2, 3.4, 4.2, 4.3_
+- [x] **TASK-2.1** Implement WebGPU initialization
+  - Created `src/core/webgpu.ts`
+  - Implemented `initWebGPU()` function
+  - Added error handling for unsupported browsers
+  - *Validates: REQ-1.1, REQ-1.2, REQ-1.4*
 
-  - [x] 3.2 编写物理模块属性测试
-    - **Property 3: Physics Update Correctness**
-    - **Property 4: Boundary Bounce Behavior**
-    - **Property 5: Repulsion Force Application**
-    - **Validates: Requirements 3.1, 3.2, 3.4, 4.2, 4.3**
+- [x] **TASK-2.2** Implement canvas configuration
+  - Implemented fullscreen canvas setup
+  - Added HiDPI support via devicePixelRatio
+  - Added resize event handling
+  - *Validates: REQ-1.3*
 
-  - [x] 3.3 实现 Buffer 创建和初始化
-    - 创建 `src/core/buffers.ts`
-    - 实现 `createParticleBuffer()` 创建 10,000 粒子的 storage buffer
-    - 实现 `createUniformBuffer()` 创建 uniform buffer
-    - 实现 `initializeParticles()` 随机初始化粒子位置和速度
-    - _Requirements: 2.1, 2.2, 2.3, 2.4_
+### Phase 3: Particle Data
 
-  - [x] 3.4 编写粒子初始化属性测试
-    - **Property 2: Particle Initialization Bounds**
-    - **Validates: Requirements 2.3**
+- [x] **TASK-3.1** Implement particle physics (CPU reference)
+  - Created `src/core/physics.ts`
+  - Implemented `updateParticle()` pure function
+  - Implemented helper functions for gravity, bounce, repulsion
+  - *Validates: REQ-3.1, REQ-3.2, REQ-3.4, REQ-4.2, REQ-4.3*
 
-- [x] 4. Checkpoint - 确保基础模块测试通过
-  - 运行所有测试确保通过
-  - 如有问题请询问用户
+- [x] **TASK-3.2** Write physics property tests
+  - Created `src/core/physics.test.ts`
+  - Property tests for physics integration
+  - Property tests for boundary bounce
+  - Property tests for repulsion force
+  - *Validates: REQ-3.1, REQ-3.2, REQ-4.2, REQ-4.3*
 
-- [x] 5. Shader 实现
-  - [x] 5.1 实现 Compute Shader
-    - 创建 `src/shaders/compute.wgsl`
-    - 实现粒子位置更新逻辑
-    - 实现边界反弹逻辑
-    - 实现鼠标排斥力逻辑
-    - 实现重力效果
-    - _Requirements: 3.1, 3.2, 3.4, 4.2, 4.3_
+- [x] **TASK-3.3** Implement GPU buffer management
+  - Created `src/core/buffers.ts`
+  - Implemented `createParticleBuffer()` for storage
+  - Implemented `createUniformBuffer()` for uniforms
+  - Implemented `initializeParticles()` for random init
+  - *Validates: REQ-2.1, REQ-2.2, REQ-2.3, REQ-2.4*
 
-  - [x] 5.2 实现 Render Shaders
-    - 创建 `src/shaders/render.wgsl`
-    - 实现 Vertex Shader（粒子位置转 NDC）
-    - 实现 Fragment Shader（速度-颜色映射）
-    - _Requirements: 5.1, 5.2, 5.3_
+- [x] **TASK-3.4** Write buffer property tests
+  - Created `src/core/buffers.test.ts`
+  - Property tests for particle bounds
+  - *Validates: REQ-2.3*
 
-  - [x] 5.3 实现颜色映射逻辑（可测试模块）
-    - 创建 `src/core/color.ts`
-    - 实现 `velocityToColor()` 纯函数
-    - _Requirements: 5.2, 5.3_
+### Phase 4: Shaders
 
-  - [x] 5.4 编写颜色映射属性测试
-    - **Property 6: Velocity-Based Color Mapping**
-    - **Validates: Requirements 5.2, 5.3**
+- [x] **TASK-4.1** Implement compute shader
+  - Created `src/shaders/compute.wgsl`
+  - Implemented gravity, repulsion, bounce logic
+  - Aligned with CPU physics implementation
+  - *Validates: REQ-3.1, REQ-3.2, REQ-3.4, REQ-4.2, REQ-4.3*
 
-  - [x] 5.5 实现拖尾效果 Shader
-    - 创建 `src/shaders/trail.wgsl`
-    - 实现全屏四边形顶点着色器
-    - 实现半透明黑色片段着色器
-    - _Requirements: 6.1, 6.2_
+- [x] **TASK-4.2** Implement render shader
+  - Created `src/shaders/render.wgsl`
+  - Implemented vertex shader (position → NDC)
+  - Implemented fragment shader (velocity → color)
+  - *Validates: REQ-5.1, REQ-5.2, REQ-5.3, REQ-5.4*
 
-- [x] 6. Pipeline 创建
-  - [x] 6.1 实现 Compute Pipeline
-    - 创建 `src/core/pipelines.ts`
-    - 创建 compute shader module
-    - 创建 compute pipeline 和 bind group layout
-    - _Requirements: 3.3_
+- [x] **TASK-4.3** Implement color mapping (CPU reference)
+  - Created `src/core/color.ts`
+  - Implemented `velocityToColor()` function
+  - *Validates: REQ-5.2, REQ-5.3, REQ-5.4*
 
-  - [x] 6.2 实现 Render Pipeline
-    - 创建 render shader module
-    - 配置 render pipeline（点图元、混合模式）
-    - 创建 bind group
-    - _Requirements: 5.1_
+- [x] **TASK-4.4** Write color property tests
+  - Created `src/core/color.test.ts`
+  - Property tests for color mapping
+  - *Validates: REQ-5.2, REQ-5.3, REQ-5.4*
 
-  - [x] 6.3 实现 Trail Pipeline
-    - 创建 trail shader module
-    - 配置 trail pipeline（三角形带、alpha 混合）
-    - _Requirements: 6.2_
+- [x] **TASK-4.5** Implement trail shader
+  - Created `src/shaders/trail.wgsl`
+  - Implemented fullscreen fade quad
+  - *Validates: REQ-6.2*
 
-- [x] 7. 渲染循环和交互
-  - [x] 7.1 实现鼠标交互
-    - 创建 `src/core/input.ts`
-    - 监听 mousemove 事件
-    - 实现 `updateMousePosition()` 更新 uniform buffer
-    - _Requirements: 4.1_
+- [x] **TASK-4.6** Implement present shader
+  - Created `src/shaders/present.wgsl`
+  - Implemented texture sampling and compositing
+  - *Validates: REQ-6.4*
 
-  - [x] 7.2 实现渲染循环
-    - 创建 `src/core/renderer.ts`
-    - 实现 `render()` 函数
-    - 按顺序执行：更新 uniforms → Compute pass → Trail pass → Render pass
-    - 使用 requestAnimationFrame 循环
-    - _Requirements: 7.1, 7.2, 7.3_
+### Phase 5: Pipelines
 
-- [x] 8. 主程序集成
-  - [x] 8.1 整合所有模块
-    - 更新 `src/main.ts`
-    - 初始化 WebGPU
-    - 创建 buffers 和 pipelines
-    - 启动渲染循环
-    - _Requirements: 1.1, 7.1_
+- [x] **TASK-5.1** Implement compute pipeline
+  - Created `src/core/pipelines.ts`
+  - Implemented compute pipeline creation
+  - Created bind group layouts
+  - *Validates: REQ-3.3*
 
-  - [x] 8.2 添加 HTML 和样式
-    - 更新 `index.html` 添加 canvas 元素
-    - 添加全屏样式和错误提示样式
-    - _Requirements: 1.3_
+- [x] **TASK-5.2** Implement render pipeline
+  - Implemented render pipeline creation
+  - Configured point topology and blending
+  - Created bind groups
+  - *Validates: REQ-5.1*
 
-- [x] 9. Final Checkpoint - 确保所有测试通过
-  - 运行所有属性测试和单元测试
-  - 验证视觉效果（粒子运动、反弹、拖尾、鼠标交互）
-  - 如有问题请询问用户
+- [x] **TASK-5.3** Implement trail pipeline
+  - Implemented trail pipeline creation
+  - Configured triangle strip topology
+  - *Validates: REQ-6.2*
 
-## Notes
+- [x] **TASK-5.4** Implement present pipeline
+  - Implemented present pipeline creation
+  - Configured texture sampling
+  - *Validates: REQ-6.4*
 
-- 所有测试任务均为必做，确保代码正确性
-- 每个任务都引用了具体的需求条款以确保可追溯性
-- Checkpoint 任务用于增量验证
-- 属性测试验证核心物理和颜色逻辑的正确性
-- Shader 逻辑与 TypeScript 模块保持一致，便于测试
+### Phase 6: Input and Rendering
+
+- [x] **TASK-6.1** Implement input handling
+  - Created `src/core/input.ts`
+  - Implemented mouse event handling
+  - Implemented touch event handling
+  - Added HiDPI coordinate mapping
+  - *Validates: REQ-4.1, REQ-4.4*
+
+- [x] **TASK-6.2** Implement render loop
+  - Created `src/core/renderer.ts`
+  - Implemented frame loop with RAF
+  - Implemented 4-pass rendering sequence
+  - Implemented delta time calculation
+  - *Validates: REQ-6.1, REQ-6.3, REQ-7.1, REQ-7.2, REQ-7.3, REQ-7.4*
+
+### Phase 7: Quality System
+
+- [x] **TASK-7.1** Implement quality heuristics
+  - Created `src/core/quality.ts`
+  - Implemented device capability detection
+  - Implemented particle count scaling
+  - *Validates: REQ-8.1, REQ-8.2, REQ-8.3, REQ-8.4*
+
+- [x] **TASK-7.2** Write quality tests
+  - Created `src/core/quality.test.ts`
+  - Tests for scaling scenarios
+  - *Validates: REQ-8.1-8.4*
+
+### Phase 8: Configuration
+
+- [x] **TASK-8.1** Centralize simulation constants
+  - Created `src/config/sim.ts`
+  - Defined all simulation constants
+  - Implemented WGSL preamble builders
+  - *Validates: REQ-2.1-2.4, REQ-3.4, REQ-4.2*
+
+### Phase 9: Integration
+
+- [x] **TASK-9.1** Create main entry point
+  - Created `src/main.ts`
+  - Integrated all modules
+  - Added FPS counter and info overlay
+  - *Validates: All REQs*
+
+- [x] **TASK-9.2** Add styles and HTML
+  - Created `src/style.css`
+  - Updated `index.html`
+  - Added error display styles
+  - *Validates: REQ-1.3, REQ-1.4*
+
+### Phase 10: Documentation
+
+- [x] **TASK-10.1** Create README documentation
+  - Created `README.md` (English)
+  - Created `README.zh-CN.md` (Chinese)
+  - *Validates: NFR-8*
+
+- [x] **TASK-10.2** Create API documentation
+  - Created `docs/API.md`
+  - Documented all public interfaces
+  - *Validates: NFR-8*
+
+- [x] **TASK-10.3** Create contributing guide
+  - Created `CONTRIBUTING.md`
+  - Documented development workflow
+  - *Validates: NFR-8*
+
+---
+
+## Summary
+
+| Phase | Tasks | Status |
+|-------|-------|--------|
+| 1. Project Setup | 2 | ✅ Complete |
+| 2. WebGPU Init | 2 | ✅ Complete |
+| 3. Particle Data | 4 | ✅ Complete |
+| 4. Shaders | 6 | ✅ Complete |
+| 5. Pipelines | 4 | ✅ Complete |
+| 6. Input/Rendering | 2 | ✅ Complete |
+| 7. Quality System | 2 | ✅ Complete |
+| 8. Configuration | 1 | ✅ Complete |
+| 9. Integration | 2 | ✅ Complete |
+| 10. Documentation | 3 | ✅ Complete |
+| **Total** | **28** | **All Complete** |
+
+---
+
+## Maintenance Tasks
+
+### Ongoing Maintenance
+
+| Task | Frequency | Description |
+|------|-----------|-------------|
+| Dependency Updates | Weekly | Review and merge Dependabot PRs |
+| Security Audits | Monthly | Run `npm audit` and address findings |
+| Performance Testing | Per Release | Benchmark on reference devices |
+| Documentation Review | Per Release | Verify docs match current code |
+
+### Future Enhancement Tasks
+
+#### Potential v2.1 Features
+- [ ] **TASK-F1** Add interactive UI controls for simulation parameters
+- [ ] **TASK-F2** Implement screenshot/image export
+- [ ] **TASK-F3** Add alternative color themes
+- [ ] **TASK-F4** Performance profiling dashboard
+
+#### Potential v3.0 Features (Major Release)
+- [ ] **TASK-M1** SPH fluid dynamics implementation
+- [ ] **TASK-M2** WebXR immersive mode
+- [ ] **TASK-M3** Custom shader support
+- [ ] **TASK-M4** State persistence (save/load)
+
+### Task Guidelines
+
+When adding new tasks:
+
+1. Use descriptive task IDs (e.g., `TASK-F1` for features, `TASK-M1` for major)
+2. Link to requirements and design sections
+3. Estimate effort (S/M/L)
+4. Add verification criteria
