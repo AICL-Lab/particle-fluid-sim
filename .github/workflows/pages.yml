@@ -4,13 +4,14 @@ on:
   push:
     branches: [main, master]
     paths:
-      - 'index.md'
-      - 'README.md'
-      - 'README.zh-CN.md'
-      - 'CHANGELOG.md'
-      - 'CONTRIBUTING.md'
+      - '**.md'
+      - '**.yml'
+      - '**.scss'
+      - '**.css'
+      - '**.js'
+      - '_*/**'
       - 'docs/**'
-      - '_config.yml'
+      - 'assets/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -25,6 +26,7 @@ concurrency:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  JEKYLL_ENV: production
 
 jobs:
   build:
@@ -33,18 +35,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          sparse-checkout-cone-mode: false
-          sparse-checkout: |
-            index.md
-            README.md
-            README.zh-CN.md
-            CHANGELOG.md
-            CONTRIBUTING.md
-            docs
-            _config.yml
-            LICENSE
+          fetch-depth: 0
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
 
       - name: Setup Pages
+        id: pages
         uses: actions/configure-pages@v5
 
       - name: Build with Jekyll
@@ -52,9 +52,57 @@ jobs:
         with:
           source: ./
           destination: ./_site
+          future: false
+          verbose: true
 
+      - name: Generate search index
+        run: |
+          echo "Generating search index..."
+          cat > _site/search.json << 'EOF'
+          [
+            {
+              "title": "API Reference",
+              "url": "/particle-fluid-sim/docs/API/",
+              "content": "Complete API documentation for WebGPU Particle Fluid Simulation including configuration, types, core modules, and shader constants.",
+              "tags": ["api", "documentation", "reference", "typescript"]
+            },
+            {
+              "title": "Performance Guide",
+              "url": "/particle-fluid-sim/docs/PERFORMANCE/",
+              "content": "Performance benchmarks, optimization tips, and profiling techniques for the WebGPU particle simulation.",
+              "tags": ["performance", "optimization", "benchmarks", "gpu"]
+            },
+            {
+              "title": "Troubleshooting",
+              "url": "/particle-fluid-sim/docs/TROUBLESHOOTING/",
+              "content": "Common issues and solutions for WebGPU Particle Fluid Simulation including browser compatibility, initialization errors, and performance problems.",
+              "tags": ["troubleshooting", "help", "faq", "errors"]
+            },
+            {
+              "title": "Changelog",
+              "url": "/particle-fluid-sim/CHANGELOG/",
+              "content": "Version history and release notes for WebGPU Particle Fluid Simulation including v2.0.0 with frame-rate independent physics and v1.0.0 initial release.",
+              "tags": ["changelog", "releases", "version"]
+            },
+            {
+              "title": "Contributing",
+              "url": "/particle-fluid-sim/CONTRIBUTING/",
+              "content": "Guidelines for contributing to the WebGPU Particle Fluid Simulation project including development setup, coding standards, and pull request process.",
+              "tags": ["contributing", "development", "guidelines"]
+            }
+          ]
+          EOF
+
+      - name: Optimize assets
+        run: |
+          echo "Optimizing assets..."
+          # Add any asset optimization here (minification, compression, etc.)
+          
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+          retention-days: 1
 
   deploy:
     environment:
@@ -66,3 +114,19 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: Wait for deployment
+        run: sleep 30
+
+      - name: Audit with Lighthouse
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: |
+            https://lessup.github.io/particle-fluid-sim/
+            https://lessup.github.io/particle-fluid-sim/docs/
+          uploadArtifacts: true
+          temporaryPublicStorage: true

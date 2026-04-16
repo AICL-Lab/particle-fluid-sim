@@ -1,0 +1,74 @@
+<header class="header" role="banner">
+  <div class="header__container">
+    <a href="{{ '/' | relative_url }}" class="header__logo" aria-label="WebGPU Particle Fluid Simulation - Home">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#58a6ff"/>
+            <stop offset="100%" style="stop-color:#79c0ff"/>
+          </linearGradient>
+        </defs>
+        <rect width="32" height="32" rx="6" fill="url(#logoGradient)"/>
+        <circle cx="8" cy="16" r="2" fill="white"/>
+        <circle cx="16" cy="12" r="2" fill="white"/>
+        <circle cx="24" cy="16" r="2" fill="white"/>
+        <circle cx="12" cy="22" r="2" fill="white" opacity="0.8"/>
+        <circle cx="20" cy="22" r="2" fill="white" opacity="0.8"/>
+      </svg>
+      <span>WebGPU Sim</span>
+    </a>
+
+    <nav class="header__nav" role="navigation" aria-label="Main navigation">
+      <a href="{{ '/' | relative_url }}" {% if page.url == '/' %}class="active"{% endif %}>Home</a>
+      <a href="{{ '/docs/' | relative_url }}" {% if page.url contains '/docs/' %}class="active"{% endif %}>Docs</a>
+      <a href="{{ '/CHANGELOG' | relative_url }}">Changelog</a>
+      <a href="https://github.com/LessUp/particle-fluid-sim" target="_blank" rel="noopener noreferrer">
+        GitHub
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-left:4px;">
+          <path d="M3.5 3a.5.5 0 0 0-.5.5v5a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5V6.5a.5.5 0 0 1 1 0v2a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 2 8.5v-5A1.5 1.5 0 0 1 3.5 2H6a.5.5 0 0 1 0 1H3.5Z"/>
+          <path d="M7 2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V3.707L5.354 8.354a.5.5 0 0 1-.708-.708L9.293 3H7.5a.5.5 0 0 1-.5-.5Z"/>
+        </svg>
+      </a>
+    </nav>
+
+    <div class="header__actions">
+      <!-- Language Switcher -->
+      <div class="lang-switcher" role="group" aria-label="Language switcher">
+        <a href="{{ page.url | remove: '/zh' }}" {% unless page.url contains '/zh' %}class="active"{% endunless %}>EN</a>
+        <a href="{{ page.url | remove: '/zh' | prepend: '/zh' }}" {% if page.url contains '/zh' %}class="active"{% endif %}>中文</a>
+      </div>
+
+      <!-- Mobile Menu Toggle -->
+      <button class="header__menu-btn" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Navigation -->
+<nav id="mobile-nav" class="mobile-nav" role="navigation" aria-label="Mobile navigation">
+  <a href="{{ '/' | relative_url }}" {% if page.url == '/' %}class="active"{% endif %}>Home</a>
+  <a href="{{ '/docs/' | relative_url }}" {% if page.url contains '/docs/' %}class="active"{% endif %}>Documentation</a>
+  <a href="{{ '/CHANGELOG' | relative_url }}">Changelog</a>
+  <a href="{{ '/CONTRIBUTING' | relative_url }}">Contributing</a>
+  <a href="{{ '/LICENSE' | relative_url }}">License</a>
+  
+  <div class="mobile-nav__section">
+    <h3>Documentation</h3>
+    <a href="{{ '/docs/API' | relative_url }}">API Reference</a>
+    <a href="{{ '/docs/PERFORMANCE' | relative_url }}">Performance Guide</a>
+    <a href="{{ '/docs/TROUBLESHOOTING' | relative_url }}">Troubleshooting</a>
+  </div>
+  
+  <div class="mobile-nav__section">
+    <h3>External</h3>
+    <a href="https://github.com/LessUp/particle-fluid-sim" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+    <a href="https://github.com/LessUp/particle-fluid-sim/issues" target="_blank" rel="noopener noreferrer">Issues</a>
+    <a href="https://github.com/LessUp/particle-fluid-sim/discussions" target="_blank" rel="noopener noreferrer">Discussions</a>
+  </div>
+</nav>
