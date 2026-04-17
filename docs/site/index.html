@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGPU Particle Fluid Simulation - Documentation</title>
+    <meta name="description" content="High-performance particle fluid simulation using WebGPU compute shaders. 10,000 particles with frame-rate independent physics.">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+</head>
+<body>
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">
+                <span class="logo-icon">💧</span>
+                <h1>WebGPU Particle Fluid</h1>
+            </div>
+            <nav class="nav">
+                <a href="#features">Features</a>
+                <a href="#getting-started">Getting Started</a>
+                <a href="#documentation">Documentation</a>
+                <a href="https://github.com/LessUp/particle-fluid-sim" target="_blank">GitHub</a>
+            </nav>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search docs... (Ctrl+K)">
+                <div id="searchResults" class="search-results hidden"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <section class="hero">
+            <div class="container">
+                <h1>WebGPU Particle Fluid Simulation</h1>
+                <p class="hero-subtitle">High-performance particle fluid simulation built with WebGPU compute shaders. 10,000 particles with frame-rate independent physics and adaptive quality scaling.</p>
+                <div class="hero-badges">
+                    <span class="badge badge-primary">v2.0.0</span>
+                    <a href="https://lessup.github.io/particle-fluid-sim/" class="badge badge-success">🔮 Live Demo</a>
+                    <span class="badge">TypeScript 5.6</span>
+                    <span class="badge">WebGPU</span>
+                    <span class="badge">MIT License</span>
+                </div>
+                <div class="hero-actions">
+                    <a href="#getting-started" class="btn btn-primary">Get Started</a>
+                    <a href="https://github.com/LessUp/particle-fluid-sim" class="btn btn-secondary" target="_blank">View on GitHub</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="section">
+            <div class="container">
+                <h2>✨ Features</h2>
+                <div class="grid grid-3">
+                    <div class="card">
+                        <div class="card-icon">⚡</div>
+                        <h3>GPU-Accelerated Physics</h3>
+                        <p>Compute shader physics with gravity, repulsion, clamping, and boundary bounce running entirely on GPU</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">📊</div>
+                        <h3>Frame-Rate Independent</h3>
+                        <p>Physics uses deltaTime for consistent simulation speed at any FPS</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🎯</div>
+                        <h3>Adaptive Quality</h3>
+                        <p>Automatic device detection and runtime scaling from 2,500 to 10,000 particles</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🎨</div>
+                        <h3>Persistent Trails</h3>
+                        <p>Motion trails via dedicated offscreen texture with velocity-based color mapping</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🖱️</div>
+                        <h3>Interactive Controls</h3>
+                        <p>Mouse/touch interaction to push particles around with HiDPI-aware coordinate mapping</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🔧</div>
+                        <h3>Modern Tooling</h3>
+                        <p>TypeScript, Vite, WebGPU, ESLint, Prettier, and Vitest for a great developer experience</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="getting-started" class="section section-alt">
+            <div class="container">
+                <h2>🚀 Getting Started</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>Clone the repository</h3>
+                            <pre><code>git clone https://github.com/LessUp/particle-fluid-sim.git
+cd particle-fluid-sim</code></pre>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>Install dependencies</h3>
+                            <pre><code>npm install</code></pre>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Start development server</h3>
+                            <pre><code>npm run dev</code></pre>
+                            <p>Open <a href="http://localhost:5173">http://localhost:5173</a> in your browser</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="callout">
+                    <strong>💡 Requirements:</strong> WebGPU-compatible browser (Chrome 113+, Edge 113+, Firefox Nightly). See <a href="/docs/setup/">Setup Guide</a> for details.
+                </div>
+            </div>
+        </section>
+
+        <section id="documentation" class="section">
+            <div class="container">
+                <h2>📚 Documentation</h2>
+                <div class="grid grid-2">
+                    <div class="doc-card">
+                        <h3>📖 API Reference</h3>
+                        <p>Complete API documentation including configuration, types, core modules, and shader constants</p>
+                        <a href="/docs/API/" class="doc-link">View API Reference →</a>
+                    </div>
+                    <div class="doc-card">
+                        <h3>⚡ Performance Guide</h3>
+                        <p>Performance benchmarks, optimization tips, and profiling techniques for the WebGPU particle simulation</p>
+                        <a href="/docs/PERFORMANCE/" class="doc-link">View Performance Guide →</a>
+                    </div>
+                    <div class="doc-card">
+                        <h3>🔧 Troubleshooting</h3>
+                        <p>Common issues and solutions including browser compatibility, initialization errors, and performance problems</p>
+                        <a href="/docs/TROUBLESHOOTING/" class="doc-link">View Troubleshooting →</a>
+                    </div>
+                    <div class="doc-card">
+                        <h3>🏗️ Architecture</h3>
+                        <p>High-level architecture overview including CPU-GPU heterogeneous computing model and data flow</p>
+                        <a href="/docs/architecture/" class="doc-link">View Architecture →</a>
+                    </div>
+                    <div class="doc-card">
+                        <h3>🚀 Setup Guide</h3>
+                        <p>Environment setup, development workflow, build process, and deployment instructions</p>
+                        <a href="/docs/setup/" class="doc-link">View Setup Guide →</a>
+                    </div>
+                    <div class="doc-card">
+                        <h3>📝 Tutorials</h3>
+                        <p>Step-by-step guides for users and developers, from first interaction to building the project</p>
+                        <a href="/docs/tutorials/" class="doc-link">View Tutorials →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-alt">
+            <div class="container">
+                <h2>📋 Project Information</h2>
+                <div class="grid grid-3">
+                    <div class="info-card">
+                        <h3>📄 README</h3>
+                        <p>Project overview, features, and quick start guide</p>
+                        <a href="/README/" class="info-link">View README →</a>
+                    </div>
+                    <div class="info-card">
+                        <h3>📝 Changelog</h3>
+                        <p>Version history and release notes</p>
+                        <a href="/CHANGELOG/" class="info-link">View Changelog →</a>
+                    </div>
+                    <div class="info-card">
+                        <h3>🤝 Contributing</h3>
+                        <p>Guidelines for contributing to the project</p>
+                        <a href="/CONTRIBUTING/" class="info-link">View Guide →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <h4>WebGPU Particle Fluid</h4>
+                    <p>High-performance particle simulation using WebGPU</p>
+                </div>
+                <div>
+                    <h4>Resources</h4>
+                    <a href="/docs/">Documentation</a>
+                    <a href="/specs/">Specifications</a>
+                    <a href="https://github.com/LessUp/particle-fluid-sim/issues">Issues</a>
+                </div>
+                <div>
+                    <h4>Community</h4>
+                    <a href="https://github.com/LessUp/particle-fluid-sim">GitHub Repository</a>
+                    <a href="https://github.com/LessUp/particle-fluid-sim/pulls">Pull Requests</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>Released under the <a href="/LICENSE">MIT License</a></p>
+                <p>© 2026 LessUp. Built with WebGPU & TypeScript.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/search-index.js"></script>
+    <script src="/main.js"></script>
+</body>
+</html>

@@ -8,6 +8,7 @@ on:
       - 'README.md'
       - 'CHANGELOG.md'
       - 'CONTRIBUTING.md'
+      - 'scripts/build-docs.js'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -27,20 +28,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
 
       - name: Build documentation site
-        run: |
-          mkdir -p _site
-          # Copy documentation and markdown files
-          cp -r docs _site/
-          cp README.md _site/
-          cp CHANGELOG.md _site/
-          cp CONTRIBUTING.md _site/
-          cp LICENSE _site/
-          echo "Documentation site built successfully"
+        run: node scripts/build-docs.js
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
