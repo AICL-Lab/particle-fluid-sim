@@ -27,7 +27,7 @@
 
 基于 **WebGPU 计算着色器**构建的高性能粒子流体仿真项目。本项目展示了现代 GPU 加速物理引擎，具备帧率无关的仿真、自适应质量缩放和持久化运动拖尾效果。
 
-🔮 **[在线演示](https://lessup.github.io/particle-fluid-sim/)** | 📖 **[文档](docs/)** | 🐛 **[问题追踪](https://github.com/LessUp/particle-fluid-sim/issues)**
+🔮 **[在线演示](https://lessup.github.io/particle-fluid-sim/)** | 📖 **[文档](docs/)** | 📋 **[规范](specs/)** | 🐛 **[问题追踪](https://github.com/LessUp/particle-fluid-sim/issues)**
 
 ## ✨ 特性
 
@@ -91,27 +91,30 @@ npm run dev
 ## 📁 项目结构
 
 ```
-src/
-├── config/
-│   └── sim.ts            # 仿真常量（物理、渲染）
-├── core/
-│   ├── buffers.ts        # GPU 缓冲区创建和管理
-│   ├── color.ts          # CPU 颜色映射参考
-│   ├── input.ts          # 鼠标/触摸输入处理
-│   ├── physics.ts        # CPU 物理参考（与 GPU 一致）
-│   ├── pipelines.ts      # WebGPU 管线创建
-│   ├── quality.ts        # 设备能力检测
-│   ├── renderer.ts       # 主渲染循环
-│   └── webgpu.ts         # WebGPU 初始化
-├── shaders/
-│   ├── compute.wgsl      # 物理计算着色器
-│   ├── present.wgsl      # 最终合成着色器
-│   ├── render.wgsl       # 粒子渲染着色器
-│   └── trail.wgsl        # 拖尾淡化着色器
-├── main.ts               # 应用入口
-├── style.css             # 画布和 UI 样式
-├── types.ts              # TypeScript 接口
-└── types.test.ts         # 属性测试
+particle-fluid-sim/
+├── specs/                # 规范文档（事实来源）
+│   ├── product/          # 产品需求 (PRD)
+│   ├── rfc/              # 技术设计文档
+│   ├── api/              # API 规范
+│   ├── db/               # 数据库模型（本项目不适用）
+│   └── testing/          # BDD 测试规范
+├── docs/                 # 文档
+│   ├── setup/            # 环境搭建指南
+│   ├── tutorials/        # 用户教程
+│   ├── architecture/     # 架构概览
+│   ├── assets/           # 静态资源（图片、图表）
+│   ├── API.md            # API 参考
+│   ├── PERFORMANCE.md    # 性能指南
+│   └── TROUBLESHOOTING.md# 故障排除指南
+├── src/                  # 源代码
+│   ├── config/           # 仿真常量
+│   ├── core/             # 核心模块
+│   └── shaders/          # WGSL 着色器
+├── .github/              # GitHub 配置
+├── AGENTS.md             # AI Agent SDD 工作流
+├── CONTRIBUTING.md       # 贡献指南
+├── CHANGELOG.md          # 版本历史
+└── LICENSE               # MIT 许可证
 ```
 
 ## 🏗️ 架构
@@ -195,18 +198,32 @@ npm run test:ui
 
 ## 📚 文档
 
-提供全面的中英文文档：
+### 规范文档（事实来源）
 
-| 文档 | English | 中文 |
-|------|---------|------|
-| API 参考 | [📖 Read](docs/en/API.md) | [📖 阅读](docs/zh-CN/API.md) |
-| 性能指南 | [📖 Read](docs/en/PERFORMANCE.md) | [📖 阅读](docs/zh-CN/PERFORMANCE.md) |
-| 故障排除 | [📖 Read](docs/en/TROUBLESHOOTING.md) | [📖 阅读](docs/zh-CN/TROUBLESHOOTING.md) |
+| 文档 | 描述 |
+|------|------|
+| [📋 产品需求](specs/product/webgpu-particle-fluid-sim.md) | 功能性与非功能性需求 |
+| [📐 RFC 0001: 核心架构](specs/rfc/0001-core-architecture.md) | 系统架构与设计决策 |
+| [📝 RFC 0002: 实现任务](specs/rfc/0002-implementation-tasks.md) | 实现任务追踪 |
+| [🔌 API 规范](specs/api/typescript-interfaces.md) | TypeScript 接口和契约 |
+| [🧪 测试规范](specs/testing/bdd-specifications.md) | BDD 测试规范 |
+
+### 开发者与用户指南
+
+| 文档 | 描述 |
+|------|------|
+| [📖 API 参考](docs/API.md) | 完整的 API 文档 |
+| [⚡ 性能指南](docs/PERFORMANCE.md) | 基准测试与优化 |
+| [🔧 故障排除](docs/TROUBLESHOOTING.md) | 常见问题与解决方案 |
+| [🛠️ 维护指南](docs/maintenance.md) | 版本发布与维护 |
+| [🏗️ 架构概览](docs/architecture/README.md) | 系统架构 |
+| [📚 教程](docs/tutorials/README.md) | 用户和开发者教程 |
 
 其他资源：
-- [贡献指南](CONTRIBUTING.md) - 如何贡献
+- [贡献指南](CONTRIBUTING.md) - 如何参与贡献
+- [AGENTS.md](AGENTS.md) - AI Agent 规范驱动开发工作流
 - [变更日志](CHANGELOG.md) - 版本历史
-- [安全策略](SECURITY.md) - 安全准则
+- [安全策略](.github/SECURITY.md) - 安全准则
 
 ## 🤝 贡献
 
@@ -216,7 +233,7 @@ npm run test:ui
 
 1. Fork 仓库
 2. 创建功能分支 (`git checkout -b feature/amazing-feature`)
-3. 进行更改
+3. 按照[规范驱动开发](AGENTS.md)工作流进行更改
 4. 运行测试 (`npm test`)
 5. 提交更改 (`git commit -m '添加 amazing 功能'`)
 6. 推送到分支 (`git push origin feature/amazing-feature`)
@@ -247,5 +264,5 @@ npm run test:ui
 </p>
 
 <p align="center">
-  <sub>版本 2.0.0 | 最后更新: 2026-04-16</sub>
+  <sub>版本 2.0.0 | 最后更新: 2026-04-17</sub>
 </p>

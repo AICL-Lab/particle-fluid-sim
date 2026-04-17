@@ -87,6 +87,12 @@ export function readRuntimeHeuristics(
   };
 }
 
+/**
+ * Resolves the quality tier based on the ratio of actual to preferred particle count.
+ * @param particleCount - The actual particle count after scaling
+ * @param preferredParticleCount - The preferred (default) particle count
+ * @returns A quality tier: 'high', 'medium', or 'low'
+ */
 function resolveQualityTier(
   particleCount: number,
   preferredParticleCount: number

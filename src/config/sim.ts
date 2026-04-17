@@ -36,15 +36,31 @@ export const UNIFORM_BUFFER_SIZE = UNIFORM_FLOAT_COUNT * Float32Array.BYTES_PER_
 export const CYAN = { r: 0.0, g: 1.0, b: 1.0 } as const;
 export const PURPLE = { r: 0.9, g: 0.3, b: 1.0 } as const;
 
+/**
+ * Formats a number for use in WGSL shader code.
+ * Ensures proper decimal representation (e.g., "1.0" for integers).
+ * @param value - The number to format
+ * @returns A string representation suitable for WGSL
+ */
 function formatShaderFloat(value: number): string {
   const normalized = Number(value.toFixed(6));
   return Number.isInteger(normalized) ? `${normalized.toFixed(1)}` : `${normalized}`;
 }
 
+/**
+ * Formats a 2D vector for use in WGSL shader code.
+ * @param value - The vector with x and y components
+ * @returns A WGSL vec2f string representation
+ */
 function formatShaderVec2(value: { x: number; y: number }): string {
   return `vec2f(${formatShaderFloat(value.x)}, ${formatShaderFloat(value.y)})`;
 }
 
+/**
+ * Formats a 3D vector for use in WGSL shader code.
+ * @param value - The vector with r, g, b components
+ * @returns A WGSL vec3f string representation
+ */
 function formatShaderVec3(value: { r: number; g: number; b: number }): string {
   return `vec3f(${formatShaderFloat(value.r)}, ${formatShaderFloat(value.g)}, ${formatShaderFloat(value.b)})`;
 }

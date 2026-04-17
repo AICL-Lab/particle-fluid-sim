@@ -27,7 +27,7 @@
 
 A high-performance particle fluid simulation built with **WebGPU compute shaders**. This project demonstrates modern GPU-accelerated physics with frame-rate independent simulation, adaptive quality scaling, and persistent motion trails.
 
-🔮 **[Live Demo](https://lessup.github.io/particle-fluid-sim/)** | 📖 **[Documentation](docs/)** | 🐛 **[Issue Tracker](https://github.com/LessUp/particle-fluid-sim/issues)**
+🔮 **[Live Demo](https://lessup.github.io/particle-fluid-sim/)** | 📖 **[Documentation](docs/)** | 📋 **[Specs](specs/)** | 🐛 **[Issue Tracker](https://github.com/LessUp/particle-fluid-sim/issues)**
 
 ## ✨ Features
 
@@ -91,27 +91,30 @@ npm run dev
 ## 📁 Project Structure
 
 ```
-src/
-├── config/
-│   └── sim.ts            # Simulation constants (physics, rendering)
-├── core/
-│   ├── buffers.ts        # GPU buffer creation and management
-│   ├── color.ts          # CPU color mapping reference
-│   ├── input.ts          # Mouse/touch input handling
-│   ├── physics.ts        # CPU physics reference (matches GPU)
-│   ├── pipelines.ts      # WebGPU pipeline creation
-│   ├── quality.ts        # Device capability detection
-│   ├── renderer.ts       # Main render loop
-│   └── webgpu.ts         # WebGPU initialization
-├── shaders/
-│   ├── compute.wgsl      # Physics compute shader
-│   ├── present.wgsl      # Final composite shader
-│   ├── render.wgsl       # Particle rendering shader
-│   └── trail.wgsl        # Trail fade shader
-├── main.ts               # Application entry point
-├── style.css             # Canvas and UI styles
-├── types.ts              # TypeScript interfaces
-└── types.test.ts         # Property-based tests
+particle-fluid-sim/
+├── specs/                # Specification documents (Source of Truth)
+│   ├── product/          # Product requirements (PRD)
+│   ├── rfc/              # Technical design documents
+│   ├── api/              # API specifications
+│   ├── db/               # Database schema (N/A for this project)
+│   └── testing/          # BDD test specifications
+├── docs/                 # Documentation
+│   ├── setup/            # Environment setup guides
+│   ├── tutorials/        # User tutorials
+│   ├── architecture/     # Architecture overview
+│   ├── assets/           # Static assets (images, diagrams)
+│   ├── API.md            # API reference
+│   ├── PERFORMANCE.md    # Performance guide
+│   └── TROUBLESHOOTING.md# Troubleshooting guide
+├── src/                  # Source code
+│   ├── config/           # Simulation constants
+│   ├── core/             # Core modules
+│   └── shaders/          # WGSL shaders
+├── .github/              # GitHub configuration
+├── AGENTS.md             # AI Agent SDD workflow
+├── CONTRIBUTING.md       # Contribution guide
+├── CHANGELOG.md          # Version history
+└── LICENSE               # MIT License
 ```
 
 ## 🏗️ Architecture
@@ -195,18 +198,32 @@ WebGPU is required. Check [caniuse.com/webgpu](https://caniuse.com/webgpu) for l
 
 ## 📚 Documentation
 
-Comprehensive documentation is available:
+### Specifications (Source of Truth)
 
-| Document | English | 中文 |
-|----------|---------|------|
-| API Reference | [📖 Read](docs/en/API.md) | [📖 阅读](docs/zh-CN/API.md) |
-| Performance Guide | [📖 Read](docs/en/PERFORMANCE.md) | [📖 阅读](docs/zh-CN/PERFORMANCE.md) |
-| Troubleshooting | [📖 Read](docs/en/TROUBLESHOOTING.md) | [📖 阅读](docs/zh-CN/TROUBLESHOOTING.md) |
+| Document | Description |
+|----------|-------------|
+| [📋 Product Requirements](specs/product/webgpu-particle-fluid-sim.md) | Functional & non-functional requirements |
+| [📐 RFC 0001: Core Architecture](specs/rfc/0001-core-architecture.md) | System architecture & design decisions |
+| [📝 RFC 0002: Implementation Tasks](specs/rfc/0002-implementation-tasks.md) | Implementation task tracking |
+| [🔌 API Specification](specs/api/typescript-interfaces.md) | TypeScript interfaces and contracts |
+| [🧪 Testing Specification](specs/testing/bdd-specifications.md) | BDD test specifications |
+
+### Developer & User Guides
+
+| Document | Description |
+|----------|-------------|
+| [📖 API Reference](docs/API.md) | Complete API documentation |
+| [⚡ Performance Guide](docs/PERFORMANCE.md) | Benchmarks and optimization |
+| [🔧 Troubleshooting](docs/TROUBLESHOOTING.md) | Common issues and solutions |
+| [🛠️ Maintenance Guide](docs/maintenance.md) | Version release and maintenance |
+| [🏗️ Architecture Overview](docs/architecture/README.md) | System architecture |
+| [📚 Tutorials](docs/tutorials/README.md) | User and developer tutorials |
 
 Additional resources:
 - [Contributing Guide](CONTRIBUTING.md) - How to contribute
+- [AGENTS.md](AGENTS.md) - Spec-Driven Development workflow for AI agents
 - [Changelog](CHANGELOG.md) - Version history
-- [Security Policy](SECURITY.md) - Security guidelines
+- [Security Policy](.github/SECURITY.md) - Security guidelines
 
 ## 🤝 Contributing
 
@@ -216,7 +233,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
+3. Make your changes following the [Spec-Driven Development](AGENTS.md) workflow
 4. Run tests (`npm test`)
 5. Commit your changes (`git commit -m 'Add amazing feature'`)
 6. Push to the branch (`git push origin feature/amazing-feature`)
@@ -247,5 +264,5 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 </p>
 
 <p align="center">
-  <sub>Version 2.0.0 | Last Updated: 2026-04-16</sub>
+  <sub>Version 2.0.0 | Last Updated: 2026-04-17</sub>
 </p>
