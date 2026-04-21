@@ -25,9 +25,11 @@
 
 ---
 
-基于 **WebGPU 计算着色器**构建的高性能粒子流体仿真项目。本项目展示了现代 GPU 加速物理引擎，具备帧率无关的仿真、自适应质量缩放和持久化运动拖尾效果。
+基于 **WebGPU 计算着色器**构建的高性能粒子流体仿真项目。万级粒子实时物理仿真，GPU 加速计算。
 
-🔮 **[在线演示](https://lessup.github.io/particle-fluid-sim/)** | 📖 **[文档](docs/)** | 📋 **[规范](specs/)** | 🐛 **[问题追踪](https://github.com/LessUp/particle-fluid-sim/issues)**
+🔮 **[在线演示](https://lessup.github.io/particle-fluid-sim/)** | 📖 **[文档](docs/)** | 📋 **[规范](specs/)**
+
+> **💡 体验提示：** 打开 [在线演示](https://lessup.github.io/particle-fluid-sim/)，移动鼠标与粒子互动！
 
 ## ✨ 特性
 

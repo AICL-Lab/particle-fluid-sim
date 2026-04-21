@@ -1,10 +1,9 @@
-// Search functionality
 const searchIndex = typeof SEARCH_INDEX !== 'undefined' ? SEARCH_INDEX : [];
 
 const searchInput = document.getElementById('searchInput');
 const searchResults = document.getElementById('searchResults');
 
-if (searchInput) {
+if (searchInput && searchResults) {
     searchInput.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase().trim();
         
@@ -13,17 +12,19 @@ if (searchInput) {
             return;
         }
 
-        const results = searchIndex.filter(item => 
-            item.title.toLowerCase().includes(query) || 
-            item.content.toLowerCase().includes(query) ||
-            item.tags.some(tag => tag.toLowerCase().includes(query))
-        ).slice(0, 10);
+        const results = searchIndex
+            .filter(item => 
+                item.title.toLowerCase().includes(query) || 
+                item.content.toLowerCase().includes(query) ||
+                item.tags.some(tag => tag.toLowerCase().includes(query))
+            )
+            .slice(0, 8);
 
         if (results.length > 0) {
             searchResults.innerHTML = results.map(result => `
                 <div class="search-result-item" onclick="window.location.href='${result.url}'">
-                    <h4>${result.title}</h4>
-                    <p>${result.content.substring(0, 120)}...</p>
+                    <h4>${highlightMatch(result.title, query)}</h4>
+                    <p>${truncate(result.content, 100)}</p>
                 </div>
             `).join('');
             searchResults.classList.remove('hidden');
@@ -33,14 +34,12 @@ if (searchInput) {
         }
     });
 
-    // Close search results when clicking outside
     document.addEventListener('click', (e) => {
         if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
             searchResults.classList.add('hidden');
         }
     });
 
-    // Keyboard shortcut: Ctrl+K or Cmd+K to focus search
     document.addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
             e.preventDefault();
@@ -53,7 +52,20 @@ if (searchInput) {
     });
 }
 
-// Smooth scrolling for anchor links
+function highlightMatch(text, query) {
+    const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+    return text.replace(regex, '<mark style="background: #ffeb3b; padding: 0 2px; border-radius: 2px;">$1</mark>');
+}
+
+function truncate(text, length) {
+    if (text.length <= length) return text;
+    return text.substring(0, length) + '...';
+}
+
+function escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         const target = document.querySelector(this.getAttribute('href'));
@@ -65,4 +77,26 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             });
         }
     });
+});
+
+const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.feature-card, .doc-card, .step').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
 });

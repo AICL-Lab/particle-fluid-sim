@@ -35,9 +35,7 @@
 
 A high-performance particle fluid simulation built with **WebGPU compute shaders**. Watch 10,000 particles interact with realistic physics, all running on your GPU.
 
-![Demo Screenshot](https://via.placeholder.com/800x450/667eea/ffffff?text=WebGPU+Particle+Fluid+Simulation)
-
-> **💡 Try it:** Move your mouse over the simulation to push particles around!
+> **💡 Try it:** Open the [Live Demo](https://lessup.github.io/particle-fluid-sim/) and move your mouse over the simulation to push particles around!
 
 ## ✨ Highlights
 
