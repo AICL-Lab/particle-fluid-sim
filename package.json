@@ -36,6 +36,7 @@
     "@vitest/coverage-v8": "^4.1.4",
     "@vitest/ui": "^4.1.4",
     "@webgpu/types": "^0.1.40",
+    "esbuild": "^0.28.0",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^9.1.0",
     "fast-check": "^3.23.1",
