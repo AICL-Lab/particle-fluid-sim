@@ -28,7 +28,7 @@
 <p align="center">
   <b>🔮 <a href="https://lessup.github.io/particle-fluid-sim/">Live Demo</a></b> · 
   <b>📖 <a href="https://lessup.github.io/particle-fluid-sim/docs/">Documentation</a></b> · 
-  <b>📋 <a href="specs/">Specifications</a></b>
+  <b>📋 <a href="openspec/specs/">Specifications</a></b>
 </p>
 
 ---
@@ -95,28 +95,31 @@ Then open **http://localhost:5173** in a WebGPU-enabled browser.
 
 ## 📁 Project Structure
 
-Built with [Spec-Driven Development](AGENTS.md) methodology:
+Built with [OpenSpec](https://github.com/Fission-AI/OpenSpec) for specification-driven development:
 
 ```
 particle-fluid-sim/
-├── specs/                 # 📋 Specifications (Single Source of Truth)
-│   ├── product/           # Product requirements & acceptance criteria
-│   ├── rfc/               # Technical architecture decisions
-│   ├── api/               # API contracts & type definitions
-│   └── testing/           # BDD test specifications
-├── docs/                  # 📖 Developer & user documentation
-│   ├── API.md             # Complete API reference
-│   ├── PERFORMANCE.md     # Optimization guide
-│   ├── TROUBLESHOOTING.md # Common issues & solutions
-│   ├── architecture/      # System architecture
-│   ├── setup/            # Environment setup guides
-│   └── tutorials/        # Step-by-step tutorials
-├── src/                   # 💻 Source code
-│   ├── config/           # Simulation constants & configuration
-│   ├── core/             # Core modules (WebGPU, physics, rendering)
-│   └── shaders/          # WGSL compute & render shaders
-├── scripts/              # 🔧 Build & release automation
-└── .github/              # 🤖 CI/CD workflows & templates
+├── openspec/               # 📋 OpenSpec framework
+│   ├── specs/              # Specifications (Single Source of Truth)
+│   │   ├── product/        # Product requirements & acceptance criteria
+│   │   ├── rfc/            # Technical architecture decisions
+│   │   ├── api/            # API contracts & type definitions
+│   │   └── testing/        # BDD test specifications
+│   ├── changes/            # Active change proposals
+│   └── config.yaml         # OpenSpec configuration
+├── docs/                   # 📖 Developer & user documentation
+│   ├── API.md              # Complete API reference
+│   ├── PERFORMANCE.md      # Optimization guide
+│   ├── TROUBLESHOOTING.md  # Common issues & solutions
+│   ├── architecture/       # System architecture
+│   ├── setup/              # Environment setup guides
+│   └── tutorials/          # Step-by-step tutorials
+├── src/                    # 💻 Source code
+│   ├── config/             # Simulation constants & configuration
+│   ├── core/               # Core modules (WebGPU, physics, rendering)
+│   └── shaders/            # WGSL compute & render shaders
+├── scripts/                # 🔧 Build & release automation
+└── .github/                # 🤖 CI/CD workflows & templates
 ```
 
 ## 🏗️ Architecture

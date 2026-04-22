@@ -27,7 +27,7 @@
 
 基于 **WebGPU 计算着色器**构建的高性能粒子流体仿真项目。万级粒子实时物理仿真，GPU 加速计算。
 
-🔮 **[在线演示](https://lessup.github.io/particle-fluid-sim/)** | 📖 **[文档](docs/)** | 📋 **[规范](specs/)**
+🔮 **[在线演示](https://lessup.github.io/particle-fluid-sim/)** | 📖 **[文档](docs/)** | 📋 **[规范](openspec/specs/)**
 
 > **💡 体验提示：** 打开 [在线演示](https://lessup.github.io/particle-fluid-sim/)，移动鼠标与粒子互动！
 
@@ -92,31 +92,35 @@ npm run dev
 
 ## 📁 项目结构
 
+使用 [OpenSpec](https://github.com/Fission-AI/OpenSpec) 进行规范驱动开发：
+
 ```
 particle-fluid-sim/
-├── specs/                # 规范文档（事实来源）
-│   ├── product/          # 产品需求 (PRD)
-│   ├── rfc/              # 技术设计文档
-│   ├── api/              # API 规范
-│   ├── db/               # 数据库模型（本项目不适用）
-│   └── testing/          # BDD 测试规范
-├── docs/                 # 文档
-│   ├── setup/            # 环境搭建指南
-│   ├── tutorials/        # 用户教程
-│   ├── architecture/     # 架构概览
-│   ├── assets/           # 静态资源（图片、图表）
-│   ├── API.md            # API 参考
-│   ├── PERFORMANCE.md    # 性能指南
-│   └── TROUBLESHOOTING.md# 故障排除指南
-├── src/                  # 源代码
-│   ├── config/           # 仿真常量
-│   ├── core/             # 核心模块
-│   └── shaders/          # WGSL 着色器
-├── .github/              # GitHub 配置
-├── AGENTS.md             # AI Agent SDD 工作流
-├── CONTRIBUTING.md       # 贡献指南
-├── CHANGELOG.md          # 版本历史
-└── LICENSE               # MIT 许可证
+├── openspec/               # OpenSpec 框架
+│   ├── specs/              # 规范文档（事实来源）
+│   │   ├── product/        # 产品需求 (PRD)
+│   │   ├── rfc/            # 技术设计文档
+│   │   ├── api/            # API 规范
+│   │   └── testing/        # BDD 测试规范
+│   ├── changes/            # 活跃的变更提案
+│   └── config.yaml         # OpenSpec 配置
+├── docs/                   # 文档
+│   ├── setup/              # 环境搭建指南
+│   ├── tutorials/          # 用户教程
+│   ├── architecture/       # 架构概览
+│   ├── assets/             # 静态资源（图片、图表）
+│   ├── API.md              # API 参考
+│   ├── PERFORMANCE.md      # 性能指南
+│   └── TROUBLESHOOTING.md  # 故障排除指南
+├── src/                    # 源代码
+│   ├── config/             # 仿真常量
+│   ├── core/               # 核心模块
+│   └── shaders/            # WGSL 着色器
+├── .github/                # GitHub 配置
+├── AGENTS.md               # AI Agent OpenSpec 工作流
+├── CONTRIBUTING.md         # 贡献指南
+├── CHANGELOG.md            # 版本历史
+└── LICENSE                 # MIT 许可证
 ```
 
 ## 🏗️ 架构

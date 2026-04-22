@@ -68,12 +68,15 @@ All commands should pass without errors.
 
 ```
 particle-fluid-sim/
-├── specs/                # Specification documents (Source of Truth)
-│   ├── product/          # Product requirements (PRD)
-│   ├── rfc/              # Technical design documents (RFCs)
-│   ├── api/              # API specifications
-│   ├── db/               # Database schema (N/A for this project)
-│   └── testing/          # BDD test specifications
+├── openspec/             # OpenSpec specification framework
+│   ├── specs/            # Specification documents (Source of Truth)
+│   │   ├── product/      # Product requirements (PRD)
+│   │   ├── rfc/          # Technical design documents (RFCs)
+│   │   ├── api/          # API specifications
+│   │   └── testing/      # BDD test specifications
+│   ├── changes/          # Active change proposals
+│   │   └── archive/      # Completed changes
+│   └── config.yaml       # OpenSpec configuration
 ├── docs/                 # Documentation
 │   ├── setup/            # Environment setup guides
 │   ├── tutorials/        # User tutorials
@@ -87,7 +90,7 @@ particle-fluid-sim/
 │   ├── core/             # Core modules
 │   └── shaders/          # WGSL shader files
 ├── .github/              # GitHub workflows and templates
-├── AGENTS.md             # AI agent workflow for SDD
+├── AGENTS.md             # AI agent workflow for OpenSpec
 ├── CONTRIBUTING.md       # This file
 ├── CHANGELOG.md          # Version history
 └── LICENSE               # MIT License
@@ -97,7 +100,20 @@ particle-fluid-sim/
 
 ## Spec-Driven Development
 
-This project strictly follows **Spec-Driven Development (SDD)**. All code implementation must use the specification documents in the `/specs` directory as the **Single Source of Truth**.
+This project uses **OpenSpec** for specification-driven development. All code implementation must use the specification documents in the `openspec/specs/` directory as the **Single Source of Truth**.
+
+### OpenSpec Workflow
+
+The project uses OpenSpec's change proposal system for managing spec updates and implementation:
+
+#### Using OpenSpec Commands
+
+| Command | When to Use |
+|---------|-------------|
+| `/opsx:propose <name>` | Starting a new feature or significant change |
+| `/opsx:apply <name>` | Implementing tasks from a proposal |
+| `/opsx:archive <name>` | Completing and archiving a change |
+| `/opsx:explore` | Researching before proposing |
 
 ### How to Participate in Spec Writing
 
@@ -105,42 +121,38 @@ This project strictly follows **Spec-Driven Development (SDD)**. All code implem
 
 | Directory | Purpose | When to Update |
 |-----------|---------|----------------|
-| `specs/product/` | Product requirements, user stories, acceptance criteria | Adding new features, changing behavior |
-| `specs/rfc/` | Technical design, architecture decisions | Changing architecture, adding new systems |
-| `specs/api/` | Interface contracts, type definitions | Changing public APIs |
-| `specs/testing/` | BDD test specifications | Adding new test scenarios |
-| `specs/db/` | Database schema (not applicable) | — |
+| `openspec/specs/product/` | Product requirements, user stories, acceptance criteria | Adding new features, changing behavior |
+| `openspec/specs/rfc/` | Technical design, architecture decisions | Changing architecture, adding new systems |
+| `openspec/specs/api/` | Interface contracts, type definitions | Changing public APIs |
+| `openspec/specs/testing/` | BDD test specifications | Adding new test scenarios |
 
-#### 2. Spec-First Workflow
+#### 2. Spec-First Workflow with OpenSpec
 
 **Before writing any code**, follow this process:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                  Spec-Driven Development                     │
+│                  OpenSpec Workflow                          │
 ├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  Step 1: Review Specs                                        │
-│  ├── Read relevant specs in /specs/                          │
-│  ├── Identify conflicts with your proposed changes           │
-│  └── Document gaps if spec is incomplete                     │
-│                                                              │
-│  Step 2: Update Specs First                                  │
-│  ├── Create/modify spec document                             │
-│  ├── Define acceptance criteria                              │
-│  ├── Submit spec change for review                           │
-│  └── Wait for spec approval                                  │
-│                                                              │
-│  Step 3: Implement Code                                      │
-│  ├── Write code 100% following spec                          │
-│  ├── No features beyond spec (No Gold-Plating)               │
-│  └── Reference spec IDs in comments                          │
-│                                                              │
-│  Step 4: Test Against Spec                                   │
-│  ├── Write tests for acceptance criteria                     │
-│  ├── Cover all boundary conditions in spec                   │
-│  └── Ensure tests validate spec requirements                 │
-│                                                              │
+│                                                             │
+│  Step 1: Propose Change                                     │
+│  ├── Run /opsx:propose <change-name>                        │
+│  ├── Edit proposal.md with motivation                       │
+│  ├── Write delta specs (ADDED/MODIFIED/REMOVED)             │
+│  ├── Document design approach in design.md                  │
+│  └── Define tasks in tasks.md                               │
+│                                                             │
+│  Step 2: Implement                                          │
+│  ├── Run /opsx:apply <change-name>                          │
+│  ├── Implement code following specs                         │
+│  ├── Write tests for acceptance criteria                    │
+│  └── Update documentation as needed                         │
+│                                                             │
+│  Step 3: Archive                                            │
+│  ├── Run /opsx:archive <change-name>                        │
+│  ├── Delta specs merge into main specs                      │
+│  └── Change moves to archive/ with history preserved        │
+│                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
