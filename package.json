@@ -17,6 +17,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "verify": "npm run lint && npm run typecheck && npm run test:coverage && npm run build",
+    "docs:build": "node scripts/build-docs.js",
+    "hooks:install": "node scripts/install-hooks.js",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -27,8 +30,7 @@
     "format": "prettier --write \"src/**/*.{ts,css}\"",
     "format:check": "prettier --check \"src/**/*.{ts,css}\"",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist node_modules/.vite",
-    "prepare": "npm run typecheck"
+    "clean": "rm -rf dist node_modules/.vite _site"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
@@ -42,9 +44,11 @@
     "eslint-config-prettier": "^9.1.0",
     "fast-check": "^3.23.1",
     "happy-dom": "^20.9.0",
+    "marked": "^18.0.2",
     "prettier": "^3.3.0",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.0.0",
+    "typescript-language-server": "^5.1.3",
     "vite": "^6.0.1",
     "vitest": "^4.1.4"
   },
