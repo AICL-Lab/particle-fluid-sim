@@ -38,3 +38,6 @@ npm-debug.log*
 
 # Test
 .vitest/
+
+# Claude Code
+.claude/settings.local.json
