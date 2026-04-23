@@ -1,5 +1,5 @@
-name: Feature Request
-description: Suggest a new feature or enhancement
+name: Feature / Change Request
+description: Suggest a change that is still worth landing in the current closeout phase
 labels: [enhancement]
 body:
   - type: markdown
@@ -25,6 +25,19 @@ body:
     validations:
       required: true
 
+  - type: dropdown
+    id: closeout-fit
+    attributes:
+      label: Why should this land now?
+      description: This repository is being finished rather than expanded broadly.
+      options:
+        - It fixes correctness or stability
+        - It improves repository quality or workflow
+        - It improves project presentation or discoverability
+        - It is optional and can wait
+    validations:
+      required: true
+
   - type: textarea
     id: alternatives
     attributes:
@@ -43,12 +56,13 @@ body:
         - Performance
         - User Interface
         - Documentation
-        - Other
+        - OpenSpec / workflow
+        - GitHub Pages / project presentation
     validations:
       required: true
 
   - type: textarea
     id: additional
     attributes:
-      label: Additional Context
-      description: Add any other context, mockups, or examples.
+      label: OpenSpec / Additional Context
+      description: Add any spec impact, mockups, or examples.

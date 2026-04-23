@@ -46,6 +46,20 @@ body:
     validations:
       required: true
 
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      description: Which part of the project is affected?
+      options:
+        - Runtime / simulation
+        - WebGPU initialization
+        - Documentation / workflow
+        - GitHub Pages
+        - CI / engineering config
+    validations:
+      required: true
+
   - type: input
     id: browser
     attributes:
