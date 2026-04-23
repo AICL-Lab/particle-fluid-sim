@@ -7,6 +7,33 @@
 
 import { vi } from 'vitest';
 
+export function installMockWebGPUConstants(): void {
+  Object.assign(globalThis, {
+    GPUShaderStage: {
+      COMPUTE: 1,
+      VERTEX: 2,
+      FRAGMENT: 4,
+    },
+    GPUBufferUsage: {
+      MAP_READ: 1,
+      MAP_WRITE: 2,
+      COPY_SRC: 4,
+      COPY_DST: 8,
+      INDEX: 16,
+      VERTEX: 32,
+      UNIFORM: 64,
+      STORAGE: 128,
+    },
+    GPUTextureUsage: {
+      COPY_SRC: 1,
+      COPY_DST: 2,
+      TEXTURE_BINDING: 4,
+      STORAGE_BINDING: 8,
+      RENDER_ATTACHMENT: 16,
+    },
+  });
+}
+
 /**
  * Creates a mock GPUBuffer
  */
@@ -144,7 +171,7 @@ export function createMockRenderPassEncoder(): GPURenderPassEncoder {
 /**
  * Creates a mock GPUTexture
  */
-export function createMockTexture(): GPUTexture {
+export function createMockTexture(overrides: Partial<GPUTexture> = {}): GPUTexture {
   return {
     createView: vi.fn().mockReturnValue({} as GPUTextureView),
     destroy: vi.fn(),
@@ -156,6 +183,7 @@ export function createMockTexture(): GPUTexture {
     dimension: '2d' as GPUTextureDimension,
     format: 'bgra8unorm' as GPUTextureFormat,
     usage: 0,
+    ...overrides,
   } as unknown as GPUTexture;
 }
 

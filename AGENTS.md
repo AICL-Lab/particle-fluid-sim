@@ -1,158 +1,103 @@
-# OpenSpec AI Agent Guide
+# AGENTS.md
 
-> **Project**: WebGPU Particle Fluid Simulation
-> **Version**: 2.0.0
-> **Last Updated**: 2026-04-23
+## Mission
 
-This project uses **OpenSpec** for specification-driven development. All code must follow specs in `openspec/specs/` as the single source of truth.
+Finish `particle-fluid-sim` cleanly. Optimize for correctness, clarity, low maintenance burden, and closeout readiness rather than feature expansion.
 
----
+## Source of truth
 
-## OpenSpec Commands
+- `openspec/specs/` is the single source of truth for requirements, architecture, API, and testing.
+- The active repository-wide normalization work lives in `openspec/changes/repo-closeout-normalization/` until it is archived.
+- If code, docs, and specs disagree, resolve the conflict explicitly instead of silently drifting.
 
-| Command | Purpose |
-|---------|---------|
-| `/opsx:propose` | Create a change proposal with specs, design, and tasks |
-| `/opsx:apply` | Implement tasks from a change proposal |
-| `/opsx:archive` | Archive completed change, merge delta specs |
-| `/opsx:explore` | Unstructured investigation and research |
+## Current project posture
 
----
+- The project is in a **closeout normalization** phase.
+- The goal is to harden the current version, simplify the repository, improve presentation quality, and reduce future maintenance burden.
+- Do **not** announce archival or low-maintenance intent in public-facing docs unless explicitly requested.
 
-## Workflow
+## Repository invariants
 
-### For New Features
+1. **Default branch** is `master`. Do not introduce `main` migration work unless explicitly requested.
+2. **WebGPU only**. Do not add WebGL or fallback renderers.
+3. **WGSL shaders** live in `src/shaders/`.
+4. **Tests are colocated** with source as `*.test.ts`.
+5. **Documentation must stay high-signal**. Remove or consolidate generic, stale, or duplicate content instead of adding more boilerplate.
 
-1. **Propose the change**
-   ```
-   /opsx:propose add-feature-name
-   ```
-   This creates `openspec/changes/add-feature-name/` with:
-   - `proposal.md` - Why & what
-   - `specs/` - Delta specs (ADDED/MODIFIED/REMOVED)
-   - `design.md` - Technical approach
-   - `tasks.md` - Implementation checklist
+## OpenSpec workflow
 
-2. **Implement the change**
-   ```
-   /opsx:apply add-feature-name
-   ```
+### Use these commands intentionally
 
-3. **Archive when complete**
-   ```
-   /opsx:archive add-feature-name
-   ```
+| Command | Use |
+|---------|-----|
+| `/opsx:explore` | Investigate before changing specs or code |
+| `/opsx:propose <change-name>` | Start a new substantial feature or governance change |
+| `/opsx:apply <change-name>` | Implement tasks from an approved change |
+| `/opsx:archive <change-name>` | Merge the finished change back into the main specs |
 
-### For Bug Fixes
+### For the current repository cleanup
 
-Use judgment based on complexity:
-- **Simple fix** → Direct fix with test
-- **Complex fix affecting specs** → Create change proposal
+- Reuse `openspec/changes/repo-closeout-normalization/` as the canonical closeout workstream.
+- Update its `proposal.md`, `design.md`, `tasks.md`, and delta specs when scope or decisions change materially.
 
----
+## Execution rules
 
-## Spec Paths
+1. Read relevant specs before making changes.
+2. For non-trivial behavior, workflow, documentation, or architecture changes, update the active OpenSpec change first.
+3. Implement in coherent batches that leave the repo in a valid state.
+4. Prefer deletion/consolidation over adding more low-value files.
+5. Prefer a single long-running autopilot execution over `/fleet` unless the work truly splits into independent streams.
+6. Use `/review` or an equivalent review pass before archive-critical merges and major workflow changes.
 
-| Spec | Path |
-|------|------|
-| Product Requirements | `openspec/specs/product/webgpu-particle-fluid-sim.md` |
-| Core Architecture | `openspec/specs/rfc/0001-core-architecture.md` |
-| Implementation Tasks | `openspec/specs/rfc/0002-implementation-tasks.md` |
-| TypeScript Interfaces | `openspec/specs/api/typescript-interfaces.md` |
-| BDD Specifications | `openspec/specs/testing/bdd-specifications.md` |
+## Validation gate
 
----
+Run the repository quality gate in this order:
 
-## ID Reference Format
-
-This project uses structured IDs for traceability:
-
-| Prefix | Pattern | Example |
-|--------|---------|---------|
-| REQ | `REQ-X.Y` | REQ-3.2 (Boundary Bounce) |
-| TASK | `TASK-X.Y` | TASK-4.1 (Compute Shader) |
-| NFR | `NFR-X` | NFR-1 (60 FPS Target) |
-| FUT | `FUT-X` | FUT-1 (SPH Fluid Dynamics) |
-
----
-
-## Core Principles
-
-1. **Specs are Single Source of Truth** — All code follows specs
-2. **Change Proposals First** — For new features, create `/opsx:propose` first
-3. **No Gold-Plating** — Only implement what specs define
-4. **Test Against Acceptance Criteria** — Specs define test requirements
-
----
-
-## OpenSpec Directory Structure
-
-```
-openspec/
-├── specs/                    # Current specifications (source of truth)
-│   ├── product/              # Product requirements
-│   ├── rfc/                  # Technical design documents
-│   ├── api/                  # API specifications
-│   └── testing/              # BDD test specifications
-├── changes/                  # Active change proposals
-│   └── archive/              # Completed changes
-└── config.yaml               # Project configuration
+```bash
+npm run lint
+npm run typecheck
+npm run test:coverage
+npm run build
 ```
 
----
+This matches CI and should be treated as the closeout gate.
 
-## AI Agent Workflow Instructions
+## Tooling policy
 
-When asked to develop a new feature, modify existing functionality, or fix a bug, **follow this workflow strictly**:
+### AI instruction files
 
-### Step 1: Review Specs (审查规范)
+- `AGENTS.md` defines repository-wide rules.
+- `CLAUDE.md` and `.github/copilot-instructions.md` must align with this file, not invent parallel workflows.
+- `opencode.json` carries the same workflow into OpenCode without introducing a second process model.
+- Keep model-specific files concise and project-specific.
 
-- Before writing any code, read relevant specs in `openspec/specs/`
-- If user instructions conflict with existing specs, stop and point out the conflict
+### LSP, MCP, and plugins
 
-### Step 2: Spec-First Update (规范优先)
+- Repository-level Copilot LSP configuration lives in `.github/lsp.json`.
+- Prefer built-in GitHub tooling, repo-local config, and skills before adding new MCP servers.
+- Keep plugin/MCP usage lean; avoid context-heavy integrations that do not materially help this repository.
 
-- For new features or interface changes, **propose spec changes first**
-- Wait for user confirmation before proceeding to implementation
+## High-value file map
 
-### Step 3: Implementation (代码实现)
+| Path | Purpose |
+|------|---------|
+| `openspec/specs/product/webgpu-particle-fluid-sim.md` | Product requirements |
+| `openspec/specs/rfc/0001-core-architecture.md` | Core architecture |
+| `openspec/specs/rfc/0002-implementation-tasks.md` | Historical implementation tasks |
+| `openspec/changes/repo-closeout-normalization/` | Active closeout normalization change |
+| `.github/copilot-instructions.md` | Copilot project instructions |
+| `.github/lsp.json` | Repository-level LSP config for Copilot CLI |
+| `src/config/sim.ts` | Shared simulation constants |
+| `src/core/renderer.ts` | Runtime orchestration |
+| `src/core/pipelines.ts` | GPU pipeline setup |
+| `docs/site/` + `scripts/build-docs.js` | Current Pages site and builder |
 
-- Write code that 100% follows spec definitions
-- No gold-plating — only implement what specs define
+## Practical priorities
 
-### Step 4: Test Validation (测试验证)
+When in doubt, prefer work that does one of the following:
 
-- Write tests based on acceptance criteria in specs
-- Ensure tests cover all boundary conditions defined in specs
-
----
-
-## Validation Order
-
-Per CI: `lint → typecheck → test:coverage → build`
-
----
-
-## Commands
-
-| Command | Notes |
-|---------|-------|
-| `npm run dev` | Dev server at :5173 |
-| `npm run build` | `tsc && vite build` (typecheck included) |
-| `npm test` | Vitest with happy-dom |
-| `npm run typecheck` | Standalone type check |
-| `npm run lint` | ESLint on src/ |
-
----
-
-## Project Notes
-
-- **WGSL shaders** in `src/shaders/` are imported as assets (Vite config)
-- **Tests colocated** with source: `*.test.ts` alongside `*.ts`
-- **Property-based testing** uses fast-check; tests have 2min timeout
-- **Node 18+** required
-- **WebGPU required** — no WebGL fallback
-
----
-
-*This file is the AI agent configuration for OpenSpec-driven development. Do not remove.*
+1. removes drift,
+2. simplifies the repo,
+3. improves correctness or verification,
+4. improves the project's public presentation,
+5. makes future maintenance smaller and clearer.
