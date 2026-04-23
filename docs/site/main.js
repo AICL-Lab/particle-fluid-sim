@@ -1,4 +1,6 @@
 const searchIndex = typeof SEARCH_INDEX !== 'undefined' ? SEARCH_INDEX : [];
+const siteRoot = document.body?.dataset.siteRoot || './';
+const siteRootUrl = new URL(siteRoot, window.location.href);
 
 const searchInput = document.getElementById('searchInput');
 const searchResults = document.getElementById('searchResults');
@@ -22,7 +24,7 @@ if (searchInput && searchResults) {
 
         if (results.length > 0) {
             searchResults.innerHTML = results.map(result => `
-                <div class="search-result-item" onclick="window.location.href='${result.url}'">
+                <div class="search-result-item" onclick="window.location.href='${toSiteUrl(result.url)}'">
                     <h4>${highlightMatch(result.title, query)}</h4>
                     <p>${truncate(result.content, 100)}</p>
                 </div>
@@ -66,6 +68,10 @@ function escapeRegex(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+function toSiteUrl(url) {
+    return new URL(url, siteRootUrl).toString();
+}
+
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         const target = document.querySelector(this.getAttribute('href'));
@@ -94,7 +100,7 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-document.querySelectorAll('.feature-card, .doc-card, .step').forEach(el => {
+document.querySelectorAll('.feature-card, .doc-card, .resource-card, .step').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
     el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';

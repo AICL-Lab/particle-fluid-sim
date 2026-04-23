@@ -167,10 +167,10 @@ Typical output: **2,500 – 10,000 particles**
 
 ## Related Documents
 
-- [RFC 0001: Core Architecture](../../specs/rfc/0001-core-architecture.md) - Detailed technical design
+- [RFC 0001: Core Architecture](../../openspec/specs/rfc/0001-core-architecture.md) - Detailed technical design
 - [API Reference](../API.md) - Complete API documentation
 - [Performance Guide](../PERFORMANCE.md) - Optimization strategies
-- [Testing Specification](../../specs/testing/bdd-specifications.md) - Test architecture
+- [Testing Specification](../../openspec/specs/testing/bdd-specifications.md) - Test architecture
 
 ---
 

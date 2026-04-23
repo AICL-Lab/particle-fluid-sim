@@ -1,568 +1,83 @@
-# Contributing Guide
+# Contributing
 
-Thank you for your interest in contributing to the WebGPU Particle Fluid Simulation project! This guide will help you get started.
+This repository accepts focused contributions that improve correctness, clarity, presentation quality, or closeout readiness.
 
-## Table of Contents
+## Before changing code
 
-- [Code of Conduct](#code-of-conduct)
-- [Development Setup](#development-setup)
-- [Project Structure](#project-structure)
-- [Spec-Driven Development](#spec-driven-development)
-- [Development Workflow](#development-workflow)
-- [Testing Guidelines](#testing-guidelines)
-- [Code Style](#code-style)
-- [Commit Convention](#commit-convention)
-- [Pull Request Process](#pull-request-process)
-- [Issue Guidelines](#issue-guidelines)
+1. Read the relevant files in `openspec/specs/`.
+2. Check whether the active change in `openspec/changes/repo-closeout-normalization/` needs an update.
+3. Read `AGENTS.md`, `CLAUDE.md`, and `.github/copilot-instructions.md` if your tooling uses them.
 
----
+## Working style
 
-## Code of Conduct
+- Keep `master` as the default branch target.
+- Use short-lived branches only when they make the work clearer.
+- Keep changes coherent and easy to review.
+- Prefer removing stale, duplicated, or generic material over adding more process text.
 
-Be respectful and inclusive. We welcome contributions from everyone.
+Suggested branch names:
 
-## Development Setup
+- `closeout/*` for repository normalization
+- `fix/*` for bug fixes
+- `docs/*` for documentation-only changes
+- `spec/*` for spec-only changes
 
-### Prerequisites
+## OpenSpec-first workflow
 
-- Node.js 18.0.0 or higher
-- npm 9.0.0 or higher
-- A WebGPU-compatible browser for testing:
-  - Chrome 113+
-  - Edge 113+
-  - Safari 17+ (macOS 14+)
-
-### Installation
-
-```bash
-# Clone your fork
-git clone https://github.com/YOUR_USERNAME/particle-fluid-sim.git
-cd particle-fluid-sim
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-### Verify Setup
-
-```bash
-# Run type checking
-npm run typecheck
-
-# Run linter
-npm run lint
-
-# Run tests
-npm test
-
-# Build for production
-npm run build
-```
-
-All commands should pass without errors.
-
-## Project Structure
-
-```
-particle-fluid-sim/
-├── openspec/             # OpenSpec specification framework
-│   ├── specs/            # Specification documents (Source of Truth)
-│   │   ├── product/      # Product requirements (PRD)
-│   │   ├── rfc/          # Technical design documents (RFCs)
-│   │   ├── api/          # API specifications
-│   │   └── testing/      # BDD test specifications
-│   ├── changes/          # Active change proposals
-│   │   └── archive/      # Completed changes
-│   └── config.yaml       # OpenSpec configuration
-├── docs/                 # Documentation
-│   ├── setup/            # Environment setup guides
-│   ├── tutorials/        # User tutorials
-│   ├── architecture/     # Architecture overview
-│   ├── assets/           # Static assets
-│   ├── API.md            # API reference
-│   ├── PERFORMANCE.md    # Performance guide
-│   └── TROUBLESHOOTING.md# Troubleshooting guide
-├── src/                  # Source code
-│   ├── config/           # Simulation configuration
-│   ├── core/             # Core modules
-│   └── shaders/          # WGSL shader files
-├── .github/              # GitHub workflows and templates
-├── AGENTS.md             # AI agent workflow for OpenSpec
-├── CONTRIBUTING.md       # This file
-├── CHANGELOG.md          # Version history
-└── LICENSE               # MIT License
-```
-
----
-
-## Spec-Driven Development
-
-This project uses **OpenSpec** for specification-driven development. All code implementation must use the specification documents in the `openspec/specs/` directory as the **Single Source of Truth**.
-
-### OpenSpec Workflow
-
-The project uses OpenSpec's change proposal system for managing spec updates and implementation:
-
-#### Using OpenSpec Commands
-
-| Command | When to Use |
-|---------|-------------|
-| `/opsx:propose <name>` | Starting a new feature or significant change |
-| `/opsx:apply <name>` | Implementing tasks from a proposal |
-| `/opsx:archive <name>` | Completing and archiving a change |
-| `/opsx:explore` | Researching before proposing |
-
-### How to Participate in Spec Writing
-
-#### 1. Understanding the Spec Directory Structure
-
-| Directory | Purpose | When to Update |
-|-----------|---------|----------------|
-| `openspec/specs/product/` | Product requirements, user stories, acceptance criteria | Adding new features, changing behavior |
-| `openspec/specs/rfc/` | Technical design, architecture decisions | Changing architecture, adding new systems |
-| `openspec/specs/api/` | Interface contracts, type definitions | Changing public APIs |
-| `openspec/specs/testing/` | BDD test specifications | Adding new test scenarios |
-
-#### 2. Spec-First Workflow with OpenSpec
-
-**Before writing any code**, follow this process:
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                  OpenSpec Workflow                          │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  Step 1: Propose Change                                     │
-│  ├── Run /opsx:propose <change-name>                        │
-│  ├── Edit proposal.md with motivation                       │
-│  ├── Write delta specs (ADDED/MODIFIED/REMOVED)             │
-│  ├── Document design approach in design.md                  │
-│  └── Define tasks in tasks.md                               │
-│                                                             │
-│  Step 2: Implement                                          │
-│  ├── Run /opsx:apply <change-name>                          │
-│  ├── Implement code following specs                         │
-│  ├── Write tests for acceptance criteria                    │
-│  └── Update documentation as needed                         │
-│                                                             │
-│  Step 3: Archive                                            │
-│  ├── Run /opsx:archive <change-name>                        │
-│  ├── Delta specs merge into main specs                      │
-│  └── Change moves to archive/ with history preserved        │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
-
-#### 3. Writing Good Specs
-
-**Product Requirements (PRD):**
-
-```markdown
-### REQ-X: Feature Name
-
-**User Story:** As a [user], I want [goal] so that [benefit].
-
-| ID | Requirement | Priority |
-|----|-------------|----------|
-| REQ-X.1 | The system SHALL... | High |
-| REQ-X.2 | IF condition THEN system SHALL... | Medium |
-
-**Acceptance Criteria:**
-- [ ] Criterion 1
-- [ ] Criterion 2
-```
-
-**Technical Design (RFC):**
-
-```markdown
-## Overview
-Brief description of the technical change.
-
-## Design
-Detailed technical design with diagrams.
-
-## Decision Records
-| Decision | Rationale |
-|----------|-----------|
-| Choice A | Because of B |
-
-## Impact
-- Performance: ...
-- Compatibility: ...
-```
-
-#### 4. Spec Review Process
-
-1. **Create spec PR first** - Before code implementation
-2. **Discuss and iterate** - Specs are contracts, get them right
-3. **Approve spec** - At least one maintainer approval
-4. **Merge spec** - Then begin code implementation
-5. **Reference spec in code PR** - Link to the approved spec
-
-### When to Update Specs
-
-| Change Type | Spec Update Required |
-|-------------|---------------------|
-| New feature | Yes — Product + RFC |
-| Bug fix | No — Unless behavior was underspecified |
-| Refactoring | No — Unless architecture changes |
-| Performance improvement | Maybe — If technique changes |
-| Documentation | No |
-| Test additions | Maybe — If adding new test specifications |
-
-### Spec Conflict Resolution
-
-If you find a conflict between spec and existing code:
-
-1. **Document the conflict** - Open an issue describing the discrepancy
-2. **Determine correct behavior** - Discuss with maintainers
-3. **Update either spec or code** - Whichever is correct
-4. **Never silently diverge** - Always resolve conflicts
-
----
-
-## Development Workflow
-
-### 1. Create a Feature Branch
-
-```bash
-git checkout -b feature/your-feature-name
-```
-
-Branch naming conventions:
-- `feature/` — New features
-- `fix/` — Bug fixes
-- `docs/` — Documentation changes
-- `refactor/` — Code refactoring
-- `test/` — Test additions/changes
-- `chore/` — Maintenance tasks
-- `spec/` — Specification updates
-
-### 2. Follow SDD Workflow
-
-1. **Read specs** in `/specs/` directory
-2. **Update specs first** if needed
-3. **Implement code** following spec definitions
-4. **Write tests** based on acceptance criteria
-
-### 3. Make Your Changes
-
-- Follow the [Code Style](#code-style) guidelines
-- Add tests for new functionality
-- Update documentation as needed
-- Keep changes focused and atomic
-
-### 4. Verify Your Changes
-
-```bash
-# Type check
-npm run typecheck
-
-# Lint
-npm run lint
-
-# Format (if needed)
-npm run format
-
-# Run tests
-npm test
-
-# Build
-npm run build
-```
-
-### 5. Commit Your Changes
-
-Follow the [Commit Convention](#commit-convention) guidelines.
-
-### 6. Push and Create PR
-
-```bash
-git push origin feature/your-feature-name
-```
-
-Create a Pull Request on GitHub.
-
----
-
-## Testing Guidelines
-
-### Test Structure
-
-Tests are located alongside source files with `.test.ts` extension:
-
-```
-src/
-├── core/
-│   ├── physics.ts
-│   ├── physics.test.ts    # Tests for physics.ts
-│   ├── color.ts
-│   └── color.test.ts      # Tests for color.ts
-```
-
-### Running Tests
-
-```bash
-# Run all tests once
-npm test
-
-# Watch mode for development
-npm run test:watch
-
-# Coverage report
-npm run test:coverage
-```
-
-### Property-Based Testing
-
-This project uses [fast-check](https://github.com/dubzzz/fast-check) for property-based testing. When adding new physics or math functions:
-
-```typescript
-import * as fc from 'fast-check';
-
-describe('MyFunction', () => {
-  it('should satisfy property X', () => {
-    fc.assert(
-      fc.property(
-        // Arbitraries for inputs
-        fc.float({ min: 0, max: 1000, noNaN: true }),
-        // Property function
-        (input) => {
-          const result = myFunction(input);
-          return result >= 0; // Your property
-        }
-      ),
-      { numRuns: 100 }
-    );
-  });
-});
-```
-
-### Test Naming
-
-Use descriptive test names that explain the expected behavior:
-
-```typescript
-// Good
-it('should return zero repulsion when particle is outside radius', () => { ... });
-it('should clamp velocity to max speed', () => { ... });
-
-// Avoid
-it('works correctly', () => { ... });
-it('test repulsion', () => { ... });
-```
-
-### Mapping Tests to Specs
-
-Reference spec requirements in your tests:
-
-```typescript
-describe('REQ-3.2: Boundary Bounce', () => {
-  it('should reverse velocity when particle exceeds canvas bounds', () => {
-    // Validates: REQ-3.2
-  });
-});
-```
-
----
-
-## Code Style
-
-### TypeScript
-
-- Use strict type checking (enabled in `tsconfig.json`)
-- Prefer explicit return types for public functions
-- Use `const` over `let` when possible
-- Avoid `any` type; use `unknown` when type is truly unknown
-
-### Formatting
-
-This project uses Prettier with these key settings:
-
-```json
-{
-  "semi": true,
-  "singleQuote": true,
-  "tabWidth": 2,
-  "trailingComma": "es5"
-}
-```
-
-Run `npm run format` to auto-format code.
-
-### Linting
-
-ESLint rules are configured in `eslint.config.js`. Key rules:
-
-- `@typescript-eslint/explicit-function-return-type: warn` — Consider adding return types
-- `@typescript-eslint/no-unused-vars: error` — No unused variables
-- `@typescript-eslint/no-explicit-any: warn` — Avoid `any`
-- `no-console: warn` — Use `console.warn` or `console.error` instead
-
-Run `npm run lint` to check, `npm run lint:fix` to auto-fix.
-
-### WGSL Shaders
-
-- Keep shader code aligned with TypeScript equivalents
-- Document any deviations from CPU implementation
-- Use meaningful variable names
-
----
-
-## Commit Convention
-
-This project follows [Conventional Commits](https://www.conventionalcommits.org/):
-
-### Format
-
-```
-<type>(<scope>): <description>
-
-[optional body]
-
-[optional footer(s)]
-```
-
-### Types
-
-| Type | Description |
+| Step | Expectation |
 |------|-------------|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation only |
-| `style` | Code style (formatting, semicolons) |
-| `refactor` | Code change without fix/feature |
-| `perf` | Performance improvement |
-| `test` | Adding/updating tests |
-| `chore` | Maintenance tasks |
-| `ci` | CI/CD changes |
-| `spec` | Specification updates |
+| 1. Read | Start from the matching spec files in `openspec/specs/` |
+| 2. Update specs | Update the active change if behavior, workflow, or repository policy changes |
+| 3. Implement | Make the code or doc changes in coherent batches |
+| 4. Validate | Run the repository quality gate |
+| 5. Review | Use a review pass for high-impact or archive-critical changes |
 
-### Examples
+Useful commands:
 
-```bash
-feat(quality): add viewport-based particle scaling
-fix(physics): correct boundary bounce damping calculation
-docs(api): document createRenderer function
-test(color): add property tests for velocityToColor
-refactor(buffers): extract buffer validation to separate function
-spec(product): add REQ-9 for touch gesture support
-```
+| Command | Use |
+|---------|-----|
+| `/opsx:explore` | Research before changing specs or code |
+| `/opsx:propose <name>` | Start a substantial new change |
+| `/opsx:apply <name>` | Implement the approved change |
+| `/opsx:archive <name>` | Merge the finished change into main specs |
 
-### Breaking Changes
+## Validation
+
+Run the full gate before opening a high-impact PR:
 
 ```bash
-feat(api)!: change createPipelines signature
-
-BREAKING CHANGE: createPipelines now requires format parameter
+npm run verify
 ```
 
----
+That runs:
 
-## Pull Request Process
-
-### Before Submitting
-
-- [ ] Specs updated if applicable (spec changes first!)
-- [ ] All tests pass (`npm test`)
-- [ ] Code is linted (`npm run lint`)
-- [ ] Code is formatted (`npm run format`)
-- [ ] Build succeeds (`npm run build`)
-- [ ] Documentation updated if needed
-- [ ] Commit messages follow convention
-- [ ] PR references relevant spec documents
-
-### PR Title
-
-Use the same format as commit messages:
-
-```
-feat(scope): brief description
+```bash
+npm run lint
+npm run typecheck
+npm run test:coverage
+npm run build
 ```
 
-### PR Description
+## Local tooling
 
-Include:
+Install project hooks:
 
-1. **What** — Description of changes
-2. **Why** — Motivation/context
-3. **Specs** — Link to relevant spec documents
-4. **How** — Implementation approach (if non-trivial)
-5. **Testing** — How you tested the changes
-6. **Screenshots** — For UI changes
-
-### Review Process
-
-1. Spec changes reviewed and approved first (if applicable)
-2. Automated checks must pass (CI)
-3. At least one approval required
-4. Resolve all review comments
-5. Squash and merge preferred
-
----
-
-## Issue Guidelines
-
-### Bug Reports
-
-Include:
-
-- Browser and version
-- Steps to reproduce
-- Expected behavior
-- Actual behavior
-- Screenshots if applicable
-- Console errors
-- Reference to spec if behavior is defined there
-
-### Feature Requests
-
-Include:
-
-- Use case / problem statement
-- Proposed solution
-- Reference to existing spec or propose new spec location
-- Alternatives considered
-- Additional context
-
-### Issue Template
-
-```markdown
-## Description
-[Description of the issue]
-
-## Related Spec
-[Link to relevant spec document, if exists]
-
-## Steps to Reproduce (for bugs)
-1. Step 1
-2. Step 2
-3. ...
-
-## Expected Behavior
-[What should happen according to spec]
-
-## Actual Behavior
-[What actually happened]
-
-## Environment
-- Browser: [e.g., Chrome 120]
-- OS: [e.g., macOS 14]
-- Device: [e.g., MacBook Pro]
-
-## Additional Context
-[Screenshots, logs, etc.]
+```bash
+npm run hooks:install
 ```
 
----
+Repository-level Copilot LSP config lives in:
 
-## Questions?
+`/.github/lsp.json`
 
-Feel free to open an issue for questions or discussions about the project.
+## Pull requests
 
-For more details on the Spec-Driven Development workflow, see [AGENTS.md](AGENTS.md).
+A good PR should explain:
 
-Thank you for contributing!
+1. what changed,
+2. why it changed,
+3. whether OpenSpec changed,
+4. what validation ran,
+5. whether a review pass was used.
+
+If the change affects public presentation, CI, hooks, Pages behavior, or repository policy, call that out clearly.
