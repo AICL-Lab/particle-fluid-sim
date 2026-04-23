@@ -26,16 +26,16 @@
 ---
 
 <p align="center">
-  <b>🔮 <a href="https://lessup.github.io/particle-fluid-sim/">Live Demo</a></b> · 
+  <b>🔮 <a href="https://lessup.github.io/particle-fluid-sim/demo/">Live Demo</a></b> · 
   <b>📖 <a href="https://lessup.github.io/particle-fluid-sim/docs/">Documentation</a></b> · 
-  <b>📋 <a href="specs/">Specifications</a></b>
+  <b>📋 <a href="openspec/specs/product/webgpu-particle-fluid-sim.md">Specifications</a></b>
 </p>
 
 ---
 
 A high-performance particle fluid simulation built with **WebGPU compute shaders**. Watch 10,000 particles interact with realistic physics, all running on your GPU.
 
-> **💡 Try it:** Open the [Live Demo](https://lessup.github.io/particle-fluid-sim/) and move your mouse over the simulation to push particles around!
+> **💡 Try it:** Open the [Live Demo](https://lessup.github.io/particle-fluid-sim/demo/) and move your mouse over the simulation to push particles around!
 
 ## ✨ Highlights
 
@@ -95,28 +95,31 @@ Then open **http://localhost:5173** in a WebGPU-enabled browser.
 
 ## 📁 Project Structure
 
-Built with [Spec-Driven Development](AGENTS.md) methodology:
+Built with [OpenSpec](https://github.com/Fission-AI/OpenSpec) for specification-driven development:
 
 ```
 particle-fluid-sim/
-├── specs/                 # 📋 Specifications (Single Source of Truth)
-│   ├── product/           # Product requirements & acceptance criteria
-│   ├── rfc/               # Technical architecture decisions
-│   ├── api/               # API contracts & type definitions
-│   └── testing/           # BDD test specifications
-├── docs/                  # 📖 Developer & user documentation
-│   ├── API.md             # Complete API reference
-│   ├── PERFORMANCE.md     # Optimization guide
-│   ├── TROUBLESHOOTING.md # Common issues & solutions
-│   ├── architecture/      # System architecture
-│   ├── setup/            # Environment setup guides
-│   └── tutorials/        # Step-by-step tutorials
-├── src/                   # 💻 Source code
-│   ├── config/           # Simulation constants & configuration
-│   ├── core/             # Core modules (WebGPU, physics, rendering)
-│   └── shaders/          # WGSL compute & render shaders
-├── scripts/              # 🔧 Build & release automation
-└── .github/              # 🤖 CI/CD workflows & templates
+├── openspec/               # 📋 OpenSpec framework
+│   ├── specs/              # Specifications (Single Source of Truth)
+│   │   ├── product/        # Product requirements & acceptance criteria
+│   │   ├── rfc/            # Technical architecture decisions
+│   │   ├── api/            # API contracts & type definitions
+│   │   └── testing/        # BDD test specifications
+│   ├── changes/            # Active change proposals
+│   └── config.yaml         # OpenSpec configuration
+├── docs/                   # 📖 Developer & user documentation
+│   ├── API.md              # Complete API reference
+│   ├── PERFORMANCE.md      # Optimization guide
+│   ├── TROUBLESHOOTING.md  # Common issues & solutions
+│   ├── architecture/       # System architecture
+│   ├── setup/              # Environment and toolchain setup
+│   └── maintenance.md      # Closeout workflow and maintenance guide
+├── src/                    # 💻 Source code
+│   ├── config/             # Simulation constants & configuration
+│   ├── core/               # Core modules (WebGPU, physics, rendering)
+│   └── shaders/            # WGSL compute & render shaders
+├── scripts/                # 🔧 Build & release automation
+└── .github/                # 🤖 CI/CD workflows & templates
 ```
 
 ## 🏗️ Architecture
@@ -258,10 +261,10 @@ git push origin feature/your-feature-name
 
 | Document | Description |
 |----------|-------------|
-| [📋 Product Requirements](specs/product/webgpu-particle-fluid-sim.md) | Functional & non-functional requirements |
-| [📐 RFC 0001: Core Architecture](specs/rfc/0001-core-architecture.md) | System architecture & design decisions |
-| [📝 RFC 0002: Implementation Tasks](specs/rfc/0002-implementation-tasks.md) | Implementation task tracking |
-| [🧪 Testing Specification](specs/testing/bdd-specifications.md) | BDD test specifications |
+| [📋 Product Requirements](openspec/specs/product/webgpu-particle-fluid-sim.md) | Functional & non-functional requirements |
+| [📐 RFC 0001: Core Architecture](openspec/specs/rfc/0001-core-architecture.md) | System architecture & design decisions |
+| [📝 RFC 0002: Implementation Tasks](openspec/specs/rfc/0002-implementation-tasks.md) | Implementation task tracking |
+| [🧪 Testing Specification](openspec/specs/testing/bdd-specifications.md) | BDD test specifications |
 
 ### Guides & Tutorials
 
@@ -270,9 +273,10 @@ git push origin feature/your-feature-name
 | [📖 API Reference](docs/API.md) | Complete API documentation |
 | [⚡ Performance Guide](docs/PERFORMANCE.md) | Benchmarks and optimization |
 | [🔧 Troubleshooting](docs/TROUBLESHOOTING.md) | Common issues and solutions |
+| [📚 Docs Index](docs/README.md) | Curated map of the durable documentation set |
 | [🏗️ Architecture](docs/architecture/README.md) | System architecture overview |
-| [🚀 Setup Guide](docs/setup/README.md) | Environment setup instructions |
-| [📝 Tutorials](docs/tutorials/README.md) | Step-by-step guides |
+| [🚀 Setup Guide](docs/setup/README.md) | Environment setup, LSP, and local tooling |
+| [🛠️ Workflow Guide](docs/maintenance.md) | OpenSpec-first closeout workflow and review gates |
 
 ### Additional Resources
 
@@ -314,7 +318,7 @@ See [LICENSE](LICENSE) for details.
 ## 🔗 Links
 
 <p align="center">
-  <a href="https://lessup.github.io/particle-fluid-sim/">🔮 Live Demo</a> ·
+  <a href="https://lessup.github.io/particle-fluid-sim/demo/">🔮 Live Demo</a> ·
   <a href="https://github.com/LessUp/particle-fluid-sim">💻 Repository</a> ·
   <a href="https://github.com/LessUp/particle-fluid-sim/issues">🐛 Issues</a> ·
   <a href="https://github.com/LessUp/particle-fluid-sim/discussions">💬 Discussions</a>

@@ -1,280 +1,126 @@
-# Maintenance Guide
+# Workflow Guide
 
-> **Project:** WebGPU Particle Fluid Simulation
-> **Version:** 2.0.0
-> **Last Updated:** 2026-04-16
+This project is in a closeout normalization phase. The goal is to finish the repository cleanly, not to expand scope.
 
-This guide provides instructions for maintaining the project after the initial implementation phase.
+## Operating principles
 
----
+1. `openspec/specs/` is the source of truth.
+2. Keep `master` as the default branch target.
+3. Prefer deleting or consolidating stale material over adding more boilerplate.
+4. Use short-lived branches only when they make the work clearer.
+5. Use `/review` or an equivalent review pass before archive-critical changes.
 
-## Table of Contents
+## OpenSpec workflow
 
-- [Version Release Process](#version-release-process)
-- [Dependency Management](#dependency-management)
-- [Documentation Updates](#documentation-updates)
-- [Testing and Quality](#testing-and-quality)
-- [GitHub Actions Maintenance](#github-actions-maintenance)
-- [Common Maintenance Tasks](#common-maintenance-tasks)
+### Existing active change
 
----
+Repository-wide cleanup and closeout work should stay under:
 
-## Version Release Process
+`openspec/changes/repo-closeout-normalization/`
 
-### Pre-Release Checklist
+### Command flow
 
-1. **Update Version**
-   ```bash
-   # Update version in package.json
-   npm version patch|minor|major
-   ```
+| Command | Use |
+|---------|-----|
+| `/opsx:explore` | Research before changing specs or code |
+| `/opsx:propose <name>` | Start a substantial new feature or governance change |
+| `/opsx:apply <name>` | Implement the approved change |
+| `/opsx:archive <name>` | Merge the finished change back into the main specs |
 
-2. **Update CHANGELOG**
-   - Move items from `[Unreleased]` to new version section
-   - Add release date
-   - Add version comparison link
+### Expected sequence
 
-3. **Run Full Test Suite**
-   ```bash
-   npm run typecheck
-   npm run lint
-   npm test
-   npm run build
-   ```
+1. Read the relevant spec files.
+2. Update the active OpenSpec change if the task affects behavior, workflow, architecture, or repository policy.
+3. Implement in coherent batches.
+4. Run the validation gate.
+5. Request or run review before merging high-impact changes.
 
-4. **Update Documentation**
-   - Verify API docs match current code
-   - Update README if needed
-   - Update performance benchmarks if relevant
-   - Update specs/ if requirements or architecture changed
+## Local quality gates
 
-### Release Steps
+### Full validation gate
+
+Run this before pushing archive-critical or broad cleanup work:
 
 ```bash
-# 1. Create release commit
-git add .
-git commit -m "chore: release v2.1.0"
-
-# 2. Create tag
-git tag v2.1.0
-
-# 3. Push to GitHub
-git push origin master --tags
+npm run verify
 ```
 
-### Post-Release
-
-- Create GitHub Release with notes from CHANGELOG
-- Verify GitHub Pages deployment completes
-- Test demo site functionality
-
----
-
-## Dependency Management
-
-### Dependabot
-
-The project uses Dependabot for automated dependency updates:
-
-- **npm dependencies**: Weekly on Mondays at 06:00 UTC
-- **GitHub Actions**: Weekly on Mondays at 06:00 UTC
-
-### Handling Dependabot PRs
-
-1. Review the PR for breaking changes
-2. Check the changelog of the updated package
-3. Run tests locally:
-   ```bash
-   npm install
-   npm test
-   npm run build
-   ```
-4. Merge if all tests pass
-
-### Manual Dependency Updates
+That expands to:
 
 ```bash
-# Check for outdated packages
-npm outdated
-
-# Update specific package
-npm install package-name@version
-
-# Update all minor/patch versions
-npm update
-```
-
-### Security Vulnerabilities
-
-```bash
-# Run security audit
-npm audit
-
-# Fix automatically fixable issues
-npm audit fix
-
-# For breaking changes, review manually
-npm audit fix --force
-```
-
----
-
-## Documentation Updates
-
-### When to Update Documentation
-
-| Change Type | Docs to Update |
-|-------------|----------------|
-| New function/module | `docs/API.md` |
-| New feature | `README.md`, `CHANGELOG.md` |
-| Bug fix | `CHANGELOG.md` |
-| Performance change | `docs/PERFORMANCE.md` |
-| Common issue discovered | `docs/TROUBLESHOOTING.md` |
-| Breaking change | All relevant docs |
-| Requirement change | `specs/product/` |
-| Architecture change | `specs/rfc/` |
-
-### Documentation Style Guide
-
-- Use present tense ("Returns particle count" not "Returned")
-- Include code examples for API functions
-- Keep table of contents updated
-- Use relative links for internal references
-- Test all links before committing
-
-### Updating API Documentation
-
-When adding or modifying a function:
-
-1. Document in the source file with JSDoc comments
-2. Update `docs/API.md` with full signature and examples
-3. Update TypeScript types in `src/types.ts` if needed
-
----
-
-## Testing and Quality
-
-### Running Tests
-
-```bash
-# Run all tests
-npm test
-
-# Watch mode for development
-npm run test:watch
-
-# Coverage report
-npm run test:coverage
-
-# UI mode
-npm run test:ui
-```
-
-### Code Quality Checks
-
-```bash
-# TypeScript type checking
-npm run typecheck
-
-# ESLint
 npm run lint
-
-# Auto-fix linting issues
-npm run lint:fix
-
-# Format code
-npm run format
+npm run typecheck
+npm run test:coverage
+npm run build
 ```
 
-### Pre-Commit Quality Gates
+### Hooks
 
-Before any commit, ensure:
+The repository includes lightweight git hooks in `.githooks/`.
 
-- [ ] `npm run typecheck` passes
-- [ ] `npm run lint` passes
-- [ ] `npm test` passes
-- [ ] `npm run build` succeeds
+Install them locally:
 
----
+```bash
+npm run hooks:install
+```
 
-## GitHub Actions Maintenance
+The default hook split is:
 
-### Workflow Files
+- **pre-commit** → `lint` + `typecheck`
+- **pre-push** → `test:coverage` + `build`
 
-| File | Purpose |
-|------|---------|
-| `.github/workflows/ci.yml` | Lint, test, build on push/PR |
-| `.github/workflows/pages.yml` | Deploy documentation to Pages |
+## GitHub workflow
 
-### Common Workflow Issues
+### Pull requests
 
-**Node.js deprecation warnings:**
-- Update `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24` env var if needed
-- Or update action versions to support new Node.js
+Use a PR when the work changes repository policy, Pages behavior, public docs, CI, or runtime behavior. The PR description should make these points clear:
 
-**Pages deployment failures:**
-- Check Jekyll build errors in workflow logs
-- Verify `_config.yml` syntax
-- Ensure all referenced files exist
+1. What changed
+2. Why it changed
+3. Whether OpenSpec changed
+4. Which validation and review steps were run
 
-### Workflow Updates
+### GitHub CLI
 
-When updating workflows:
+The repository is managed primarily through GitHub and `gh`. High-value operations include:
 
-1. Test locally with `act` CLI tool if available
-2. Create a test branch and push
-3. Monitor GitHub Actions run
-4. Merge after verification
+```bash
+gh repo view LessUp/particle-fluid-sim
+gh pr create
+gh pr view --web
+gh repo edit
+```
 
----
+Use `gh repo edit` for About/homepage/topics rather than leaving repository presentation stale.
 
-## Common Maintenance Tasks
+## AI-assisted workflow
 
-### Adding a New Configuration Parameter
+### Preferred mode
 
-1. Add to `src/config/sim.ts`:
-   ```typescript
-   export const NEW_PARAM = 100;
-   ```
-2. Add to `SIMULATION_CONFIG` object
-3. Create preamble function if used in shaders
-4. Update `docs/API.md`
-5. Add test if relevant
-6. Update `CHANGELOG.md`
+- Prefer one long-running autopilot session over `/fleet`.
+- Use subagents only when the work genuinely splits into independent streams.
+- Let `opencode.json` inherit the same repository rules instead of creating a separate OpenCode-only workflow.
+- Keep MCP/plugin usage lean; native GitHub integrations and local skills are preferred unless a custom integration clearly pays for itself.
 
-### Fixing a Bug
+### Review checkpoints
 
-1. Create branch: `fix/description`
-2. Write failing test that demonstrates the bug
-3. Fix the code
-4. Verify test passes
-5. Run full test suite
-6. Update `CHANGELOG.md` under `Unreleased/Fixed`
-7. Create PR with description
+Run a review pass when:
 
-### Adding a New Feature
+1. governance docs are rewritten,
+2. workflows or hooks change,
+3. Pages or public presentation changes substantially,
+4. the OpenSpec closeout change is ready to archive.
 
-1. Create branch: `feature/description`
-2. **Update or create specs in `/specs/`** (Spec-Driven Development)
-3. Implement with tests
-4. Update documentation
-5. Update `CHANGELOG.md` under `Unreleased/Added`
-6. Create PR with description
+### GitHub-native command choices
 
-### Performance Optimization
+| Command | Use in this repository |
+|---------|------------------------|
+| `/review` | Before archive-critical merges, workflow rewrites, or major Pages/public-doc changes |
+| `/research` | For cross-cutting investigation when the answer spans specs, docs, workflows, and runtime code |
+| `/remote` | Only when GitHub-hosted execution clearly helps more than a local long-running session |
 
-1. Baseline: measure current performance
-2. Implement optimization
-3. Re-measure on multiple devices
-4. Update `docs/PERFORMANCE.md` if significant
-5. Document approach in code comments
+Default to local, repo-aware work first. Reach for `/remote` only when the task benefits from cloud execution rather than because it is available.
 
----
+## Releases and tags
 
-## Contact
-
-For questions about maintenance procedures, open a discussion on GitHub.
-
----
-
-*This guide is maintained as part of the project documentation. Update it when processes change.*
+If a release is needed, use a tag-driven flow and keep the release notes grounded in the final verified changes. Avoid stale, version-hardcoded release scripts or one-off manual notes files.

@@ -27,9 +27,9 @@
 
 基于 **WebGPU 计算着色器**构建的高性能粒子流体仿真项目。万级粒子实时物理仿真，GPU 加速计算。
 
-🔮 **[在线演示](https://lessup.github.io/particle-fluid-sim/)** | 📖 **[文档](docs/)** | 📋 **[规范](specs/)**
+🔮 **[在线演示](https://lessup.github.io/particle-fluid-sim/demo/)** | 📖 **[文档](docs/)** | 📋 **[规范](openspec/specs/product/webgpu-particle-fluid-sim.md)**
 
-> **💡 体验提示：** 打开 [在线演示](https://lessup.github.io/particle-fluid-sim/)，移动鼠标与粒子互动！
+> **💡 体验提示：** 打开 [在线演示](https://lessup.github.io/particle-fluid-sim/demo/)，移动鼠标与粒子互动！
 
 ## ✨ 特性
 
@@ -92,31 +92,34 @@ npm run dev
 
 ## 📁 项目结构
 
+使用 [OpenSpec](https://github.com/Fission-AI/OpenSpec) 进行规范驱动开发：
+
 ```
 particle-fluid-sim/
-├── specs/                # 规范文档（事实来源）
-│   ├── product/          # 产品需求 (PRD)
-│   ├── rfc/              # 技术设计文档
-│   ├── api/              # API 规范
-│   ├── db/               # 数据库模型（本项目不适用）
-│   └── testing/          # BDD 测试规范
-├── docs/                 # 文档
-│   ├── setup/            # 环境搭建指南
-│   ├── tutorials/        # 用户教程
-│   ├── architecture/     # 架构概览
-│   ├── assets/           # 静态资源（图片、图表）
-│   ├── API.md            # API 参考
-│   ├── PERFORMANCE.md    # 性能指南
-│   └── TROUBLESHOOTING.md# 故障排除指南
-├── src/                  # 源代码
-│   ├── config/           # 仿真常量
-│   ├── core/             # 核心模块
-│   └── shaders/          # WGSL 着色器
-├── .github/              # GitHub 配置
-├── AGENTS.md             # AI Agent SDD 工作流
-├── CONTRIBUTING.md       # 贡献指南
-├── CHANGELOG.md          # 版本历史
-└── LICENSE               # MIT 许可证
+├── openspec/               # OpenSpec 框架
+│   ├── specs/              # 规范文档（事实来源）
+│   │   ├── product/        # 产品需求 (PRD)
+│   │   ├── rfc/            # 技术设计文档
+│   │   ├── api/            # API 规范
+│   │   └── testing/        # BDD 测试规范
+│   ├── changes/            # 活跃的变更提案
+│   └── config.yaml         # OpenSpec 配置
+├── docs/                   # 文档
+│   ├── setup/              # 环境与工具链配置
+│   ├── architecture/       # 架构概览
+│   ├── API.md              # API 参考
+│   ├── PERFORMANCE.md      # 性能与分析指南
+│   ├── TROUBLESHOOTING.md  # 故障排除指南
+│   └── maintenance.md      # 收尾工作流与维护指南
+├── src/                    # 源代码
+│   ├── config/             # 仿真常量
+│   ├── core/               # 核心模块
+│   └── shaders/            # WGSL 着色器
+├── .github/                # GitHub 配置
+├── AGENTS.md               # AI Agent OpenSpec 工作流
+├── CONTRIBUTING.md         # 贡献指南
+├── CHANGELOG.md            # 版本历史
+└── LICENSE                 # MIT 许可证
 ```
 
 ## 🏗️ 架构
@@ -204,11 +207,11 @@ npm run test:ui
 
 | 文档 | 描述 |
 |------|------|
-| [📋 产品需求](specs/product/webgpu-particle-fluid-sim.md) | 功能性与非功能性需求 |
-| [📐 RFC 0001: 核心架构](specs/rfc/0001-core-architecture.md) | 系统架构与设计决策 |
-| [📝 RFC 0002: 实现任务](specs/rfc/0002-implementation-tasks.md) | 实现任务追踪 |
-| [🔌 API 规范](specs/api/typescript-interfaces.md) | TypeScript 接口和契约 |
-| [🧪 测试规范](specs/testing/bdd-specifications.md) | BDD 测试规范 |
+| [📋 产品需求](openspec/specs/product/webgpu-particle-fluid-sim.md) | 功能性与非功能性需求 |
+| [📐 RFC 0001: 核心架构](openspec/specs/rfc/0001-core-architecture.md) | 系统架构与设计决策 |
+| [📝 RFC 0002: 实现任务](openspec/specs/rfc/0002-implementation-tasks.md) | 实现任务追踪 |
+| [🔌 API 规范](openspec/specs/api/typescript-interfaces.md) | TypeScript 接口和契约 |
+| [🧪 测试规范](openspec/specs/testing/bdd-specifications.md) | BDD 测试规范 |
 
 ### 开发者与用户指南
 
@@ -217,9 +220,9 @@ npm run test:ui
 | [📖 API 参考](docs/API.md) | 完整的 API 文档 |
 | [⚡ 性能指南](docs/PERFORMANCE.md) | 基准测试与优化 |
 | [🔧 故障排除](docs/TROUBLESHOOTING.md) | 常见问题与解决方案 |
-| [🛠️ 维护指南](docs/maintenance.md) | 版本发布与维护 |
+| [📚 文档索引](docs/README.md) | 精简后的文档入口与导航 |
+| [🛠️ 维护指南](docs/maintenance.md) | OpenSpec 收尾工作流与维护流程 |
 | [🏗️ 架构概览](docs/architecture/README.md) | 系统架构 |
-| [📚 教程](docs/tutorials/README.md) | 用户和开发者教程 |
 
 其他资源：
 - [贡献指南](CONTRIBUTING.md) - 如何参与贡献
@@ -254,7 +257,7 @@ npm run test:ui
 
 ## 🔗 链接
 
-- 🌐 **在线演示**: https://lessup.github.io/particle-fluid-sim/
+- 🌐 **在线演示**: https://lessup.github.io/particle-fluid-sim/demo/
 - 💻 **代码仓库**: https://github.com/LessUp/particle-fluid-sim
 - 🐛 **问题追踪**: https://github.com/LessUp/particle-fluid-sim/issues
 - 💬 **讨论区**: https://github.com/LessUp/particle-fluid-sim/discussions

@@ -1,106 +1,103 @@
-# Project Philosophy: Spec-Driven Development (SDD)
+# AGENTS.md
 
-> **Project**: WebGPU Particle Fluid Simulation
-> **Version**: 2.0.0
-> **Last Updated**: 2026-04-17
+## Mission
 
-本项目严格遵循**规范驱动开发（Spec-Driven Development）**范式。所有的代码实现必须以 `/specs` 目录下的规范文档为唯一事实来源（Single Source of Truth）。
+Finish `particle-fluid-sim` cleanly. Optimize for correctness, clarity, low maintenance burden, and closeout readiness rather than feature expansion.
 
----
+## Source of truth
 
-## Directory Context (目录说明)
+- `openspec/specs/` is the single source of truth for requirements, architecture, API, and testing.
+- The active repository-wide normalization work lives in `openspec/changes/repo-closeout-normalization/` until it is archived.
+- If code, docs, and specs disagree, resolve the conflict explicitly instead of silently drifting.
 
-| 目录 | 用途 |
-|------|------|
-| `/specs/product/` | 产品功能定义与验收标准 (PRD) |
-| `/specs/rfc/` | 技术设计文档与架构决策 (RFCs) |
-| `/specs/api/` | API 接口定义（如 OpenAPI.yaml, GraphQL Schema） |
-| `/specs/db/` | 数据库模型定义（如 DBML, Prisma Schema） |
-| `/specs/testing/` | BDD 测试用例规范（.feature 文件） |
-| `/docs/` | 开发者和用户文档 |
-| `/docs/setup/` | 环境搭建指南 |
-| `/docs/tutorials/` | 用户使用教程 |
-| `/docs/architecture/` | 高层面架构说明 |
-| `/docs/assets/` | 图片、UML 图等静态资源 |
+## Current project posture
 
----
+- The project is in a **closeout normalization** phase.
+- The goal is to harden the current version, simplify the repository, improve presentation quality, and reduce future maintenance burden.
+- Do **not** announce archival or low-maintenance intent in public-facing docs unless explicitly requested.
 
-## AI Agent Workflow Instructions (AI 工作流指令)
+## Repository invariants
 
-当你（AI）被要求开发一个新功能、修改现有功能或修复 Bug 时，**必须严格按照以下工作流执行，不可跳过任何步骤**：
+1. **Default branch** is `master`. Do not introduce `main` migration work unless explicitly requested.
+2. **WebGPU only**. Do not add WebGL or fallback renderers.
+3. **WGSL shaders** live in `src/shaders/`.
+4. **Tests are colocated** with source as `*.test.ts`.
+5. **Documentation must stay high-signal**. Remove or consolidate generic, stale, or duplicate content instead of adding more boilerplate.
 
-### Step 1: 审查与分析 (Review Specs)
+## OpenSpec workflow
 
-- 在编写任何代码之前，首先阅读 `/specs` 目录下相关的产品文档、RFC 和 API 定义。
-- 如果用户指令与现有 Spec 冲突，请立即停止编码，并指出冲突点，询问用户是否需要先更新 Spec。
+### Use these commands intentionally
 
-### Step 2: 规范优先 (Spec-First Update)
+| Command | Use |
+|---------|-----|
+| `/opsx:explore` | Investigate before changing specs or code |
+| `/opsx:propose <change-name>` | Start a new substantial feature or governance change |
+| `/opsx:apply <change-name>` | Implement tasks from an approved change |
+| `/opsx:archive <change-name>` | Merge the finished change back into the main specs |
 
-- 如果这是一个新功能，或者需要改变现有的接口/数据库结构，**必须首先提议修改或创建相应的 Spec 文档**（如 `openapi.yaml` 或 RFC 文档）。
-- 等待用户确认 Spec 的修改后，才能进入代码编写阶段。
+### For the current repository cleanup
 
-### Step 3: 代码实现 (Implementation)
+- Reuse `openspec/changes/repo-closeout-normalization/` as the canonical closeout workstream.
+- Update its `proposal.md`, `design.md`, `tasks.md`, and delta specs when scope or decisions change materially.
 
-- 编写代码时，必须 100% 遵守 Spec 中的定义（包括变量命名、API 路径、数据类型、状态码等）。
-- 不要在代码中擅自添加 Spec 中未定义的功能（No Gold-Plating）。
+## Execution rules
 
-### Step 4: 测试验证 (Test against Spec)
+1. Read relevant specs before making changes.
+2. For non-trivial behavior, workflow, documentation, or architecture changes, update the active OpenSpec change first.
+3. Implement in coherent batches that leave the repo in a valid state.
+4. Prefer deletion/consolidation over adding more low-value files.
+5. Prefer a single long-running autopilot execution over `/fleet` unless the work truly splits into independent streams.
+6. Use `/review` or an equivalent review pass before archive-critical merges and major workflow changes.
 
-- 根据 `/specs` 中的验收标准（Acceptance Criteria）编写单元测试和集成测试。
-- 确保测试用例覆盖了 Spec 中描述的所有边界情况。
+## Validation gate
 
----
+Run the repository quality gate in this order:
 
-## Code Generation Rules
+```bash
+npm run lint
+npm run typecheck
+npm run test:coverage
+npm run build
+```
 
-1. **API 变更**: 任何对外部暴露的 API 变更，必须同步修改 `/specs/api/` 下的相关文件。
-2. **架构决策**: 如果遇到不确定的技术细节，请查阅 `/specs/rfc/` 下的架构约定，不要自行捏造设计模式。
-3. **双语文档**: 当添加或更新文档时，确保英文版和中文版同步更新。
-4. **变更日志**: 所有变更必须记录在 `CHANGELOG.md` 的 `[Unreleased]` 部分。
+This matches CI and should be treated as the closeout gate.
 
----
+## Tooling policy
 
-## Project Quick Reference
+### AI instruction files
 
-### Key Specs
+- `AGENTS.md` defines repository-wide rules.
+- `CLAUDE.md` and `.github/copilot-instructions.md` must align with this file, not invent parallel workflows.
+- `opencode.json` carries the same workflow into OpenCode without introducing a second process model.
+- Keep model-specific files concise and project-specific.
 
-| Spec | Path |
-|------|------|
-| Product Requirements (PRD) | `specs/product/webgpu-particle-fluid-sim.md` |
-| RFC 0001: Core Architecture | `specs/rfc/0001-core-architecture.md` |
-| RFC 0002: Implementation Tasks | `specs/rfc/0002-implementation-tasks.md` |
+### LSP, MCP, and plugins
 
-### Key Documentation
+- Repository-level Copilot LSP configuration lives in `.github/lsp.json`.
+- Prefer built-in GitHub tooling, repo-local config, and skills before adding new MCP servers.
+- Keep plugin/MCP usage lean; avoid context-heavy integrations that do not materially help this repository.
 
-| Document | Path |
-|----------|------|
-| API Reference | `docs/API.md` |
-| Performance Guide | `docs/PERFORMANCE.md` |
-| Troubleshooting | `docs/TROUBLESHOOTING.md` |
-| Maintenance Guide | `docs/maintenance.md` |
+## High-value file map
 
-### Available Scripts
+| Path | Purpose |
+|------|---------|
+| `openspec/specs/product/webgpu-particle-fluid-sim.md` | Product requirements |
+| `openspec/specs/rfc/0001-core-architecture.md` | Core architecture |
+| `openspec/specs/rfc/0002-implementation-tasks.md` | Historical implementation tasks |
+| `openspec/changes/repo-closeout-normalization/` | Active closeout normalization change |
+| `.github/copilot-instructions.md` | Copilot project instructions |
+| `.github/lsp.json` | Repository-level LSP config for Copilot CLI |
+| `src/config/sim.ts` | Shared simulation constants |
+| `src/core/renderer.ts` | Runtime orchestration |
+| `src/core/pipelines.ts` | GPU pipeline setup |
+| `docs/site/` + `scripts/build-docs.js` | Current Pages site and builder |
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server with HMR |
-| `npm run build` | TypeScript check + production build |
-| `npm run preview` | Preview production build locally |
-| `npm test` | Run unit tests |
-| `npm run test:watch` | Run tests in watch mode |
-| `npm run test:coverage` | Run tests with coverage report |
-| `npm run lint` | Run ESLint |
-| `npm run typecheck` | Run TypeScript type checking |
-| `npm run format` | Format code with Prettier |
+## Practical priorities
 
----
+When in doubt, prefer work that does one of the following:
 
-## Why This Declaration?
-
-1. **防范 AI 幻觉**: 强制第一步读取 `/specs` 可以锚定 AI 的思考范围，防止在没有上下文的情况下"自由发挥"。
-2. **约束修改路径**: 声明了"修改代码前先改 Spec"，保证了文档与代码永远同步（Document-Code Synchronization）。
-3. **提高 PR 质量**: 当 AI 帮你生成 Pull Request 时，实现会与业务逻辑高度一致，因为它是根据 Spec 中定义的验收标准来进行开发的。
-
----
-
-*This file is the AI agent configuration for Spec-Driven Development. Do not remove.*
+1. removes drift,
+2. simplifies the repo,
+3. improves correctness or verification,
+4. improves the project's public presentation,
+5. makes future maintenance smaller and clearer.

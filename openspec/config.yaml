@@ -1,0 +1,85 @@
+# OpenSpec Configuration for particle-fluid-sim
+# Version: 1.0.0
+# Generated: 2026-04-23
+
+project:
+  name: WebGPU Particle Fluid Simulation
+  description: High-performance particle fluid simulation using WebGPU compute shaders
+  version: 2.0.0
+  license: MIT
+
+# Spec domains - maps to directory structure
+domains:
+  product:
+    description: Product requirements and user stories
+    path: specs/product
+    required: true
+  rfc:
+    description: Technical design documents (Requests for Comments)
+    path: specs/rfc
+    required: true
+  api:
+    description: API specifications and TypeScript interfaces
+    path: specs/api
+    required: true
+  testing:
+    description: BDD test specifications and verification criteria
+    path: specs/testing
+    required: true
+
+# ID format configuration for traceability
+id_patterns:
+  requirement:
+    pattern: "REQ-\\d+(\\.\\d+)?"
+    example: "REQ-3.2"
+    description: "Functional requirement ID"
+  task:
+    pattern: "TASK-\\d+(\\.\\d+)?"
+    example: "TASK-4.1"
+    description: "Implementation task ID"
+  non_functional:
+    pattern: "NFR-\\d+"
+    example: "NFR-1"
+    description: "Non-functional requirement ID"
+  future:
+    pattern: "FUT-\\d+"
+    example: "FUT-1"
+    description: "Future enhancement ID"
+
+# Cross-reference patterns
+references:
+  validates_pattern: "Validates: (.+)"
+  related_pattern: "Related Specs?: (.+)"
+  implements_pattern: "Implements: (.+)"
+
+# Change workflow settings
+changes:
+  default_status: draft
+  required_files:
+    - proposal.md
+    - tasks.md
+  optional_files:
+    - design.md
+    - specs/
+  archive_on_complete: true
+  preserve_delta_specs: true
+  numbering_scheme: "numeric"  # 001, 002, etc.
+
+# AI assistant configuration
+ai:
+  commands:
+    propose: "/opsx:propose"
+    apply: "/opsx:apply"
+    archive: "/opsx:archive"
+    explore: "/opsx:explore"
+  context_files:
+    - AGENTS.md
+    - CONTRIBUTING.md
+  auto_context: true
+
+# Validation settings
+validation:
+  require_status_badge: true
+  require_version: true
+  require_last_updated: true
+  check_cross_references: true

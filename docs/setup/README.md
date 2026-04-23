@@ -1,212 +1,119 @@
-# Development Environment Setup
+# Development Setup
 
-> **Version**: 2.0.0 | **Last Updated**: 2026-04-17
+This guide covers the local setup that matters for this repository today: TypeScript/WebGPU development, validation, LSP, editor settings, and hooks.
 
-This guide covers setting up the development environment for the WebGPU Particle Fluid Simulation project.
+## Requirements
 
----
+| Tool | Requirement |
+|------|-------------|
+| Node.js | 18+ |
+| npm | 9+ |
+| Git | Any recent version |
+| Browser | Chrome 113+, Edge 113+, or Safari 17+ |
 
-## Prerequisites
-
-### Required Software
-
-| Software | Minimum Version | Recommended |
-|----------|-----------------|-------------|
-| Node.js | 18.x | 20.x LTS |
-| npm | 9.x | 10.x |
-| Git | 2.x | Latest |
-
-### Browser Requirements
-
-WebGPU is required for running the simulation:
-
-| Browser | Minimum Version | Status |
-|---------|-----------------|--------|
-| Chrome | 113+ | ✅ Recommended |
-| Edge | 113+ | ✅ Recommended |
-| Safari | 17+ | macOS 14+ |
-| Firefox | Nightly | Behind flag |
-
-Check [caniuse.com/webgpu](https://caniuse.com/webgpu) for the latest support status.
-
----
-
-## Quick Start
-
-### 1. Clone the Repository
+## Quick start
 
 ```bash
 git clone https://github.com/LessUp/particle-fluid-sim.git
 cd particle-fluid-sim
-```
-
-### 2. Install Dependencies
-
-```bash
 npm install
-```
-
-### 3. Start Development Server
-
-```bash
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173`.
+Open `http://localhost:5173` in a WebGPU-capable browser.
 
----
+## Validation commands
 
-## Development Tools
+| Command | Purpose |
+|---------|---------|
+| `npm run lint` | ESLint on `src/` |
+| `npm run typecheck` | Standalone TypeScript check |
+| `npm run test:coverage` | Full test suite with coverage |
+| `npm run build` | Production build |
+| `npm run verify` | CI-order closeout gate |
 
-### IDE Recommendations
+## Editor and LSP
 
-**VS Code** is recommended with the following extensions:
+### VS Code
 
-| Extension | Purpose |
-|-----------|---------|
-| [WGSL](https://marketplace.visualstudio.com/items?itemName=PolyMeilex.wgsl) | WGSL shader syntax highlighting |
-| [TypeScript](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-next) | TypeScript language support |
-| [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) | Linting |
-| [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) | Code formatting |
+The repository ships with:
 
-### Project Configuration
+- `.vscode/settings.json`
+- `.vscode/extensions.json`
 
-The project includes pre-configured settings:
+Recommended extensions:
+
+- ESLint
+- Prettier
+- GitHub Copilot
+- GitHub Copilot Chat
+- Shader syntax highlighting
+
+### Copilot CLI LSP
+
+Repository-level LSP configuration lives in:
+
+`/.github/lsp.json`
+
+This repository uses the TypeScript language service through:
 
 ```json
-// .vscode/settings.json
 {
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "lspServers": {
+    "typescript": {
+      "command": "node_modules/.bin/typescript-language-server",
+      "args": ["--stdio"]
+    }
+  }
 }
 ```
 
----
+This setup is repository-specific and works best with Copilot CLI. Other tools such as Claude Code or Codex may use their own editor or built-in code intelligence, but the TypeScript language server itself is not tied to one assistant.
 
-## Available Scripts
+### OpenCode project config
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server with HMR |
-| `npm run build` | TypeScript check + production build |
-| `npm run preview` | Preview production build locally |
-| `npm test` | Run unit tests once |
-| `npm run test:watch` | Run tests in watch mode |
-| `npm run test:coverage` | Run tests with coverage report |
-| `npm run lint` | Run ESLint |
-| `npm run typecheck` | Run TypeScript type checking |
-| `npm run format` | Format code with Prettier |
+Repository-level OpenCode configuration lives in:
 
----
+`/opencode.json`
 
-## Project Structure
+It intentionally stays small:
 
-```
-particle-fluid-sim/
-├── src/
-│   ├── config/           # Simulation constants
-│   │   └── sim.ts
-│   ├── core/             # Core modules
-│   │   ├── buffers.ts    # GPU buffer management
-│   │   ├── color.ts      # Color mapping
-│   │   ├── input.ts      # Input handling
-│   │   ├── physics.ts    # Physics calculations
-│   │   ├── pipelines.ts  # WebGPU pipelines
-│   │   ├── quality.ts    # Quality heuristics
-│   │   ├── renderer.ts   # Render loop
-│   │   └── webgpu.ts     # WebGPU initialization
-│   ├── shaders/          # WGSL shaders
-│   │   ├── compute.wgsl
-│   │   ├── present.wgsl
-│   │   ├── render.wgsl
-│   │   └── trail.wgsl
-│   ├── main.ts           # Entry point
-│   ├── style.css         # Styles
-│   ├── types.ts          # Type definitions
-│   └── types.test.ts     # Type tests
-├── specs/                # Specification documents
-├── docs/                 # Documentation
-└── .github/              # GitHub configuration
-```
+- reuse shared repository instructions,
+- keep file watching away from build artifacts,
+- avoid preconfiguring heavy MCP/plugin stacks,
+- bias the default workflow toward closeout implementation rather than feature sprawl.
 
----
+## Git hooks
 
-## Testing
+The repo includes project-local hooks in `.githooks/`.
 
-### Run Tests
+Install them with:
 
 ```bash
-# Run all tests
-npm test
-
-# Run with coverage
-npm run test:coverage
-
-# Run specific test file
-npx vitest run src/core/physics.test.ts
+npm run hooks:install
 ```
 
-### Test Coverage
+Hook policy:
 
-The project uses property-based testing with fast-check:
+- `pre-commit` runs `lint` and `typecheck`
+- `pre-push` runs `test:coverage` and `build`
 
-| Module | Coverage Target |
-|--------|-----------------|
-| `config/sim.ts` | 90% |
-| `core/buffers.ts` | 95% |
-| `core/color.ts` | 95% |
-| `core/physics.ts` | 98% |
-| `core/quality.ts` | 90% |
+This keeps the fast checks local while still enforcing a strong pre-push gate.
 
----
+## Pages and demo
 
-## Troubleshooting
+- Local dev app: `npm run dev`
+- Production app build: `npm run build`
+- Pages site build: `npm run docs:build`
 
-### WebGPU Not Available
+The hosted Pages site uses:
 
-If you see "WebGPU not supported":
+- `/` → landing page + docs/spec navigation
+- `/demo/` → actual simulation build
 
-1. Ensure you're using a supported browser (Chrome 113+, Edge 113+, Safari 17+)
-2. Check if WebGPU is enabled in browser flags
-3. Verify GPU drivers are up to date
+## Repository-specific notes
 
-### Node.js Version Issues
-
-```bash
-# Check Node.js version
-node --version
-
-# Use nvm to switch versions
-nvm install 20
-nvm use 20
-```
-
-### Dependency Issues
-
-```bash
-# Clear npm cache
-npm cache clean --force
-
-# Reinstall dependencies
-rm -rf node_modules package-lock.json
-npm install
-```
-
----
-
-## Next Steps
-
-- Read the [Architecture Overview](../architecture/README.md)
-- Review the [API Reference](../API.md)
-- Check the [Performance Guide](../PERFORMANCE.md)
-- See [Contributing Guide](../../CONTRIBUTING.md) for workflow
-
----
-
-## Related Documentation
-
-- [API Reference](../API.md)
-- [Performance Guide](../PERFORMANCE.md)
-- [Troubleshooting](../TROUBLESHOOTING.md)
-- [Contributing Guide](../../CONTRIBUTING.md)
+1. `openspec/specs/` is the source of truth.
+2. WGSL shaders live in `src/shaders/`.
+3. Tests are colocated with source as `*.test.ts`.
+4. The current repository-wide cleanup runs under `openspec/changes/repo-closeout-normalization/`.

@@ -1,39 +1,28 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# GitHub Release Script for v2.0.0
-# This script creates a GitHub release with bilingual notes
-
-set -e
-
-VERSION="v2.0.0"
-TAG="v2.0.0-docs"
-
-echo "Creating GitHub Release: $VERSION"
-echo "========================================"
-
-# Check if gh CLI is installed
-if ! command -v gh &> /dev/null; then
-    echo "Error: GitHub CLI (gh) is not installed"
-    echo "Install from: https://cli.github.com/"
-    exit 1
+if ! command -v gh >/dev/null 2>&1; then
+  echo "GitHub CLI (gh) is required."
+  exit 1
 fi
 
-# Check authentication
-if ! gh auth status &> /dev/null; then
-    echo "Error: Not authenticated with GitHub"
-    echo "Run: gh auth login"
-    exit 1
+if ! gh auth status >/dev/null 2>&1; then
+  echo "Run 'gh auth login' first."
+  exit 1
 fi
 
-# Create release with bilingual notes
-echo "Creating release with bilingual notes..."
+TAG="${1:-}"
+TITLE="${2:-}"
+
+if [ -z "$TAG" ]; then
+  echo "Usage: scripts/release.sh <tag> [title]"
+  exit 1
+fi
+
+if [ -z "$TITLE" ]; then
+  TITLE="$TAG"
+fi
 
 gh release create "$TAG" \
-    --title "WebGPU Particle Fluid Simulation $VERSION" \
-    --notes-file RELEASE_NOTES.md \
-    --latest
-
-echo ""
-echo "✅ Release created successfully!"
-echo ""
-echo "Release URL: https://github.com/LessUp/particle-fluid-sim/releases/tag/$TAG"
+  --title "$TITLE" \
+  --generate-notes

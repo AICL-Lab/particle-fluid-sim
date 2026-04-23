@@ -1,6 +1,6 @@
 ## Description
 
-<!-- Brief description of changes -->
+<!-- What changed and why? -->
 
 ## Type of Change
 
@@ -13,19 +13,22 @@
 - [ ] ⚡ Performance improvement
 - [ ] ✅ Test addition/improvement
 
-## Related Issue
+## OpenSpec Impact
 
-<!-- Link to the issue this PR addresses -->
+- [ ] No spec change required
+- [ ] Existing spec updated
+- [ ] Active change proposal updated
+
+## Related Issue / PR Context
+
 Closes #
 
 ## How Has This Been Tested?
 
 <!-- Describe the tests you ran -->
-- [ ] Unit tests pass (`npm test`)
-- [ ] Type checking passes (`npm run typecheck`)
-- [ ] Linting passes (`npm run lint`)
-- [ ] Build succeeds (`npm run build`)
+- [ ] Full verify gate passes (`npm run verify`)
 - [ ] Tested in browser (Chrome/Edge/Safari)
+- [ ] Review pass completed for high-impact changes
 
 ### Test Configuration
 - Browser:
@@ -37,10 +40,7 @@ Closes #
 
 ## Checklist
 
-- [ ] My code follows the style guidelines of this project
 - [ ] I have performed a self-review of my own code
-- [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
 - [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests pass locally with my changes
+- [ ] I updated the relevant OpenSpec files when behavior or workflow changed
