@@ -41,7 +41,7 @@
     "@webgpu/types": "^0.1.40",
     "esbuild": "^0.25.0",
     "eslint": "^9.0.0",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-prettier": "^10.1.8",
     "fast-check": "^3.23.1",
     "happy-dom": "^20.9.0",
     "marked": "^18.0.2",
