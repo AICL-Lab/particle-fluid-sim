@@ -16,6 +16,7 @@ on:
       - 'package-lock.json'
       - 'vite.config.ts'
       - 'scripts/**'
+      - 'docs-site/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -41,7 +42,7 @@ jobs:
           node-version: '20'
           cache: npm
 
-      - name: Install dependencies
+      - name: Install root dependencies
         run: npm ci
 
       - name: Setup Pages
@@ -51,13 +52,23 @@ jobs:
       - name: Build demo
         run: VITE_BASE_PATH=/particle-fluid-sim/demo/ npm run build
 
-      - name: Build Pages site
-        run: npm run docs:build
+      - name: Install Docusaurus dependencies
+        working-directory: docs-site
+        run: npm ci
+
+      - name: Build Docusaurus site
+        working-directory: docs-site
+        run: npm run build
+
+      - name: Copy demo to Docusaurus static
+        run: |
+          rm -rf docs-site/build/demo
+          cp -r dist/ docs-site/build/demo/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./_site
+          path: ./docs-site/build
           retention-days: 1
 
   deploy:
