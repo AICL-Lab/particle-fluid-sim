@@ -7,7 +7,6 @@ const config: Config = {
   url: 'https://lessup.github.io',
   baseUrl: '/particle-fluid-sim/',
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
 
   // 国际化配置
