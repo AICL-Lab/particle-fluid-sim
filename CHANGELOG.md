@@ -9,26 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
-
-### Added
-
-- Comprehensive bilingual documentation system
-  - Restructured docs/ with English and Chinese versions
-  - Added professional API reference documentation
-  - Added performance optimization guide
-  - Added troubleshooting guide with diagnostic tools
-  - All documentation available in both English and 简体中文
-
-### Changed
-
-- Professionalized documentation structure and formatting
-- Standardized changelog archive organization
-
-[Unreleased]: https://github.com/LessUp/particle-fluid-sim/compare/v2.0.0...HEAD
-
----
-
 ## [2.0.0] - 2026-03-09
 
 ### 🎯 Release Highlights
@@ -80,10 +60,10 @@ Major release introducing **frame-rate independent physics**, critical bug fixes
 
 #### Physics Constants Rescaled
 
-| Constant | v1.0.0 | v2.0.0 | Unit | Impact |
-|----------|--------|--------|------|--------|
-| `GRAVITY.y` | `0.1` | `600` | px/s² | Simulation now frame-rate independent |
-| `REPULSION_STRENGTH` | `50` | `3000` | px/s | Scaled for per-second physics |
+| Constant             | v1.0.0 | v2.0.0 | Unit  | Impact                                |
+| -------------------- | ------ | ------ | ----- | ------------------------------------- |
+| `GRAVITY.y`          | `0.1`  | `600`  | px/s² | Simulation now frame-rate independent |
+| `REPULSION_STRENGTH` | `50`   | `3000` | px/s  | Scaled for per-second physics         |
 
 **Migration:** If you customized these values, multiply by `60` (for 60 FPS baseline).
 
@@ -109,13 +89,13 @@ struct Uniforms {
 
 ### 🐛 Bug Fixes
 
-| Issue | Severity | Description | Fix |
-|-------|----------|-------------|-----|
-| Memory leak | 🔴 Critical | `setupCanvas()` accumulated resize listeners | Moved event handling to caller |
-| Duplicate handlers | 🔴 Critical | Both `setupCanvas()` and `main.ts` added listeners | Single handler in `main.ts` |
-| Frame-rate dependency | 🔴 Critical | Physics speed varied with FPS | Added deltaTime scaling |
-| Lockfile drift | 🟡 High | `package-lock.json` out of sync | Regenerated lockfile |
-| ESLint error | 🟢 Medium | `prefer-const` violation | Fixed variable declaration |
+| Issue                 | Severity    | Description                                        | Fix                            |
+| --------------------- | ----------- | -------------------------------------------------- | ------------------------------ |
+| Memory leak           | 🔴 Critical | `setupCanvas()` accumulated resize listeners       | Moved event handling to caller |
+| Duplicate handlers    | 🔴 Critical | Both `setupCanvas()` and `main.ts` added listeners | Single handler in `main.ts`    |
+| Frame-rate dependency | 🔴 Critical | Physics speed varied with FPS                      | Added deltaTime scaling        |
+| Lockfile drift        | 🟡 High     | `package-lock.json` out of sync                    | Regenerated lockfile           |
+| ESLint error          | 🟢 Medium   | `prefer-const` violation                           | Fixed variable declaration     |
 
 ### 📚 Documentation
 
@@ -130,6 +110,7 @@ struct Uniforms {
 ### 📦 Dependencies
 
 Updated to latest compatible versions:
+
 - TypeScript: ~5.6.2
 - Vite: ^6.0.1
 - Vitest: ^2.1.8
@@ -193,10 +174,10 @@ First public release of the WebGPU Particle Fluid Simulation.
 
 ### 版本历史
 
-| 版本 | 日期 | 主要更新 |
-|------|------|----------|
+| 版本      | 日期       | 主要更新                                        |
+| --------- | ---------- | ----------------------------------------------- |
 | **2.0.0** | 2026-03-09 | 帧率无关物理引擎、关键 Bug 修复、CI/CD 基础设施 |
-| **1.0.0** | 2025-02-13 | 初始版本，WebGPU 计算着色器粒子仿真 |
+| **1.0.0** | 2025-02-13 | 初始版本，WebGPU 计算着色器粒子仿真             |
 
 ### 2.0.0 关键变更
 
@@ -283,10 +264,10 @@ p.position += p.velocity * uniforms.deltaTime;
 
 ## Version History Summary
 
-| Version | Date | Key Changes |
-|---------|------|-------------|
-| 2.0.0 | 2026-03-09 | Frame-rate independent physics, deltaTime, velocity clamping, CI/CD |
-| 1.0.0 | 2025-02-13 | Initial release, WebGPU compute shaders, adaptive quality |
+| Version | Date       | Key Changes                                                         |
+| ------- | ---------- | ------------------------------------------------------------------- |
+| 2.0.0   | 2026-03-09 | Frame-rate independent physics, deltaTime, velocity clamping, CI/CD |
+| 1.0.0   | 2025-02-13 | Initial release, WebGPU compute shaders, adaptive quality           |
 
 ---
 
@@ -298,4 +279,4 @@ See [GitHub Contributors](https://github.com/LessUp/particle-fluid-sim/graphs/co
 
 ---
 
-*Changelog Version: 2.0.0 | Last Updated: 2026-04-16*
+_Changelog Version: 2.0.0 | Last Updated: 2026-04-27_
