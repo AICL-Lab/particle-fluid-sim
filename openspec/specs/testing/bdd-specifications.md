@@ -128,9 +128,9 @@ Feature: Particle Physics
 ```typescript
 // Physics Integration Property
 fc.property(
-  fc.record({ x: fc.float(), y: fc.float() }),      // position
-  fc.record({ x: fc.float(), y: fc.float() }),      // velocity
-  fc.float({ min: 0.001, max: 0.1 }),               // deltaTime
+  fc.record({ x: fc.float(), y: fc.float() }), // position
+  fc.record({ x: fc.float(), y: fc.float() }), // velocity
+  fc.float({ min: 0.001, max: 0.1 }), // deltaTime
   (position, velocity, dt) => {
     // After physics update:
     // 1. Position should have changed
@@ -141,9 +141,9 @@ fc.property(
 
 // Boundary Bounce Property
 fc.property(
-  fc.float(),      // position
-  fc.float(),      // velocity
-  fc.float({ min: 0, max: 1000 }),  // min bound
+  fc.float(), // position
+  fc.float(), // velocity
+  fc.float({ min: 0, max: 1000 }), // min bound
   fc.float({ min: 1000, max: 2000 }), // max bound
   (pos, vel, min, max) => {
     // After bounce:
@@ -216,8 +216,8 @@ Feature: Velocity-Based Color Mapping
 ```typescript
 // Color Mapping Property
 fc.property(
-  fc.float({ min: -1000, max: 1000 }),  // vx
-  fc.float({ min: -1000, max: 1000 }),  // vy
+  fc.float({ min: -1000, max: 1000 }), // vx
+  fc.float({ min: -1000, max: 1000 }), // vy
   (vx, vy) => {
     const color = velocityToColor({ x: vx, y: vy });
     // All RGB values should be in [0, 1]
@@ -285,13 +285,13 @@ Feature: Render Loop
 
 ## Test Coverage Requirements
 
-| Module | Minimum Coverage | Target |
-|--------|------------------|--------|
-| `config/sim.ts` | 80% | 90% |
-| `core/buffers.ts` | 85% | 95% |
-| `core/color.ts` | 90% | 95% |
-| `core/physics.ts` | 95% | 98% |
-| `core/quality.ts` | 85% | 90% |
+| Module            | Minimum Coverage | Target |
+| ----------------- | ---------------- | ------ |
+| `config/sim.ts`   | 80%              | 90%    |
+| `core/buffers.ts` | 85%              | 95%    |
+| `core/color.ts`   | 90%              | 95%    |
+| `core/physics.ts` | 95%              | 98%    |
+| `core/quality.ts` | 85%              | 90%    |
 
 ---
 
@@ -317,7 +317,7 @@ npx vitest run src/core/physics.test.ts
 
 Tests are automatically run in GitHub Actions CI pipeline:
 
-- On every push to `main` branch
+- On every push to `master` branch
 - On every Pull Request
 - Coverage report is uploaded as artifact
 
@@ -325,14 +325,14 @@ Tests are automatically run in GitHub Actions CI pipeline:
 
 ## Verification Matrix
 
-| Requirement | Test File | Property/Function |
-|-------------|-----------|-------------------|
-| REQ-2.3 | `buffers.test.ts` | Particle Initialization Bounds |
-| REQ-3.1, REQ-3.4 | `physics.test.ts` | Physics Update Correctness |
-| REQ-3.2 | `physics.test.ts` | Boundary Bounce Behavior |
-| REQ-4.2, REQ-4.3 | `physics.test.ts` | Repulsion Force Application |
-| REQ-5.2, REQ-5.3 | `color.test.ts` | Velocity-Based Color Mapping |
-| REQ-8.1-8.4 | `quality.test.ts` | Adaptive Quality Scaling |
+| Requirement      | Test File         | Property/Function              |
+| ---------------- | ----------------- | ------------------------------ |
+| REQ-2.3          | `buffers.test.ts` | Particle Initialization Bounds |
+| REQ-3.1, REQ-3.4 | `physics.test.ts` | Physics Update Correctness     |
+| REQ-3.2          | `physics.test.ts` | Boundary Bounce Behavior       |
+| REQ-4.2, REQ-4.3 | `physics.test.ts` | Repulsion Force Application    |
+| REQ-5.2, REQ-5.3 | `color.test.ts`   | Velocity-Based Color Mapping   |
+| REQ-8.1-8.4      | `quality.test.ts` | Adaptive Quality Scaling       |
 
 ---
 
@@ -354,9 +354,9 @@ const testFixtures = {
   fastMovingParticle: { x: 500, y: 500, vx: 500, vy: 500 },
 
   // Time steps
-  normalDelta: 0.01667,    // ~60 FPS
-  slowDelta: 0.03333,      // ~30 FPS
-  extremeDelta: 0.1,       // Frame drop
+  normalDelta: 0.01667, // ~60 FPS
+  slowDelta: 0.03333, // ~30 FPS
+  extremeDelta: 0.1, // Frame drop
 };
 ```
 

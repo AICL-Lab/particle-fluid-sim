@@ -7,7 +7,6 @@ Finish the repository cleanly. Optimize for correctness, clarity, low maintenanc
 ## Source of truth
 
 - Treat `openspec/specs/` as the single source of truth.
-- For non-trivial behavioral, workflow, or architecture changes, update or create the relevant OpenSpec change under `openspec/changes/` before broad implementation.
 - If code and specs disagree, surface the conflict and resolve it explicitly.
 
 ## Repository-specific rules
@@ -31,7 +30,7 @@ Run the existing closeout gate in this order:
 ## Preferred workflow
 
 1. Read the relevant OpenSpec docs first.
-2. Update the active OpenSpec change when the task changes behavior, workflow, or repository policy.
+2. Update specs under `openspec/specs/` when the task changes behavior or repository policy.
 3. Implement in coherent batches.
 4. Prefer one long-running session over parallel execution unless work truly splits into independent streams.
 

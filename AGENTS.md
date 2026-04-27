@@ -7,7 +7,6 @@ Finish `particle-fluid-sim` cleanly. Optimize for correctness, clarity, low main
 ## Source of truth
 
 - `openspec/specs/` is the single source of truth for requirements, architecture, API, and testing.
-- The active repository-wide normalization work lives in `openspec/changes/repo-closeout-normalization/` until it is archived.
 - If code, docs, and specs disagree, resolve the conflict explicitly instead of silently drifting.
 
 ## Current project posture
@@ -29,12 +28,11 @@ Finish `particle-fluid-sim` cleanly. Optimize for correctness, clarity, low main
 ### Reading and updating specs
 
 1. **Before implementation**: Read relevant specs in `openspec/specs/`
-2. **For behavioral changes**: Update the active OpenSpec change under `openspec/changes/` first
-3. **After decisions**: Update `proposal.md`, `design.md`, `tasks.md` when scope changes
+2. **For behavioral changes**: Create or update specs under `openspec/specs/` as needed
 
-### Current active change
+### Status
 
-- `openspec/changes/repo-closeout-normalization/` — canonical closeout workstream
+All closeout work has been completed. Historical changes are archived in `openspec/changes/archive/`.
 
 ## Execution rules
 
@@ -80,7 +78,8 @@ This matches CI and should be treated as the closeout gate.
 | `openspec/specs/product/webgpu-particle-fluid-sim.md` | Product requirements                        |
 | `openspec/specs/rfc/0001-core-architecture.md`        | Core architecture                           |
 | `openspec/specs/rfc/0002-implementation-tasks.md`     | Historical implementation tasks             |
-| `openspec/changes/repo-closeout-normalization/`       | Active closeout normalization change        |
+| `openspec/specs/api/typescript-interfaces.md`         | API type contracts                          |
+| `openspec/specs/testing/bdd-specifications.md`        | BDD test specifications                     |
 | `.github/copilot-instructions.md`                     | Copilot project instructions                |
 | `.github/lsp.json`                                    | Repository-level LSP config for Copilot CLI |
 | `src/config/sim.ts`                                   | Shared simulation constants                 |
