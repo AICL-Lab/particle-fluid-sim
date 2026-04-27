@@ -24,22 +24,13 @@ Suggested branch names:
 
 ## OpenSpec-first workflow
 
-| Step | Expectation |
-|------|-------------|
-| 1. Read | Start from the matching spec files in `openspec/specs/` |
+| Step            | Expectation                                                                  |
+| --------------- | ---------------------------------------------------------------------------- |
+| 1. Read         | Start from the matching spec files in `openspec/specs/`                      |
 | 2. Update specs | Update the active change if behavior, workflow, or repository policy changes |
-| 3. Implement | Make the code or doc changes in coherent batches |
-| 4. Validate | Run the repository quality gate |
-| 5. Review | Use a review pass for high-impact or archive-critical changes |
-
-Useful commands:
-
-| Command | Use |
-|---------|-----|
-| `/opsx:explore` | Research before changing specs or code |
-| `/opsx:propose <name>` | Start a substantial new change |
-| `/opsx:apply <name>` | Implement the approved change |
-| `/opsx:archive <name>` | Merge the finished change into main specs |
+| 3. Implement    | Make the code or doc changes in coherent batches                             |
+| 4. Validate     | Run the repository quality gate                                              |
+| 5. Review       | Use a review pass for high-impact or archive-critical changes                |
 
 ## Validation
 

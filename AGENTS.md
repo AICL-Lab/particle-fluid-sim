@@ -26,19 +26,15 @@ Finish `particle-fluid-sim` cleanly. Optimize for correctness, clarity, low main
 
 ## OpenSpec workflow
 
-### Use these commands intentionally
+### Reading and updating specs
 
-| Command | Use |
-|---------|-----|
-| `/opsx:explore` | Investigate before changing specs or code |
-| `/opsx:propose <change-name>` | Start a new substantial feature or governance change |
-| `/opsx:apply <change-name>` | Implement tasks from an approved change |
-| `/opsx:archive <change-name>` | Merge the finished change back into the main specs |
+1. **Before implementation**: Read relevant specs in `openspec/specs/`
+2. **For behavioral changes**: Update the active OpenSpec change under `openspec/changes/` first
+3. **After decisions**: Update `proposal.md`, `design.md`, `tasks.md` when scope changes
 
-### For the current repository cleanup
+### Current active change
 
-- Reuse `openspec/changes/repo-closeout-normalization/` as the canonical closeout workstream.
-- Update its `proposal.md`, `design.md`, `tasks.md`, and delta specs when scope or decisions change materially.
+- `openspec/changes/repo-closeout-normalization/` — canonical closeout workstream
 
 ## Execution rules
 
@@ -79,18 +75,18 @@ This matches CI and should be treated as the closeout gate.
 
 ## High-value file map
 
-| Path | Purpose |
-|------|---------|
-| `openspec/specs/product/webgpu-particle-fluid-sim.md` | Product requirements |
-| `openspec/specs/rfc/0001-core-architecture.md` | Core architecture |
-| `openspec/specs/rfc/0002-implementation-tasks.md` | Historical implementation tasks |
-| `openspec/changes/repo-closeout-normalization/` | Active closeout normalization change |
-| `.github/copilot-instructions.md` | Copilot project instructions |
-| `.github/lsp.json` | Repository-level LSP config for Copilot CLI |
-| `src/config/sim.ts` | Shared simulation constants |
-| `src/core/renderer.ts` | Runtime orchestration |
-| `src/core/pipelines.ts` | GPU pipeline setup |
-| `docs/site/` + `scripts/build-docs.js` | Current Pages site and builder |
+| Path                                                  | Purpose                                     |
+| ----------------------------------------------------- | ------------------------------------------- |
+| `openspec/specs/product/webgpu-particle-fluid-sim.md` | Product requirements                        |
+| `openspec/specs/rfc/0001-core-architecture.md`        | Core architecture                           |
+| `openspec/specs/rfc/0002-implementation-tasks.md`     | Historical implementation tasks             |
+| `openspec/changes/repo-closeout-normalization/`       | Active closeout normalization change        |
+| `.github/copilot-instructions.md`                     | Copilot project instructions                |
+| `.github/lsp.json`                                    | Repository-level LSP config for Copilot CLI |
+| `src/config/sim.ts`                                   | Shared simulation constants                 |
+| `src/core/renderer.ts`                                | Runtime orchestration                       |
+| `src/core/pipelines.ts`                               | GPU pipeline setup                          |
+| `docs/site/` + `scripts/build-docs.js`                | Current Pages site and builder              |
 
 ## Practical priorities
 

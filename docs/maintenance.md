@@ -18,15 +18,6 @@ Repository-wide cleanup and closeout work should stay under:
 
 `openspec/changes/repo-closeout-normalization/`
 
-### Command flow
-
-| Command | Use |
-|---------|-----|
-| `/opsx:explore` | Research before changing specs or code |
-| `/opsx:propose <name>` | Start a substantial new feature or governance change |
-| `/opsx:apply <name>` | Implement the approved change |
-| `/opsx:archive <name>` | Merge the finished change back into the main specs |
-
 ### Expected sequence
 
 1. Read the relevant spec files.
@@ -113,11 +104,11 @@ Run a review pass when:
 
 ### GitHub-native command choices
 
-| Command | Use in this repository |
-|---------|------------------------|
-| `/review` | Before archive-critical merges, workflow rewrites, or major Pages/public-doc changes |
+| Command     | Use in this repository                                                                         |
+| ----------- | ---------------------------------------------------------------------------------------------- |
+| `/review`   | Before archive-critical merges, workflow rewrites, or major Pages/public-doc changes           |
 | `/research` | For cross-cutting investigation when the answer spans specs, docs, workflows, and runtime code |
-| `/remote` | Only when GitHub-hosted execution clearly helps more than a local long-running session |
+| `/remote`   | Only when GitHub-hosted execution clearly helps more than a local long-running session         |
 
 Default to local, repo-aware work first. Reach for `/remote` only when the task benefits from cloud execution rather than because it is available.
 

@@ -33,10 +33,7 @@ Run the existing closeout gate in this order:
 1. Read the relevant OpenSpec docs first.
 2. Update the active OpenSpec change when the task changes behavior, workflow, or repository policy.
 3. Implement in coherent batches.
-4. Use `/review` before archive-critical merges or major workflow changes.
-5. Use `/research` for cross-cutting investigations before large refactors or workflow changes.
-6. Prefer one long-running autopilot session over `/fleet` unless work truly splits into independent streams.
-7. Use `/remote` only when GitHub-hosted execution clearly helps more than the local repository session.
+4. Prefer one long-running session over parallel execution unless work truly splits into independent streams.
 
 ## Tooling guidance
 
