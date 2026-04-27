@@ -1,5 +1,7 @@
 # API Reference
 
+> **规范契约**: 接口定义的权威来源是 [`openspec/specs/api/typescript-interfaces.md`](../openspec/specs/api/typescript-interfaces.md)。本文档提供详细的函数说明和使用示例。
+
 This document provides detailed documentation for all public modules, functions, types, and constants in the WebGPU Particle Fluid Simulation project.
 
 ## Table of Contents
@@ -27,45 +29,48 @@ Central configuration file containing all simulation constants. This is the sing
 
 #### Constants
 
-| Constant | Type | Default | Description |
-|----------|------|---------|-------------|
-| `PARTICLE_COUNT` | `number` | `10000` | Default number of particles |
-| `PARTICLE_SIZE` | `number` | `16` | Size in bytes per particle (4 floats × 4 bytes) |
-| `WORKGROUP_SIZE` | `number` | `64` | WebGPU compute shader workgroup size |
-| `GRAVITY` | `Vec2` | `{x: 0, y: 600}` | Gravity acceleration in px/s² |
-| `DAMPING` | `number` | `0.9` | Velocity damping on boundary bounce |
-| `REPULSION_RADIUS` | `number` | `200` | Mouse repulsion radius in pixels |
-| `REPULSION_STRENGTH` | `number` | `3000` | Mouse repulsion force magnitude |
-| `MAX_SPEED` | `number` | `800` | Maximum particle velocity in px/s |
-| `COLOR_MAX_SPEED` | `number` | `800` | Maximum speed for color mapping |
-| `DEFAULT_DELTA_TIME` | `number` | `1/60` | Default frame time in seconds |
-| `MAX_DELTA_TIME` | `number` | `0.05` | Maximum delta time to prevent spiral of death |
-| `INITIAL_VELOCITY_RANGE` | `number` | `4` | Range for random initial velocities |
-| `OFFSCREEN_COORDINATE` | `number` | `-1000` | Coordinate value when mouse is off-canvas |
-| `TRAIL_FADE_ALPHA` | `number` | `0.05` | Alpha value for trail fade effect |
-| `UNIFORM_BUFFER_SIZE` | `number` | `32` | Size of uniform buffer in bytes |
-| `CYAN` | `Color` | `{r: 0, g: 1, b: 1}` | Cyan color for slow particles |
-| `PURPLE` | `Color` | `{r: 0.9, g: 0.3, b: 1}` | Purple color for fast particles |
+| Constant                 | Type     | Default                  | Description                                     |
+| ------------------------ | -------- | ------------------------ | ----------------------------------------------- |
+| `PARTICLE_COUNT`         | `number` | `10000`                  | Default number of particles                     |
+| `PARTICLE_SIZE`          | `number` | `16`                     | Size in bytes per particle (4 floats × 4 bytes) |
+| `WORKGROUP_SIZE`         | `number` | `64`                     | WebGPU compute shader workgroup size            |
+| `GRAVITY`                | `Vec2`   | `{x: 0, y: 600}`         | Gravity acceleration in px/s²                   |
+| `DAMPING`                | `number` | `0.9`                    | Velocity damping on boundary bounce             |
+| `REPULSION_RADIUS`       | `number` | `200`                    | Mouse repulsion radius in pixels                |
+| `REPULSION_STRENGTH`     | `number` | `3000`                   | Mouse repulsion force magnitude                 |
+| `MAX_SPEED`              | `number` | `800`                    | Maximum particle velocity in px/s               |
+| `COLOR_MAX_SPEED`        | `number` | `800`                    | Maximum speed for color mapping                 |
+| `DEFAULT_DELTA_TIME`     | `number` | `1/60`                   | Default frame time in seconds                   |
+| `MAX_DELTA_TIME`         | `number` | `0.05`                   | Maximum delta time to prevent spiral of death   |
+| `INITIAL_VELOCITY_RANGE` | `number` | `4`                      | Range for random initial velocities             |
+| `OFFSCREEN_COORDINATE`   | `number` | `-1000`                  | Coordinate value when mouse is off-canvas       |
+| `TRAIL_FADE_ALPHA`       | `number` | `0.05`                   | Alpha value for trail fade effect               |
+| `UNIFORM_BUFFER_SIZE`    | `number` | `32`                     | Size of uniform buffer in bytes                 |
+| `CYAN`                   | `Color`  | `{r: 0, g: 1, b: 1}`     | Cyan color for slow particles                   |
+| `PURPLE`                 | `Color`  | `{r: 0.9, g: 0.3, b: 1}` | Purple color for fast particles                 |
 
 #### Functions
 
 ```typescript
-function buildComputeShaderPreamble(): string
+function buildComputeShaderPreamble(): string;
 ```
+
 Builds WGSL constant declarations for the compute shader.
 
 **Returns:** WGSL code string with constants for GRAVITY, REPULSION_RADIUS, REPULSION_STRENGTH, DAMPING, and MAX_SPEED.
 
 ```typescript
-function buildRenderShaderPreamble(): string
+function buildRenderShaderPreamble(): string;
 ```
+
 Builds WGSL constant declarations for the render shader.
 
 **Returns:** WGSL code string with constants for CYAN, PURPLE, and MAX_SPEED.
 
 ```typescript
-function buildTrailShaderPreamble(): string
+function buildTrailShaderPreamble(): string;
 ```
+
 Builds WGSL constant declarations for the trail shader.
 
 **Returns:** WGSL code string with constant for TRAIL_FADE_ALPHA.
@@ -82,10 +87,10 @@ Type definitions and re-exports for the simulation.
 
 ```typescript
 interface Particle {
-  x: number;   // Position X in pixels
-  y: number;   // Position Y in pixels
-  vx: number;  // Velocity X in px/s
-  vy: number;  // Velocity Y in px/s
+  x: number; // Position X in pixels
+  y: number; // Position Y in pixels
+  vx: number; // Velocity X in px/s
+  vy: number; // Velocity Y in px/s
 }
 ```
 
@@ -102,9 +107,9 @@ Generic 2D vector type.
 
 ```typescript
 interface Color {
-  r: number;  // Red (0-1)
-  g: number;  // Green (0-1)
-  b: number;  // Blue (0-1)
+  r: number; // Red (0-1)
+  g: number; // Green (0-1)
+  b: number; // Blue (0-1)
 }
 ```
 
@@ -117,7 +122,7 @@ interface Uniforms {
   mouseX: number;
   mouseY: number;
   deltaTime: number;
-  _pad1: number;  // Padding for 16-byte alignment
+  _pad1: number; // Padding for 16-byte alignment
   _pad2: number;
   _pad3: number;
 }
@@ -171,43 +176,52 @@ Collection of WebGPU pipelines and bind groups.
 Handles WebGPU initialization and canvas configuration.
 
 ```typescript
-function showError(message: string): void
+function showError(message: string): void;
 ```
+
 Displays an error message overlay to the user.
 
 **Parameters:**
+
 - `message` - Error message to display
 
 ```typescript
-async function initWebGPU(canvas: HTMLCanvasElement): Promise<WebGPUContext>
+async function initWebGPU(canvas: HTMLCanvasElement): Promise<WebGPUContext>;
 ```
+
 Initializes WebGPU and returns the context.
 
 **Parameters:**
+
 - `canvas` - HTML canvas element to use
 
 **Returns:** Promise resolving to WebGPUContext
 
 **Throws:**
+
 - Error if WebGPU is not supported
 - Error if GPU adapter cannot be obtained
 - Error if GPU device cannot be obtained
 - Error if WebGPU canvas context cannot be created
 
 ```typescript
-function setupCanvas(canvas: HTMLCanvasElement): void
+function setupCanvas(canvas: HTMLCanvasElement): void;
 ```
+
 Configures canvas for fullscreen display with HiDPI support.
 
 **Parameters:**
+
 - `canvas` - HTML canvas element to configure
 
 ```typescript
-function reconfigureContext(ctx: WebGPUContext): void
+function reconfigureContext(ctx: WebGPUContext): void;
 ```
+
 Reconfigures the WebGPU context after resize.
 
 **Parameters:**
+
 - `ctx` - WebGPU context to reconfigure
 
 ---
@@ -219,39 +233,39 @@ Reconfigures the WebGPU context after resize.
 Manages GPU buffer creation and particle initialization.
 
 ```typescript
-function initializeParticles(
-  canvasSize: Vec2,
-  particleCount?: number
-): Float32Array
+function initializeParticles(canvasSize: Vec2, particleCount?: number): Float32Array;
 ```
+
 Creates initial particle data with random positions and velocities.
 
 **Parameters:**
+
 - `canvasSize` - Canvas dimensions
 - `particleCount` - Number of particles (default: `PARTICLE_COUNT`)
 
 **Returns:** Float32Array with particle data (4 floats per particle)
 
 ```typescript
-function createParticleBuffer(
-  device: GPUDevice,
-  initialData: Float32Array
-): GPUBuffer
+function createParticleBuffer(device: GPUDevice, initialData: Float32Array): GPUBuffer;
 ```
+
 Creates a GPU storage buffer for particle data.
 
 **Parameters:**
+
 - `device` - GPU device
 - `initialData` - Initial particle data
 
 **Returns:** GPUBuffer configured for storage, vertex, and copy destination usage
 
 ```typescript
-function createUniformBuffer(device: GPUDevice): GPUBuffer
+function createUniformBuffer(device: GPUDevice): GPUBuffer;
 ```
+
 Creates a GPU uniform buffer for global parameters.
 
 **Parameters:**
+
 - `device` - GPU device
 
 **Returns:** GPUBuffer configured for uniform and copy destination usage
@@ -265,11 +279,13 @@ function updateUniformBuffer(
   mouseX: number,
   mouseY: number,
   deltaTime?: number
-): void
+): void;
 ```
+
 Updates the uniform buffer with current values.
 
 **Parameters:**
+
 - `device` - GPU device
 - `buffer` - Uniform buffer to update
 - `width` - Canvas width
@@ -283,11 +299,13 @@ function createBuffers(
   device: GPUDevice,
   canvasSize: Vec2,
   particleCount?: number
-): ParticleBuffers
+): ParticleBuffers;
 ```
+
 Creates all buffers needed for the particle system.
 
 **Parameters:**
+
 - `device` - GPU device
 - `canvasSize` - Canvas dimensions
 - `particleCount` - Number of particles (default: `PARTICLE_COUNT`)
@@ -299,11 +317,13 @@ function validateParticleData(
   data: Float32Array,
   canvasSize: Vec2,
   particleCount?: number
-): boolean
+): boolean;
 ```
+
 Validates that all particles are within canvas bounds.
 
 **Parameters:**
+
 - `data` - Particle data array
 - `canvasSize` - Canvas dimensions
 - `particleCount` - Number of particles (default: `data.length / 4`)
@@ -319,15 +339,13 @@ Validates that all particles are within canvas bounds.
 CPU reference implementation of physics calculations. Mirrors the WGSL compute shader logic exactly.
 
 ```typescript
-function applyGravity(
-  velocity: Vec2,
-  gravity?: Vec2,
-  deltaTime?: number
-): Vec2
+function applyGravity(velocity: Vec2, gravity?: Vec2, deltaTime?: number): Vec2;
 ```
+
 Applies gravity acceleration to velocity.
 
 **Parameters:**
+
 - `velocity` - Current velocity
 - `gravity` - Gravity vector (default: `GRAVITY`)
 - `deltaTime` - Frame time (default: `DEFAULT_DELTA_TIME`)
@@ -341,11 +359,13 @@ function calculateRepulsion(
   radius?: number,
   repulsionStrength?: number,
   deltaTime?: number
-): Vec2
+): Vec2;
 ```
+
 Calculates repulsion force from mouse position.
 
 **Parameters:**
+
 - `position` - Particle position
 - `mousePos` - Mouse cursor position
 - `radius` - Repulsion radius (default: `REPULSION_RADIUS`)
@@ -357,14 +377,13 @@ Calculates repulsion force from mouse position.
 **Note:** Returns zero vector if distance >= radius or distance === 0.
 
 ```typescript
-function clampVelocity(
-  velocity: Vec2,
-  maxSpeed?: number
-): Vec2
+function clampVelocity(velocity: Vec2, maxSpeed?: number): Vec2;
 ```
+
 Clamps velocity magnitude to maximum speed.
 
 **Parameters:**
+
 - `velocity` - Velocity vector to clamp
 - `maxSpeed` - Maximum speed (default: `MAX_SPEED`)
 
@@ -376,11 +395,13 @@ function applyBoundaryBounce(
   velocity: Vec2,
   canvasSize: Vec2,
   damping?: number
-): { position: Vec2; velocity: Vec2 }
+): { position: Vec2; velocity: Vec2 };
 ```
+
 Applies boundary collision and bounce.
 
 **Parameters:**
+
 - `position` - Current position
 - `velocity` - Current velocity
 - `canvasSize` - Canvas dimensions
@@ -395,11 +416,13 @@ function updateParticle(
   mousePos: Vec2,
   deltaTime?: number,
   gravity?: Vec2
-): Particle
+): Particle;
 ```
+
 Updates a single particle for one frame.
 
 **Parameters:**
+
 - `particle` - Particle to update
 - `canvasSize` - Canvas dimensions
 - `mousePos` - Mouse cursor position
@@ -409,6 +432,7 @@ Updates a single particle for one frame.
 **Returns:** Updated particle
 
 **Algorithm:**
+
 1. Apply gravity to velocity
 2. Calculate and apply mouse repulsion
 3. Clamp velocity to max speed
@@ -424,44 +448,52 @@ Updates a single particle for one frame.
 CPU reference implementation of color mapping. Mirrors the WGSL fragment shader logic.
 
 ```typescript
-function clamp(value: number, min: number, max: number): number
+function clamp(value: number, min: number, max: number): number;
 ```
+
 Clamps a value between min and max.
 
 ```typescript
-function lerp(a: number, b: number, t: number): number
+function lerp(a: number, b: number, t: number): number;
 ```
+
 Linear interpolation between two values.
 
 ```typescript
-function mixColors(a: Color, b: Color, t: number): Color
+function mixColors(a: Color, b: Color, t: number): Color;
 ```
+
 Linear interpolation between two colors.
 
 ```typescript
-function velocityMagnitude(velocity: Vec2): number
+function velocityMagnitude(velocity: Vec2): number;
 ```
+
 Calculates the magnitude of a velocity vector.
 
 ```typescript
-function velocityToColor(velocity: Vec2): Color
+function velocityToColor(velocity: Vec2): Color;
 ```
+
 Converts velocity to color based on speed.
 
 **Parameters:**
+
 - `velocity` - Velocity vector
 
 **Returns:** Color with brightness applied
 
 **Algorithm:**
+
 1. Calculate speed magnitude
 2. Normalize to 0-1 range using `COLOR_MAX_SPEED`
 3. Interpolate between CYAN (slow) and PURPLE (fast)
 4. Apply brightness scaling (0.5 to 1.0 based on speed)
 
 ```typescript
-function getSpeedFactor(velocity: Vec2): number
+function getSpeedFactor(velocity: Vec2): number;
 ```
+
 Gets normalized speed factor (0-1) from velocity.
 
 ---
@@ -484,18 +516,22 @@ interface MouseState {
 function createMouseHandler(canvas: HTMLCanvasElement): {
   getMousePosition: () => Vec2;
   destroy: () => void;
-}
+};
 ```
+
 Creates a mouse/touch input handler.
 
 **Parameters:**
+
 - `canvas` - HTML canvas element to monitor
 
 **Returns:** Object with:
+
 - `getMousePosition()` - Returns current mouse position in canvas coordinates
 - `destroy()` - Removes all event listeners
 
 **Features:**
+
 - Handles both mouse and touch events
 - Maps coordinates to canvas pixels accounting for HiDPI
 - Returns `OFFSCREEN_COORDINATE` when cursor leaves canvas
@@ -512,11 +548,13 @@ Creates WebGPU pipelines for compute, render, trail, and present passes.
 function createComputePipeline(device: GPUDevice): {
   pipeline: GPUComputePipeline;
   bindGroupLayout: GPUBindGroupLayout;
-}
+};
 ```
+
 Creates the compute pipeline for particle physics.
 
 **Parameters:**
+
 - `device` - GPU device
 
 **Returns:** Object with pipeline and bind group layout
@@ -525,39 +563,39 @@ Creates the compute pipeline for particle physics.
 function createRenderPipeline(
   device: GPUDevice,
   format: GPUTextureFormat
-): { pipeline: GPURenderPipeline; bindGroupLayout: GPUBindGroupLayout }
+): { pipeline: GPURenderPipeline; bindGroupLayout: GPUBindGroupLayout };
 ```
+
 Creates the render pipeline for particle drawing.
 
 **Parameters:**
+
 - `device` - GPU device
 - `format` - Texture format
 
 **Returns:** Object with pipeline and bind group layout
 
 ```typescript
-function createTrailPipeline(
-  device: GPUDevice,
-  format: GPUTextureFormat
-): GPURenderPipeline
+function createTrailPipeline(device: GPUDevice, format: GPUTextureFormat): GPURenderPipeline;
 ```
+
 Creates the trail pipeline for fade effect.
 
 **Parameters:**
+
 - `device` - GPU device
 - `format` - Texture format
 
 **Returns:** Render pipeline for trail effect
 
 ```typescript
-function createPresentPipeline(
-  device: GPUDevice,
-  format: GPUTextureFormat
-): GPURenderPipeline
+function createPresentPipeline(device: GPUDevice, format: GPUTextureFormat): GPURenderPipeline;
 ```
+
 Creates the present pipeline for compositing.
 
 **Parameters:**
+
 - `device` - GPU device
 - `format` - Texture format
 
@@ -568,11 +606,13 @@ function createPipelines(
   device: GPUDevice,
   format: GPUTextureFormat,
   buffers: ParticleBuffers
-): Pipelines
+): Pipelines;
 ```
+
 Creates all pipelines and bind groups.
 
 **Parameters:**
+
 - `device` - GPU device
 - `format` - Texture format
 - `buffers` - Particle buffers for bind groups
@@ -592,6 +632,7 @@ class Renderer
 ```
 
 **Constructor:**
+
 ```typescript
 constructor(
   ctx: WebGPUContext,
@@ -607,19 +648,23 @@ constructor(
 ```typescript
 start(): void
 ```
+
 Starts the render loop.
 
 ```typescript
 stop(): void
 ```
+
 Stops the render loop.
 
 ```typescript
 destroy(): void
 ```
+
 Destroys renderer and releases GPU resources.
 
 **Render Pipeline (per frame):**
+
 1. Update uniforms with current canvas size, mouse position, and delta time
 2. Compute pass: Update particle physics
 3. Trail pass: Fade the persistent offscreen texture
@@ -633,8 +678,9 @@ function createRenderer(
   buffers: ParticleBuffers,
   getMousePosition: () => Vec2,
   onFrame?: () => void
-): Renderer
+): Renderer;
 ```
+
 Factory function to create a Renderer instance.
 
 ---
@@ -646,7 +692,7 @@ Factory function to create a Renderer instance.
 Runtime particle count adjustment based on device capabilities.
 
 ```typescript
-type SimulationQualityTier = 'low' | 'medium' | 'high'
+type SimulationQualityTier = 'low' | 'medium' | 'high';
 ```
 
 ```typescript
@@ -671,17 +717,20 @@ interface SimulationHeuristicsInput {
 function resolveSimulationSettings(
   input: SimulationHeuristicsInput,
   preferredParticleCount?: number
-): RuntimeSimulationSettings
+): RuntimeSimulationSettings;
 ```
+
 Determines runtime particle count based on device capabilities.
 
 **Parameters:**
+
 - `input` - Device capability metrics
 - `preferredParticleCount` - Target particle count (default: `PARTICLE_COUNT`)
 
 **Returns:** Runtime settings with adjusted particle count
 
 **Heuristics:**
+
 - Fallback adapter: max 40% scale
 - Device memory ≤ 2GB: max 45% scale
 - Device memory ≤ 4GB: max 65% scale
@@ -691,14 +740,13 @@ Determines runtime particle count based on device capabilities.
 - QHD viewport: max 85% scale
 
 ```typescript
-function readRuntimeHeuristics(
-  adapter: GPUAdapter,
-  device: GPUDevice
-): SimulationHeuristicsInput
+function readRuntimeHeuristics(adapter: GPUAdapter, device: GPUDevice): SimulationHeuristicsInput;
 ```
+
 Reads runtime device capabilities.
 
 **Parameters:**
+
 - `adapter` - GPU adapter
 - `device` - GPU device
 
@@ -711,6 +759,7 @@ Reads runtime device capabilities.
 The following constants are injected into WGSL shaders at build time via preamble functions:
 
 ### Compute Shader Constants
+
 ```wgsl
 const GRAVITY: vec2f;
 const REPULSION_RADIUS: f32;
@@ -720,6 +769,7 @@ const MAX_SPEED: f32;
 ```
 
 ### Render Shader Constants
+
 ```wgsl
 const CYAN: vec3f;
 const PURPLE: vec3f;
@@ -727,6 +777,7 @@ const MAX_SPEED: f32;
 ```
 
 ### Trail Shader Constants
+
 ```wgsl
 const TRAIL_FADE_ALPHA: f32;
 ```
@@ -736,25 +787,27 @@ const TRAIL_FADE_ALPHA: f32;
 ## Data Layouts
 
 ### Particle Buffer
+
 Each particle occupies 16 bytes (4 × float32):
 
 | Offset | Size | Field | Type |
-|--------|------|-------|------|
-| 0 | 4 | x | f32 |
-| 4 | 4 | y | f32 |
-| 8 | 4 | vx | f32 |
-| 12 | 4 | vy | f32 |
+| ------ | ---- | ----- | ---- |
+| 0      | 4    | x     | f32  |
+| 4      | 4    | y     | f32  |
+| 8      | 4    | vx    | f32  |
+| 12     | 4    | vy    | f32  |
 
 ### Uniform Buffer
+
 Total size: 32 bytes (8 × float32)
 
-| Offset | Size | Field | Type |
-|--------|------|-------|------|
-| 0 | 4 | width | f32 |
-| 4 | 4 | height | f32 |
-| 8 | 4 | mouseX | f32 |
-| 12 | 4 | mouseY | f32 |
-| 16 | 4 | deltaTime | f32 |
-| 20 | 4 | _pad1 | f32 |
-| 24 | 4 | _pad2 | f32 |
-| 28 | 4 | _pad3 | f32 |
+| Offset | Size | Field     | Type |
+| ------ | ---- | --------- | ---- |
+| 0      | 4    | width     | f32  |
+| 4      | 4    | height    | f32  |
+| 8      | 4    | mouseX    | f32  |
+| 12     | 4    | mouseY    | f32  |
+| 16     | 4    | deltaTime | f32  |
+| 20     | 4    | \_pad1    | f32  |
+| 24     | 4    | \_pad2    | f32  |
+| 28     | 4    | \_pad3    | f32  |
