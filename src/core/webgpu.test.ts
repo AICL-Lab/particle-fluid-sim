@@ -59,14 +59,13 @@ describe('webgpu', () => {
     });
 
     it('should throw error when adapter is not available', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (globalThis as any).navigator = {
-        ...globalThis.navigator,
+      // Mock navigator.gpu without valid adapter
+      Object.assign(globalThis.navigator, {
         gpu: {
           requestAdapter: vi.fn().mockResolvedValue(null),
           getPreferredCanvasFormat: vi.fn().mockReturnValue('bgra8unorm'),
         },
-      };
+      });
 
       await expect(initWebGPU(canvas)).rejects.toThrow('No GPU adapter found');
     });
@@ -76,14 +75,12 @@ describe('webgpu', () => {
         requestDevice: vi.fn().mockResolvedValue(null),
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (globalThis as any).navigator = {
-        ...globalThis.navigator,
+      Object.assign(globalThis.navigator, {
         gpu: {
           requestAdapter: vi.fn().mockResolvedValue(mockAdapter),
           getPreferredCanvasFormat: vi.fn().mockReturnValue('bgra8unorm'),
         },
-      };
+      });
 
       await expect(initWebGPU(canvas)).rejects.toThrow('No GPU device found');
     });
@@ -125,14 +122,12 @@ describe('webgpu', () => {
         requestDevice: vi.fn().mockResolvedValue(mockDevice),
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (globalThis as any).navigator = {
-        ...globalThis.navigator,
+      Object.assign(globalThis.navigator, {
         gpu: {
           requestAdapter: vi.fn().mockResolvedValue(mockAdapter),
           getPreferredCanvasFormat: vi.fn().mockReturnValue('bgra8unorm'),
         },
-      };
+      });
 
       // Should not throw during init
       const ctx = await initWebGPU(canvas);

@@ -4,11 +4,11 @@ This guide covers the local setup that matters for this repository today: TypeSc
 
 ## Requirements
 
-| Tool | Requirement |
-|------|-------------|
-| Node.js | 18+ |
-| npm | 9+ |
-| Git | Any recent version |
+| Tool    | Requirement                           |
+| ------- | ------------------------------------- |
+| Node.js | 18+                                   |
+| npm     | 9+                                    |
+| Git     | Any recent version                    |
 | Browser | Chrome 113+, Edge 113+, or Safari 17+ |
 
 ## Quick start
@@ -24,13 +24,13 @@ Open `http://localhost:5173` in a WebGPU-capable browser.
 
 ## Validation commands
 
-| Command | Purpose |
-|---------|---------|
-| `npm run lint` | ESLint on `src/` |
-| `npm run typecheck` | Standalone TypeScript check |
+| Command                 | Purpose                       |
+| ----------------------- | ----------------------------- |
+| `npm run lint`          | ESLint on `src/`              |
+| `npm run typecheck`     | Standalone TypeScript check   |
 | `npm run test:coverage` | Full test suite with coverage |
-| `npm run build` | Production build |
-| `npm run verify` | CI-order closeout gate |
+| `npm run build`         | Production build              |
+| `npm run verify`        | CI-order closeout gate        |
 
 ## Editor and LSP
 
@@ -116,4 +116,4 @@ The hosted Pages site uses:
 1. `openspec/specs/` is the source of truth.
 2. WGSL shaders live in `src/shaders/`.
 3. Tests are colocated with source as `*.test.ts`.
-4. The current repository-wide cleanup runs under `openspec/changes/repo-closeout-normalization/`.
+4. All closeout work has been completed and archived.

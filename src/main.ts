@@ -38,7 +38,10 @@ function createFPSCounter(
       const now = performance.now();
       if (now - lastTime >= 1000) {
         const fps = Math.round((frameCount * 1000) / (now - lastTime));
-        element.querySelector('.fps-value')!.textContent = `${fps} FPS`;
+        const fpsElement = element.querySelector('.fps-value');
+        if (fpsElement) {
+          fpsElement.textContent = `${fps} FPS`;
+        }
         frameCount = 0;
         lastTime = now;
       }

@@ -8,6 +8,8 @@ TypeScript API documentation for the WebGPU Particle Fluid Simulation.
 
 > **Specification Contract**: The authoritative source for interface definitions is [`openspec/specs/api/typescript-interfaces.md`](https://github.com/LessUp/particle-fluid-sim/blob/master/openspec/specs/api/typescript-interfaces.md).
 
+> **📖 完整 API 参考**: 详细的 API 文档请参阅 [`docs/API.md`](https://github.com/LessUp/particle-fluid-sim/blob/master/docs/API.md)。
+
 ## Configuration
 
 ### `src/config/sim.ts`

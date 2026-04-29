@@ -214,17 +214,19 @@ export function createMockCanvas(): HTMLCanvasElement {
     return null;
   }) as typeof canvas.getContext;
 
-  canvas.getBoundingClientRect = vi.fn((): DOMRect => ({
-    left: 0,
-    top: 0,
-    width: 800,
-    height: 600,
-    right: 800,
-    bottom: 600,
-    x: 0,
-    y: 0,
-    toJSON: (): string => '{}',
-  }));
+  canvas.getBoundingClientRect = vi.fn(
+    (): DOMRect => ({
+      left: 0,
+      top: 0,
+      width: 800,
+      height: 600,
+      right: 800,
+      bottom: 600,
+      x: 0,
+      y: 0,
+      toJSON: (): string => '{}',
+    })
+  );
 
   return canvas;
 }
@@ -233,20 +235,21 @@ export function createMockCanvas(): HTMLCanvasElement {
  * Sets up global navigator.gpu mock
  */
 export function mockWebGPU(): void {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (globalThis as any).navigator = {
-    ...globalThis.navigator,
+  Object.assign(globalThis.navigator, {
     gpu: {
       requestAdapter: vi.fn().mockResolvedValue(createMockAdapter()),
       getPreferredCanvasFormat: vi.fn().mockReturnValue('bgra8unorm'),
     },
-  };
+  });
 }
 
 /**
  * Restores global navigator.gpu
  */
 export function unmockWebGPU(): void {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  delete (globalThis as any).navigator?.gpu;
+  const nav = globalThis as unknown as Record<string, unknown>;
+  const navigator = nav.navigator as Record<string, unknown>;
+  if (navigator && 'gpu' in navigator) {
+    delete navigator['gpu'];
+  }
 }

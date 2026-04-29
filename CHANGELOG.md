@@ -276,7 +276,3 @@ p.position += p.velocity * uniforms.deltaTime;
 Thanks to all contributors who have helped improve this project!
 
 See [GitHub Contributors](https://github.com/LessUp/particle-fluid-sim/graphs/contributors) for the full list.
-
----
-
-_Changelog Version: 2.0.0 | Last Updated: 2026-04-27_

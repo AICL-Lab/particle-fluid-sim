@@ -91,13 +91,7 @@ function createRendererFixture(): {
     renderBindGroup: {} as GPUBindGroup,
   };
 
-  const renderer = createRenderer(
-    ctx,
-    pipelines,
-    buffers,
-    () => ({ x: 12, y: 34 }),
-    vi.fn()
-  );
+  const renderer = createRenderer(ctx, pipelines, buffers, () => ({ x: 12, y: 34 }), vi.fn());
 
   return {
     renderer,
@@ -187,15 +181,133 @@ describe('renderer', () => {
 
   it('start and stop manage the animation loop', () => {
     const fixture = createRendererFixture();
-    const requestAnimationFrameSpy = vi
-      .spyOn(window, 'requestAnimationFrame')
-      .mockReturnValue(99);
-    const cancelAnimationFrameSpy = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {});
+    const requestAnimationFrameSpy = vi.spyOn(window, 'requestAnimationFrame').mockReturnValue(99);
+    const cancelAnimationFrameSpy = vi
+      .spyOn(window, 'cancelAnimationFrame')
+      .mockImplementation(() => {});
 
     fixture.renderer.start();
     fixture.renderer.stop();
 
     expect(requestAnimationFrameSpy).toHaveBeenCalledTimes(1);
     expect(cancelAnimationFrameSpy).toHaveBeenCalledWith(99);
+  });
+
+  it('destroy stops the animation loop and destroys trail resources', () => {
+    const fixture = createRendererFixture();
+    vi.spyOn(buffersModule, 'updateUniformBuffer').mockImplementation(() => {});
+    const cancelAnimationFrameSpy = vi
+      .spyOn(window, 'cancelAnimationFrame')
+      .mockImplementation(() => {});
+
+    // First render to initialize trail texture
+    (fixture.renderer as unknown as { render: (deltaTime: number) => void }).render(0.02);
+
+    fixture.renderer.start();
+    fixture.renderer.destroy();
+
+    expect(cancelAnimationFrameSpy).toHaveBeenCalled();
+    expect(fixture.trailTexture.destroy).toHaveBeenCalled();
+  });
+
+  it('destroy is idempotent - can be called multiple times', () => {
+    const fixture = createRendererFixture();
+    vi.spyOn(buffersModule, 'updateUniformBuffer').mockImplementation(() => {});
+
+    // First render to initialize trail texture
+    (fixture.renderer as unknown as { render: (deltaTime: number) => void }).render(0.02);
+
+    fixture.renderer.destroy();
+    fixture.renderer.destroy();
+
+    expect(fixture.trailTexture.destroy).toHaveBeenCalledTimes(1);
+  });
+
+  it('start is idempotent - calling twice does not start two loops', () => {
+    const fixture = createRendererFixture();
+    const requestAnimationFrameSpy = vi.spyOn(window, 'requestAnimationFrame').mockReturnValue(1);
+
+    fixture.renderer.start();
+    fixture.renderer.start();
+
+    expect(requestAnimationFrameSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('animation loop calls render and schedules next frame', () => {
+    const fixture = createRendererFixture();
+    vi.spyOn(buffersModule, 'updateUniformBuffer').mockImplementation(() => {});
+
+    let frameCallback: FrameRequestCallback | undefined;
+    const requestAnimationFrameSpy = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((cb: FrameRequestCallback) => {
+        frameCallback = cb;
+        return 1;
+      });
+
+    fixture.renderer.start();
+
+    expect(requestAnimationFrameSpy).toHaveBeenCalledTimes(1);
+
+    // Simulate first frame
+    if (frameCallback) {
+      frameCallback(16);
+    }
+
+    expect(fixture.device.queue.submit).toHaveBeenCalled();
+    expect(requestAnimationFrameSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('animation loop stops when stop is called', () => {
+    const fixture = createRendererFixture();
+    vi.spyOn(buffersModule, 'updateUniformBuffer').mockImplementation(() => {});
+
+    let frameCallback: FrameRequestCallback | undefined;
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
+      frameCallback = cb;
+      return 1;
+    });
+
+    fixture.renderer.start();
+    fixture.renderer.stop();
+
+    // Simulate frame callback after stop
+    if (frameCallback) {
+      frameCallback(16);
+    }
+
+    // Should not have scheduled another frame after stop
+    expect(fixture.device.queue.submit).not.toHaveBeenCalled();
+  });
+
+  it('animation loop calculates deltaTime correctly', () => {
+    const fixture = createRendererFixture();
+    const updateUniformBufferSpy = vi
+      .spyOn(buffersModule, 'updateUniformBuffer')
+      .mockImplementation(() => {});
+
+    let frameCallback: FrameRequestCallback | undefined;
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
+      frameCallback = cb;
+      return 1;
+    });
+
+    fixture.renderer.start();
+
+    // First frame (no previous time, uses DEFAULT_DELTA_TIME)
+    if (frameCallback) {
+      frameCallback(0);
+    }
+
+    // Second frame (16ms later)
+    if (frameCallback) {
+      frameCallback(16);
+    }
+
+    // Check that deltaTime was calculated for second frame
+    const lastCall =
+      updateUniformBufferSpy.mock.calls[updateUniformBufferSpy.mock.calls.length - 1];
+    const deltaTime = lastCall[6]; // deltaTime is the 7th argument
+    expect(deltaTime).toBeCloseTo(0.016, 2);
   });
 });

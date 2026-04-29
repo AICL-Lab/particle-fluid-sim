@@ -1,7 +1,25 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fc from 'fast-check';
-import { initializeParticles, validateParticleData } from './buffers';
-import { Vec2, PARTICLE_COUNT } from '../types';
+import {
+  initializeParticles,
+  validateParticleData,
+  createParticleBuffer,
+  createUniformBuffer,
+  updateUniformBuffer,
+  createBuffers,
+} from './buffers';
+import {
+  createMockDevice,
+  createMockBuffer,
+  installMockWebGPUConstants,
+} from '../test/webgpu-mock';
+import {
+  Vec2,
+  PARTICLE_COUNT,
+  UNIFORM_BUFFER_SIZE,
+  DEFAULT_DELTA_TIME,
+  OFFSCREEN_COORDINATE,
+} from '../types';
 
 // Arbitrary for canvas size
 const canvasSizeArb = fc.record({
@@ -221,6 +239,244 @@ describe('Buffers Edge Cases', () => {
       data[offset] = 1000;
 
       expect(validateParticleData(data, canvasSize)).toBe(false);
+    });
+  });
+});
+
+describe('GPU Buffer Operations', () => {
+  beforeEach(() => {
+    installMockWebGPUConstants();
+  });
+
+  describe('createParticleBuffer', () => {
+    it('should create a buffer with correct size', () => {
+      const device = createMockDevice();
+      const particleCount = 100;
+      const particleData = initializeParticles({ x: 800, y: 600 }, particleCount);
+      const expectedSize = particleCount * 16; // 4 floats * 4 bytes each
+
+      // Override createBuffer to provide sufficiently large mapped range
+      device.createBuffer = vi.fn((descriptor) => {
+        const buffer = createMockBuffer();
+        if (descriptor.mappedAtCreation && descriptor.size) {
+          buffer.getMappedRange = vi.fn().mockReturnValue(new ArrayBuffer(descriptor.size));
+        }
+        return buffer;
+      });
+
+      const buffer = createParticleBuffer(device, particleData);
+
+      expect(device.createBuffer).toHaveBeenCalledWith(
+        expect.objectContaining({
+          size: expectedSize,
+          usage: expect.any(Number),
+          mappedAtCreation: true,
+        })
+      );
+      expect(buffer).toBeDefined();
+    });
+
+    it('should create a buffer with mappedAtCreation true', () => {
+      const device = createMockDevice();
+      const particleCount = 50;
+      const particleData = initializeParticles({ x: 800, y: 600 }, particleCount);
+
+      // Override createBuffer to provide sufficiently large mapped range
+      device.createBuffer = vi.fn((descriptor) => {
+        const buffer = createMockBuffer();
+        if (descriptor.mappedAtCreation && descriptor.size) {
+          buffer.getMappedRange = vi.fn().mockReturnValue(new ArrayBuffer(descriptor.size));
+        }
+        return buffer;
+      });
+
+      createParticleBuffer(device, particleData);
+
+      expect(device.createBuffer).toHaveBeenCalledWith(
+        expect.objectContaining({
+          mappedAtCreation: true,
+        })
+      );
+    });
+
+    it('should copy particle data into the buffer', () => {
+      const device = createMockDevice();
+      const particleCount = 25;
+      const particleData = initializeParticles({ x: 800, y: 600 }, particleCount);
+      const expectedSize = particleCount * 16;
+
+      // Create a mock buffer with appropriately sized mapped range
+      const mockBuffer = createMockBuffer();
+      const mappedRange = new ArrayBuffer(expectedSize);
+      mockBuffer.getMappedRange = vi.fn().mockReturnValue(mappedRange);
+      device.createBuffer = vi.fn().mockReturnValue(mockBuffer);
+
+      createParticleBuffer(device, particleData);
+
+      expect(mockBuffer.getMappedRange).toHaveBeenCalled();
+      expect(mockBuffer.unmap).toHaveBeenCalled();
+    });
+  });
+
+  describe('createUniformBuffer', () => {
+    it('should create a buffer with UNIFORM_BUFFER_SIZE', () => {
+      const device = createMockDevice();
+
+      createUniformBuffer(device);
+
+      expect(device.createBuffer).toHaveBeenCalledWith({
+        size: UNIFORM_BUFFER_SIZE,
+        usage: expect.any(Number),
+      });
+    });
+
+    it('should create a buffer with UNIFORM and COPY_DST usage', () => {
+      const device = createMockDevice();
+
+      createUniformBuffer(device);
+
+      expect(device.createBuffer).toHaveBeenCalledWith({
+        size: UNIFORM_BUFFER_SIZE,
+        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+      });
+    });
+  });
+
+  describe('updateUniformBuffer', () => {
+    it('should write correct data to the buffer', () => {
+      const device = createMockDevice();
+      const buffer = createMockBuffer();
+
+      updateUniformBuffer(device, buffer, 800, 600, 100, 200, 0.016);
+
+      expect(device.queue.writeBuffer).toHaveBeenCalledWith(buffer, 0, expect.any(Float32Array));
+    });
+
+    it('should use DEFAULT_DELTA_TIME when not specified', () => {
+      const device = createMockDevice();
+      const buffer = createMockBuffer();
+
+      updateUniformBuffer(device, buffer, 800, 600, 100, 200);
+
+      const callArgs = device.queue.writeBuffer as ReturnType<typeof vi.fn>;
+      const writtenData = callArgs.mock.calls[0][2] as Float32Array;
+
+      expect(writtenData[4]).toBeCloseTo(DEFAULT_DELTA_TIME, 6);
+    });
+
+    it('should write correct uniform values in order', () => {
+      const device = createMockDevice();
+      const buffer = createMockBuffer();
+
+      updateUniformBuffer(device, buffer, 1024, 768, 50, 100, 0.033);
+
+      const callArgs = device.queue.writeBuffer as ReturnType<typeof vi.fn>;
+      const writtenData = callArgs.mock.calls[0][2] as Float32Array;
+
+      expect(writtenData[0]).toBe(1024); // width
+      expect(writtenData[1]).toBe(768); // height
+      expect(writtenData[2]).toBe(50); // mouseX
+      expect(writtenData[3]).toBe(100); // mouseY
+      expect(writtenData[4]).toBeCloseTo(0.033, 5); // deltaTime (float precision)
+    });
+
+    it('should include padding values', () => {
+      const device = createMockDevice();
+      const buffer = createMockBuffer();
+
+      updateUniformBuffer(device, buffer, 800, 600, 0, 0, 0.016);
+
+      const callArgs = device.queue.writeBuffer as ReturnType<typeof vi.fn>;
+      const writtenData = callArgs.mock.calls[0][2] as Float32Array;
+
+      expect(writtenData.length).toBe(8); // 5 values + 3 padding
+      expect(writtenData[5]).toBe(0); // padding
+      expect(writtenData[6]).toBe(0); // padding
+      expect(writtenData[7]).toBe(0); // padding
+    });
+  });
+
+  describe('createBuffers', () => {
+    it('should create both particle and uniform buffers', () => {
+      const device = createMockDevice();
+      const canvasSize: Vec2 = { x: 800, y: 600 };
+      const particleCount = 10;
+
+      // Override createBuffer to provide sufficiently large mapped range
+      device.createBuffer = vi.fn((descriptor) => {
+        const buffer = createMockBuffer();
+        if (descriptor.mappedAtCreation && descriptor.size) {
+          buffer.getMappedRange = vi.fn().mockReturnValue(new ArrayBuffer(descriptor.size));
+        }
+        return buffer;
+      });
+
+      const buffers = createBuffers(device, canvasSize, particleCount);
+
+      expect(buffers.particleBuffer).toBeDefined();
+      expect(buffers.uniformBuffer).toBeDefined();
+    });
+
+    it('should return correct particle count', () => {
+      const device = createMockDevice();
+      const canvasSize: Vec2 = { x: 800, y: 600 };
+      const particleCount = 50;
+
+      // Override createBuffer to provide sufficiently large mapped range
+      device.createBuffer = vi.fn((descriptor) => {
+        const buffer = createMockBuffer();
+        if (descriptor.mappedAtCreation && descriptor.size) {
+          buffer.getMappedRange = vi.fn().mockReturnValue(new ArrayBuffer(descriptor.size));
+        }
+        return buffer;
+      });
+
+      const buffers = createBuffers(device, canvasSize, particleCount);
+
+      expect(buffers.particleCount).toBe(particleCount);
+    });
+
+    it('should use default PARTICLE_COUNT when not specified', () => {
+      const device = createMockDevice();
+      const canvasSize: Vec2 = { x: 800, y: 600 };
+
+      // Override createBuffer to provide sufficiently large mapped range
+      device.createBuffer = vi.fn((descriptor) => {
+        const buffer = createMockBuffer();
+        if (descriptor.mappedAtCreation && descriptor.size) {
+          buffer.getMappedRange = vi.fn().mockReturnValue(new ArrayBuffer(descriptor.size));
+        }
+        return buffer;
+      });
+
+      const buffers = createBuffers(device, canvasSize);
+
+      expect(buffers.particleCount).toBe(PARTICLE_COUNT);
+    });
+
+    it('should initialize uniform buffer with offscreen coordinates', () => {
+      const device = createMockDevice();
+      const canvasSize: Vec2 = { x: 1024, y: 768 };
+      const particleCount = 10;
+
+      // Override createBuffer to provide sufficiently large mapped range
+      device.createBuffer = vi.fn((descriptor) => {
+        const buffer = createMockBuffer();
+        if (descriptor.mappedAtCreation && descriptor.size) {
+          buffer.getMappedRange = vi.fn().mockReturnValue(new ArrayBuffer(descriptor.size));
+        }
+        return buffer;
+      });
+
+      createBuffers(device, canvasSize, particleCount);
+
+      const callArgs = device.queue.writeBuffer as ReturnType<typeof vi.fn>;
+      const writtenData = callArgs.mock.calls[0][2] as Float32Array;
+
+      expect(writtenData[0]).toBe(1024);
+      expect(writtenData[1]).toBe(768);
+      expect(writtenData[2]).toBe(OFFSCREEN_COORDINATE);
+      expect(writtenData[3]).toBe(OFFSCREEN_COORDINATE);
     });
   });
 });

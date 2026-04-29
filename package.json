@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "type": "module",
   "description": "High-performance WebGPU particle fluid simulation with compute shaders",
-  "author": "",
+  "author": "LessUp",
   "license": "MIT",
   "keywords": [
     "webgpu",
