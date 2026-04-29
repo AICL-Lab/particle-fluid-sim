@@ -3,7 +3,6 @@
 ## First principles
 
 - Read `AGENTS.md` and the relevant files in `openspec/specs/` before changing code or process.
-- Treat `openspec/changes/repo-closeout-normalization/` as the active closeout workstream unless a new approved change supersedes it.
 - Optimize for finishing the repository cleanly, not for adding more features.
 
 ## Repository rules
@@ -39,9 +38,8 @@ npm run lint && npm run typecheck && npm run test:coverage && npm run build
 ## Workflow
 
 1. Review the relevant OpenSpec docs.
-2. Update the active change when behavior, workflow, or governance changes materially.
-3. Implement in coherent batches.
-4. Use `/review` before archive-critical steps or major workflow rewrites.
-5. Use `/research` for cross-cutting investigations before large refactors.
-6. Prefer one long-running autopilot session over `/fleet` unless parallelism is clearly worth it.
-7. Use `/remote` only when GitHub-hosted execution is clearly more useful than a local session.
+2. Implement in coherent batches.
+3. Use `/review` before archive-critical steps or major workflow rewrites.
+4. Use `/research` for cross-cutting investigations before large refactors.
+5. Prefer one long-running autopilot session over `/fleet` unless parallelism is clearly worth it.
+6. Use `/remote` only when GitHub-hosted execution is clearly more useful than a local session.
