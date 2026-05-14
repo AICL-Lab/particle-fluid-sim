@@ -9,7 +9,7 @@ import {
   createMockTexture,
   installMockWebGPUConstants,
 } from '../test/webgpu-mock';
-import { WORKGROUP_SIZE, type ParticleBuffers, type Pipelines, type WebGPUContext } from '../types';
+import { type ParticleBuffers, type Pipelines, type WebGPUContext } from '../types';
 import * as buffersModule from './buffers';
 
 function createRendererFixture(): {
@@ -120,30 +120,12 @@ describe('renderer', () => {
     expect(fixture.renderer).toBeInstanceOf(Renderer);
   });
 
-  it('renders a frame with compute, trail, render, and present passes', () => {
+  it('delegates frame encoding to FrameEncoder and submits the command buffer', () => {
     const fixture = createRendererFixture();
-    const updateUniformBufferSpy = vi
-      .spyOn(buffersModule, 'updateUniformBuffer')
-      .mockImplementation(() => {});
+    vi.spyOn(buffersModule, 'updateUniformBuffer').mockImplementation(() => {});
 
     (fixture.renderer as unknown as { render: (deltaTime: number) => void }).render(0.02);
 
-    expect(updateUniformBufferSpy).toHaveBeenCalledWith(
-      fixture.device,
-      fixture.buffers.uniformBuffer,
-      800,
-      600,
-      12,
-      34,
-      0.02
-    );
-    expect(fixture.computePass.setPipeline).toHaveBeenCalledWith(fixture.pipelines.computePipeline);
-    expect(fixture.computePass.dispatchWorkgroups).toHaveBeenCalledWith(
-      Math.ceil(fixture.buffers.particleCount / WORKGROUP_SIZE)
-    );
-    expect(fixture.trailPass.draw).toHaveBeenCalledWith(4);
-    expect(fixture.renderPass.draw).toHaveBeenCalledWith(fixture.buffers.particleCount);
-    expect(fixture.presentPass.draw).toHaveBeenCalledWith(4);
     expect(fixture.device.queue.submit).toHaveBeenCalledTimes(1);
   });
 
@@ -164,18 +146,31 @@ describe('renderer', () => {
     expect(fixture.trailTexture.destroy).toHaveBeenCalledTimes(1);
   });
 
-  it('skips rendering when the canvas has no drawable size', () => {
+  it('skips frame submission when the canvas has no drawable size', () => {
     const fixture = createRendererFixture();
-    const updateUniformBufferSpy = vi
-      .spyOn(buffersModule, 'updateUniformBuffer')
-      .mockImplementation(() => {});
+    vi.spyOn(buffersModule, 'updateUniformBuffer').mockImplementation(() => {});
 
     fixture.ctx.canvas.width = 0;
     fixture.ctx.canvas.height = 0;
 
     (fixture.renderer as unknown as { render: (deltaTime: number) => void }).render(0.02);
 
-    expect(updateUniformBufferSpy).not.toHaveBeenCalled();
+    expect(fixture.device.queue.submit).not.toHaveBeenCalled();
+  });
+
+  it('skips frame submission when trail resources cannot be created', () => {
+    const fixture = createRendererFixture();
+    vi.spyOn(buffersModule, 'updateUniformBuffer').mockImplementation(() => {});
+
+    // Override createTexture to return a texture whose createView yields null
+    fixture.device.createTexture = vi.fn().mockReturnValue(
+      createMockTexture({
+        createView: vi.fn().mockReturnValue(null),
+      })
+    );
+
+    (fixture.renderer as unknown as { render: (deltaTime: number) => void }).render(0.02);
+
     expect(fixture.device.queue.submit).not.toHaveBeenCalled();
   });
 

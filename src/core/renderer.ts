@@ -5,11 +5,8 @@ import {
   Vec2,
   DEFAULT_DELTA_TIME,
   MAX_DELTA_TIME,
-  WORKGROUP_SIZE,
 } from '../types';
-import { updateUniformBuffer } from './buffers';
-
-const CLEAR_COLOR: GPUColor = { r: 0, g: 0, b: 0, a: 1 };
+import { encodeFrame } from './frame-encoder';
 
 /**
  * Renderer class manages the render loop
@@ -145,15 +142,7 @@ export class Renderer {
    * Render a single frame
    */
   private render(deltaTime: number): void {
-    const { device, context, canvas } = this.ctx;
-    const {
-      computePipeline,
-      renderPipeline,
-      trailPipeline,
-      presentPipeline,
-      computeBindGroup,
-      renderBindGroup,
-    } = this.pipelines;
+    const { canvas } = this.ctx;
 
     if (canvas.width === 0 || canvas.height === 0) {
       return;
@@ -165,90 +154,24 @@ export class Renderer {
       return;
     }
 
-    // Update uniforms with current canvas size, mouse position, and deltaTime
     const mousePos = this.getMousePosition();
-    updateUniformBuffer(
-      device,
-      this.buffers.uniformBuffer,
-      canvas.width,
-      canvas.height,
-      mousePos.x,
-      mousePos.y,
-      deltaTime
-    );
-
-    // Get current texture to render to
-    const textureView = context.getCurrentTexture().createView();
-
-    // Create command encoder
-    const commandEncoder = device.createCommandEncoder({
-      label: 'Main Command Encoder',
+    const commandBuffer = encodeFrame({
+      device: this.ctx.device,
+      context: this.ctx.context,
+      canvas,
+      pipelines: this.pipelines,
+      buffers: this.buffers,
+      mousePosition: mousePos,
+      deltaTime,
+      trailTextureView: this.trailTextureView,
+      presentBindGroup: this.presentBindGroup,
+      trailTextureInitialized: this.trailTextureInitialized,
     });
 
-    // === Compute Pass ===
-    const computePass = commandEncoder.beginComputePass({
-      label: 'Compute Pass',
-    });
-    computePass.setPipeline(computePipeline);
-    computePass.setBindGroup(0, computeBindGroup);
-    // Dispatch enough workgroups to cover all particles
-    const workgroupCount = Math.ceil(this.buffers.particleCount / WORKGROUP_SIZE);
-    computePass.dispatchWorkgroups(workgroupCount);
-    computePass.end();
-
-    // === Trail Pass (fade effect into persistent offscreen texture) ===
-    const trailLoadOp: GPULoadOp = this.trailTextureInitialized ? 'load' : 'clear';
-    const trailPass = commandEncoder.beginRenderPass({
-      label: 'Trail Pass',
-      colorAttachments: [
-        {
-          view: this.trailTextureView,
-          loadOp: trailLoadOp,
-          clearValue: CLEAR_COLOR,
-          storeOp: 'store',
-        },
-      ],
-    });
-    trailPass.setPipeline(trailPipeline);
-    trailPass.draw(4); // Fullscreen quad (4 vertices)
-    trailPass.end();
-
-    // === Render Pass (particles) ===
-    const renderPass = commandEncoder.beginRenderPass({
-      label: 'Render Pass',
-      colorAttachments: [
-        {
-          view: this.trailTextureView,
-          loadOp: 'load',
-          storeOp: 'store',
-        },
-      ],
-    });
-    renderPass.setPipeline(renderPipeline);
-    renderPass.setBindGroup(0, renderBindGroup);
-    renderPass.draw(this.buffers.particleCount); // One vertex per particle
-    renderPass.end();
-
-    // === Present Pass ===
-    const presentPass = commandEncoder.beginRenderPass({
-      label: 'Present Pass',
-      colorAttachments: [
-        {
-          view: textureView,
-          loadOp: 'clear',
-          clearValue: CLEAR_COLOR,
-          storeOp: 'store',
-        },
-      ],
-    });
-    presentPass.setPipeline(presentPipeline);
-    presentPass.setBindGroup(0, this.presentBindGroup);
-    presentPass.draw(4);
-    presentPass.end();
-
-    // Submit commands
-    device.queue.submit([commandEncoder.finish()]);
-    this.trailTextureInitialized = true;
+    if (commandBuffer) {
+      this.ctx.device.queue.submit([commandBuffer]);
+      this.trailTextureInitialized = true;
+    }
   }
 }
 

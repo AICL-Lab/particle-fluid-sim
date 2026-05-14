@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createComputePipeline, createPipelines, createRenderPipeline } from './pipelines';
+import { createComputePipeline, createRenderPipeline } from './pipelines';
 import {
-  createMockBuffer,
   createMockDevice,
   installMockWebGPUConstants,
 } from '../test/webgpu-mock';
@@ -85,41 +84,4 @@ describe('pipelines', () => {
     });
   });
 
-  it('creates bind groups that point at the supplied buffers', () => {
-    const particleBuffer = createMockBuffer();
-    const uniformBuffer = createMockBuffer();
-    const createdBindGroups: unknown[] = [];
-    const device = createMockDevice({
-      createBindGroup: vi.fn().mockImplementation((descriptor) => {
-        createdBindGroups.push(descriptor);
-        return { descriptor } as unknown as GPUBindGroup;
-      }),
-    });
-
-    const result = createPipelines(device, 'bgra8unorm', {
-      particleBuffer,
-      uniformBuffer,
-      particleCount: 256,
-    });
-
-    expect(device.createBindGroup).toHaveBeenCalledTimes(2);
-    expect(createdBindGroups).toEqual([
-      expect.objectContaining({
-        label: 'Compute Bind Group',
-        entries: [
-          { binding: 0, resource: { buffer: particleBuffer } },
-          { binding: 1, resource: { buffer: uniformBuffer } },
-        ],
-      }),
-      expect.objectContaining({
-        label: 'Render Bind Group',
-        entries: [
-          { binding: 0, resource: { buffer: particleBuffer } },
-          { binding: 1, resource: { buffer: uniformBuffer } },
-        ],
-      }),
-    ]);
-    expect(result.computeBindGroup).toBeDefined();
-    expect(result.renderBindGroup).toBeDefined();
-  });
 });

@@ -6,7 +6,6 @@ import {
   createParticleBuffer,
   createUniformBuffer,
   updateUniformBuffer,
-  createBuffers,
 } from './buffers';
 import {
   createMockDevice,
@@ -18,7 +17,6 @@ import {
   PARTICLE_COUNT,
   UNIFORM_BUFFER_SIZE,
   DEFAULT_DELTA_TIME,
-  OFFSCREEN_COORDINATE,
 } from '../types';
 
 // Arbitrary for canvas size
@@ -396,87 +394,4 @@ describe('GPU Buffer Operations', () => {
     });
   });
 
-  describe('createBuffers', () => {
-    it('should create both particle and uniform buffers', () => {
-      const device = createMockDevice();
-      const canvasSize: Vec2 = { x: 800, y: 600 };
-      const particleCount = 10;
-
-      // Override createBuffer to provide sufficiently large mapped range
-      device.createBuffer = vi.fn((descriptor) => {
-        const buffer = createMockBuffer();
-        if (descriptor.mappedAtCreation && descriptor.size) {
-          buffer.getMappedRange = vi.fn().mockReturnValue(new ArrayBuffer(descriptor.size));
-        }
-        return buffer;
-      });
-
-      const buffers = createBuffers(device, canvasSize, particleCount);
-
-      expect(buffers.particleBuffer).toBeDefined();
-      expect(buffers.uniformBuffer).toBeDefined();
-    });
-
-    it('should return correct particle count', () => {
-      const device = createMockDevice();
-      const canvasSize: Vec2 = { x: 800, y: 600 };
-      const particleCount = 50;
-
-      // Override createBuffer to provide sufficiently large mapped range
-      device.createBuffer = vi.fn((descriptor) => {
-        const buffer = createMockBuffer();
-        if (descriptor.mappedAtCreation && descriptor.size) {
-          buffer.getMappedRange = vi.fn().mockReturnValue(new ArrayBuffer(descriptor.size));
-        }
-        return buffer;
-      });
-
-      const buffers = createBuffers(device, canvasSize, particleCount);
-
-      expect(buffers.particleCount).toBe(particleCount);
-    });
-
-    it('should use default PARTICLE_COUNT when not specified', () => {
-      const device = createMockDevice();
-      const canvasSize: Vec2 = { x: 800, y: 600 };
-
-      // Override createBuffer to provide sufficiently large mapped range
-      device.createBuffer = vi.fn((descriptor) => {
-        const buffer = createMockBuffer();
-        if (descriptor.mappedAtCreation && descriptor.size) {
-          buffer.getMappedRange = vi.fn().mockReturnValue(new ArrayBuffer(descriptor.size));
-        }
-        return buffer;
-      });
-
-      const buffers = createBuffers(device, canvasSize);
-
-      expect(buffers.particleCount).toBe(PARTICLE_COUNT);
-    });
-
-    it('should initialize uniform buffer with offscreen coordinates', () => {
-      const device = createMockDevice();
-      const canvasSize: Vec2 = { x: 1024, y: 768 };
-      const particleCount = 10;
-
-      // Override createBuffer to provide sufficiently large mapped range
-      device.createBuffer = vi.fn((descriptor) => {
-        const buffer = createMockBuffer();
-        if (descriptor.mappedAtCreation && descriptor.size) {
-          buffer.getMappedRange = vi.fn().mockReturnValue(new ArrayBuffer(descriptor.size));
-        }
-        return buffer;
-      });
-
-      createBuffers(device, canvasSize, particleCount);
-
-      const callArgs = device.queue.writeBuffer as ReturnType<typeof vi.fn>;
-      const writtenData = callArgs.mock.calls[0][2] as Float32Array;
-
-      expect(writtenData[0]).toBe(1024);
-      expect(writtenData[1]).toBe(768);
-      expect(writtenData[2]).toBe(OFFSCREEN_COORDINATE);
-      expect(writtenData[3]).toBe(OFFSCREEN_COORDINATE);
-    });
-  });
 });

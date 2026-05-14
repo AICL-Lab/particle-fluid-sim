@@ -1,4 +1,3 @@
-import { Pipelines, ParticleBuffers } from '../types';
 import {
   buildComputeShaderPreamble,
   buildRenderShaderPreamble,
@@ -199,51 +198,4 @@ export function createPresentPipeline(
   });
 }
 
-/**
- * Create all pipelines and bind groups
- */
-export function createPipelines(
-  device: GPUDevice,
-  format: GPUTextureFormat,
-  buffers: ParticleBuffers
-): Pipelines {
-  // Create pipelines
-  const { pipeline: computePipeline, bindGroupLayout: computeBindGroupLayout } =
-    createComputePipeline(device);
 
-  const { pipeline: renderPipeline, bindGroupLayout: renderBindGroupLayout } = createRenderPipeline(
-    device,
-    format
-  );
-
-  const trailPipeline = createTrailPipeline(device, format);
-  const presentPipeline = createPresentPipeline(device, format);
-
-  // Create bind groups
-  const computeBindGroup = device.createBindGroup({
-    label: 'Compute Bind Group',
-    layout: computeBindGroupLayout,
-    entries: [
-      { binding: 0, resource: { buffer: buffers.particleBuffer } },
-      { binding: 1, resource: { buffer: buffers.uniformBuffer } },
-    ],
-  });
-
-  const renderBindGroup = device.createBindGroup({
-    label: 'Render Bind Group',
-    layout: renderBindGroupLayout,
-    entries: [
-      { binding: 0, resource: { buffer: buffers.particleBuffer } },
-      { binding: 1, resource: { buffer: buffers.uniformBuffer } },
-    ],
-  });
-
-  return {
-    computePipeline,
-    renderPipeline,
-    trailPipeline,
-    presentPipeline,
-    computeBindGroup,
-    renderBindGroup,
-  };
-}

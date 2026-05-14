@@ -1,73 +1,16 @@
-import { initWebGPU, reconfigureContext, setupCanvas, showError } from './core/webgpu';
-import { createBuffers } from './core/buffers';
-import { createPipelines } from './core/pipelines';
+import { initWebGPU, reconfigureContext } from './core/webgpu';
+import { setupCanvas } from './core/canvas';
+import { createSimulationResources, destroySimulationResources } from './core/simulation-resources';
 import { createMouseHandler } from './core/input';
 import { readRuntimeHeuristics, resolveSimulationSettings } from './core/quality';
 import { createRenderer } from './core/renderer';
+import { showError, createFPSCounter, createInfoOverlay, createLoadingIndicator } from './core/app-shell';
 import './style.css';
 
 function debugLog(message: string): void {
   if (import.meta.env.DEV) {
     console.warn(message);
   }
-}
-
-/**
- * Create FPS counter element
- */
-function createFPSCounter(
-  particleCount: number,
-  qualityTier: string
-): { update: () => void; element: HTMLElement } {
-  const element = document.createElement('div');
-  element.id = 'fps-counter';
-  element.innerHTML = `
-    <div class="fps-value">-- FPS</div>
-    <div class="particle-count">${particleCount.toLocaleString()} particles</div>
-    <div class="quality-tier">${qualityTier} quality</div>
-  `;
-  document.body.appendChild(element);
-
-  let frameCount = 0;
-  let lastTime = performance.now();
-
-  return {
-    element,
-    update: (): void => {
-      frameCount++;
-      const now = performance.now();
-      if (now - lastTime >= 1000) {
-        const fps = Math.round((frameCount * 1000) / (now - lastTime));
-        const fpsElement = element.querySelector('.fps-value');
-        if (fpsElement) {
-          fpsElement.textContent = `${fps} FPS`;
-        }
-        frameCount = 0;
-        lastTime = now;
-      }
-    },
-  };
-}
-
-/**
- * Create info overlay
- */
-function createInfoOverlay(): HTMLElement {
-  const element = document.createElement('div');
-  element.id = 'info-overlay';
-  element.innerHTML = `
-    <h1>WebGPU Particle Fluid Simulation</h1>
-    <p>Move your mouse to interact with particles</p>
-    <p class="hint">Particles are repelled by the cursor</p>
-  `;
-  document.body.appendChild(element);
-
-  // Fade out after 3 seconds
-  setTimeout(() => {
-    element.classList.add('fade-out');
-  }, 3000);
-
-  return element;
 }
 
 /**
@@ -85,10 +28,7 @@ async function main(): Promise<void> {
   setupCanvas(canvas);
 
   // Show loading indicator
-  const loadingDiv = document.createElement('div');
-  loadingDiv.className = 'loading';
-  loadingDiv.textContent = 'Initializing WebGPU...';
-  document.body.appendChild(loadingDiv);
+  const loadingDiv = createLoadingIndicator('Initializing WebGPU...');
 
   try {
     // Initialize WebGPU
@@ -103,22 +43,18 @@ async function main(): Promise<void> {
       `Using ${simulationSettings.particleCount.toLocaleString()} particles (${simulationSettings.qualityTier} quality)`
     );
 
-    // Create buffers
-    debugLog('Creating buffers...');
-    const buffers = createBuffers(
+    // Create GPU resources (buffers + pipelines + bind groups)
+    debugLog('Creating simulation resources...');
+    const resources = createSimulationResources(
       ctx.device,
+      ctx.format,
       {
         x: canvas.width,
         y: canvas.height,
       },
       simulationSettings.particleCount
     );
-    debugLog('Buffers created');
-
-    // Create pipelines
-    debugLog('Creating pipelines...');
-    const pipelines = createPipelines(ctx.device, ctx.format, buffers);
-    debugLog('Pipelines created');
+    debugLog('Simulation resources created');
 
     // Remove loading indicator
     loadingDiv.remove();
@@ -138,8 +74,8 @@ async function main(): Promise<void> {
     // Create renderer with FPS callback
     const renderer = createRenderer(
       ctx,
-      pipelines,
-      buffers,
+      resources.pipelines,
+      resources.buffers,
       mouseHandler.getMousePosition,
       fpsCounter.update
     );
@@ -160,6 +96,7 @@ async function main(): Promise<void> {
     window.addEventListener('beforeunload', (): void => {
       renderer.destroy();
       mouseHandler.destroy();
+      destroySimulationResources(resources);
     });
   } catch (error) {
     loadingDiv.remove();

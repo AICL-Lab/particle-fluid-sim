@@ -1,9 +1,7 @@
 import {
   DEFAULT_DELTA_TIME,
   Vec2,
-  ParticleBuffers,
   INITIAL_VELOCITY_RANGE,
-  OFFSCREEN_COORDINATE,
   PARTICLE_COUNT,
   PARTICLE_SIZE,
   UNIFORM_BUFFER_SIZE,
@@ -69,31 +67,6 @@ export function updateUniformBuffer(
 ): void {
   const data = new Float32Array([width, height, mouseX, mouseY, deltaTime, 0, 0, 0]);
   device.queue.writeBuffer(buffer, 0, data);
-}
-
-/**
- * Create all buffers needed for the particle system
- */
-export function createBuffers(
-  device: GPUDevice,
-  canvasSize: Vec2,
-  particleCount: number = PARTICLE_COUNT
-): ParticleBuffers {
-  const particleData = initializeParticles(canvasSize, particleCount);
-  const particleBuffer = createParticleBuffer(device, particleData);
-  const uniformBuffer = createUniformBuffer(device);
-
-  // Initialize uniform buffer
-  updateUniformBuffer(
-    device,
-    uniformBuffer,
-    canvasSize.x,
-    canvasSize.y,
-    OFFSCREEN_COORDINATE,
-    OFFSCREEN_COORDINATE
-  );
-
-  return { particleBuffer, uniformBuffer, particleCount };
 }
 
 /**

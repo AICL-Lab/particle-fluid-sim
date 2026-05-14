@@ -6,7 +6,7 @@ import {
   mockWebGPU,
   unmockWebGPU,
 } from '../test/webgpu-mock';
-import { initWebGPU, setupCanvas, reconfigureContext, showError } from './webgpu';
+import { initWebGPU, reconfigureContext } from './webgpu';
 
 describe('webgpu', () => {
   let canvas: HTMLCanvasElement;
@@ -21,24 +21,6 @@ describe('webgpu', () => {
     unmockWebGPU();
     vi.restoreAllMocks();
     document.body.innerHTML = '';
-  });
-
-  describe('showError', () => {
-    it('should create error div with message', () => {
-      showError('Test error message');
-
-      const errorDiv = document.body.querySelector('.error-message');
-      expect(errorDiv).not.toBeNull();
-      expect(errorDiv?.textContent).toBe('Test error message');
-    });
-
-    it('should append error to body', () => {
-      showError('First error');
-      showError('Second error');
-
-      const errorDivs = document.body.querySelectorAll('.error-message');
-      expect(errorDivs).toHaveLength(2);
-    });
   });
 
   describe('initWebGPU', () => {
@@ -132,57 +114,6 @@ describe('webgpu', () => {
       // Should not throw during init
       const ctx = await initWebGPU(canvas);
       expect(ctx.device).toBeDefined();
-    });
-  });
-
-  describe('setupCanvas', () => {
-    it('should set canvas dimensions based on window size', () => {
-      vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(1024);
-      vi.spyOn(window, 'innerHeight', 'get').mockReturnValue(768);
-      vi.spyOn(window, 'devicePixelRatio', 'get').mockReturnValue(1);
-
-      setupCanvas(canvas);
-
-      expect(canvas.width).toBe(1024);
-      expect(canvas.height).toBe(768);
-      expect(canvas.style.width).toBe('1024px');
-      expect(canvas.style.height).toBe('768px');
-    });
-
-    it('should scale canvas by devicePixelRatio', () => {
-      vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(800);
-      vi.spyOn(window, 'innerHeight', 'get').mockReturnValue(600);
-      vi.spyOn(window, 'devicePixelRatio', 'get').mockReturnValue(2);
-
-      setupCanvas(canvas);
-
-      expect(canvas.width).toBe(1600);
-      expect(canvas.height).toBe(1200);
-      expect(canvas.style.width).toBe('800px');
-      expect(canvas.style.height).toBe('600px');
-    });
-
-    it('should handle zero devicePixelRatio', () => {
-      vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(800);
-      vi.spyOn(window, 'innerHeight', 'get').mockReturnValue(600);
-      vi.spyOn(window, 'devicePixelRatio', 'get').mockReturnValue(0);
-
-      setupCanvas(canvas);
-
-      // Should use minimum of 1
-      expect(canvas.width).toBe(800);
-      expect(canvas.height).toBe(600);
-    });
-
-    it('should ensure minimum size of 1x1', () => {
-      vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(0);
-      vi.spyOn(window, 'innerHeight', 'get').mockReturnValue(0);
-      vi.spyOn(window, 'devicePixelRatio', 'get').mockReturnValue(1);
-
-      setupCanvas(canvas);
-
-      expect(canvas.width).toBe(1);
-      expect(canvas.height).toBe(1);
     });
   });
 
