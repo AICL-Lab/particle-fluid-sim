@@ -18,7 +18,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "verify": "npm run lint && npm run typecheck && npm run test:coverage && npm run build",
-    "docs:build": "node scripts/build-docs.js",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
     "hooks:install": "node scripts/install-hooks.js",
     "preview": "vite preview",
     "test": "vitest run",
@@ -30,7 +32,7 @@
     "format": "prettier --write \"src/**/*.{ts,css}\"",
     "format:check": "prettier --check \"src/**/*.{ts,css}\"",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist node_modules/.vite _site"
+    "clean": "rm -rf dist node_modules/.vite _site docs/.vitepress/dist docs/.vitepress/cache"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
@@ -50,6 +52,9 @@
     "typescript-eslint": "^8.0.0",
     "typescript-language-server": "^5.1.3",
     "vite": "^6.0.1",
+    "vitepress": "^1.5.0",
+    "vitepress-plugin-llms": "^1.0.0",
+    "vitepress-plugin-mermaid": "^2.0.17",
     "vitest": "^4.1.4"
   },
   "engines": {

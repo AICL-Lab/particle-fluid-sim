@@ -1,0 +1,587 @@
+/**
+ * WebGPU Particle Fluid Simulation - VitePress Custom Styles
+ * Technical Whitepaper Design System
+ *
+ * Brand Colors: Cyan → Purple gradient (mirrors particle velocity mapping)
+ */
+
+/* === CSS Variables === */
+:root {
+  /* Brand Colors - Cyan to Purple (particle velocity mapping) */
+  --vp-c-brand-1: #06b6d4;
+  --vp-c-brand-2: #8b5cf6;
+  --vp-c-brand-3: #a78bfa;
+  --vp-c-brand-soft: rgba(6, 182, 212, 0.14);
+
+  /* Accent Colors */
+  --vp-c-accent: #06b6d4;
+  --vp-c-accent-soft: rgba(6, 182, 212, 0.1);
+
+  /* Background Colors */
+  --vp-c-bg: #ffffff;
+  --vp-c-bg-alt: #f8fafc;
+  --vp-c-bg-elv: #ffffff;
+  --vp-c-bg-soft: #f1f5f9;
+
+  /* Text Colors */
+  --vp-c-text-1: #0f172a;
+  --vp-c-text-2: #475569;
+  --vp-c-text-3: #94a3b8;
+
+  /* Border Colors */
+  --vp-c-border: #e2e8f0;
+  --vp-c-divider: #e2e8f0;
+  --vp-c-gutter: #e2e8f0;
+
+  /* Hero Section - Gradient Brand */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%);
+
+  /* Custom Colors for Homepage */
+  --tag-bg: #ecfeff;
+  --tag-text: #06b6d4;
+
+  /* Custom Spacing */
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  /* Custom Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Custom Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.2s ease;
+  --transition-slow: 0.3s ease;
+}
+
+/* === Dark Mode Variables === */
+.dark {
+  --vp-c-brand-1: #22d3ee;
+  --vp-c-brand-2: #a78bfa;
+  --vp-c-brand-3: #c4b5fd;
+  --vp-c-brand-soft: rgba(34, 211, 238, 0.16);
+
+  --vp-c-accent: #22d3ee;
+  --vp-c-accent-soft: rgba(34, 211, 238, 0.12);
+
+  --vp-c-bg: #0f172a;
+  --vp-c-bg-alt: #1e293b;
+  --vp-c-bg-elv: #1e293b;
+  --vp-c-bg-soft: #334155;
+
+  --vp-c-text-1: #f1f5f9;
+  --vp-c-text-2: #94a3b8;
+  --vp-c-text-3: #64748b;
+
+  --vp-c-border: #334155;
+  --vp-c-divider: #334155;
+  --vp-c-gutter: #334155;
+
+  --vp-home-hero-name-background: linear-gradient(135deg, #22d3ee 0%, #a78bfa 100%);
+
+  --tag-bg: rgba(34, 211, 238, 0.15);
+  --tag-text: #22d3ee;
+}
+
+/* === Hero Section Styling === */
+.VPHero {
+  padding: calc(var(--vp-nav-height) + 64px) var(--spacing-lg) 64px;
+}
+
+.VPHero .name {
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.VPHero .text {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--vp-c-text-2);
+  margin-top: var(--spacing-md);
+}
+
+.VPHero .tagline {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--vp-c-text-3);
+  margin-top: var(--spacing-lg);
+  max-width: 640px;
+}
+
+/* === Buttons Styling === */
+.VPHero .actions {
+  margin-top: var(--spacing-2xl);
+  gap: var(--spacing-md);
+}
+
+.VPHero .VPButton {
+  border-radius: var(--radius-md);
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.VPHero .VPButton.medium.brand {
+  background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%);
+  border: none;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.35);
+}
+
+.VPHero .VPButton.medium.brand:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(6, 182, 212, 0.45);
+}
+
+.VPHero .VPButton.medium.alt {
+  border: 2px solid var(--vp-c-border);
+  background: transparent;
+  color: var(--vp-c-text-1);
+}
+
+.VPHero .VPButton.medium.alt:hover {
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
+}
+
+/* === Features Section === */
+.VPFeatures {
+  padding: 64px var(--spacing-lg);
+}
+
+.VPFeatures .container {
+  max-width: 1200px;
+}
+
+.VPFeatures .VPFeature {
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  background: var(--vp-c-bg);
+  border: 1px solid var(--vp-c-border);
+  transition: all var(--transition-normal);
+}
+
+.VPFeatures .VPFeature:hover {
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 8px 30px rgba(6, 182, 212, 0.12);
+  transform: translateY(-4px);
+}
+
+.VPFeature .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  font-size: 24px;
+  margin-bottom: var(--spacing-md);
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  border-radius: var(--radius-md);
+}
+
+.VPFeature .title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: var(--spacing-sm);
+  color: var(--vp-c-text-1);
+}
+
+.VPFeature .details {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--vp-c-text-2);
+}
+
+/* === Navigation Styling === */
+.VPNav {
+  background: var(--vp-c-bg);
+  border-bottom: 1px solid var(--vp-c-border);
+}
+
+.VPNavBarMenuLink,
+.VPNavBarMenuGroup .button {
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.VPNavBarMenuLink.active,
+.VPNavBarMenuGroup.open .button {
+  color: var(--vp-c-brand-1);
+}
+
+/* === Search Bar === */
+.VPNavBarSearch {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.VPLocalSearchBox {
+  backdrop-filter: blur(20px);
+}
+
+.VPLocalSearchBox .backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.VPLocalSearchBox .shell {
+  border-radius: var(--radius-xl);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* === Sidebar Styling === */
+.VPSidebar {
+  padding: var(--spacing-xl) var(--spacing-md) 96px;
+}
+
+.VPSidebarGroup {
+  margin-bottom: var(--spacing-lg);
+}
+
+.VPSidebarGroup .title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--vp-c-text-3);
+  padding: var(--spacing-sm) 16px;
+}
+
+.VPSidebarItem .text {
+  font-size: 14px;
+  padding: var(--spacing-xs) 16px;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.VPSidebarItem .text:hover {
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-brand-1);
+}
+
+.VPSidebarItem.is-active .text {
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand-1);
+  font-weight: 600;
+}
+
+/* === Content Styling === */
+.VPDoc {
+  padding: var(--spacing-2xl) var(--spacing-lg) 96px;
+}
+
+.VPDoc .content {
+  max-width: 760px;
+}
+
+.VPDoc h1 {
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: var(--spacing-lg);
+  background: linear-gradient(135deg, var(--vp-c-brand-1) 0%, var(--vp-c-brand-2) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.VPDoc h2 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-top: 56px;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.VPDoc h3 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-top: var(--spacing-2xl);
+  margin-bottom: var(--spacing-md);
+}
+
+.VPDoc p {
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: var(--spacing-md);
+}
+
+.VPDoc a {
+  color: var(--vp-c-brand-1);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--transition-fast);
+}
+
+.VPDoc a:hover {
+  border-bottom-color: var(--vp-c-brand-1);
+}
+
+.VPDoc code {
+  font-size: 14px;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-brand-1);
+  font-weight: 500;
+}
+
+.VPDoc pre code {
+  font-size: 14px;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+}
+
+/* Custom Blocks */
+.VPDoc .custom-block {
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  margin: var(--spacing-xl) 0;
+}
+
+.VPDoc .custom-block.info {
+  background: rgba(6, 182, 212, 0.08);
+  border-left: 4px solid var(--vp-c-brand-1);
+}
+
+.VPDoc .custom-block.tip {
+  background: rgba(139, 92, 246, 0.08);
+  border-left: 4px solid var(--vp-c-brand-2);
+}
+
+.VPDoc .custom-block.warning {
+  background: rgba(251, 191, 36, 0.12);
+  border-left: 4px solid #fbbf24;
+}
+
+.VPDoc .custom-block.danger {
+  background: rgba(239, 68, 68, 0.12);
+  border-left: 4px solid #ef4444;
+}
+
+/* === Table Styling === */
+.VPDoc table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: var(--spacing-xl) 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--vp-c-border);
+}
+
+.VPDoc th {
+  background: var(--vp-c-bg-soft);
+  font-weight: 600;
+  text-align: left;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: 14px;
+  border-bottom: 1px solid var(--vp-c-border);
+}
+
+.VPDoc td {
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: 14px;
+  border-bottom: 1px solid var(--vp-c-border);
+}
+
+.VPDoc tr:last-child td {
+  border-bottom: none;
+}
+
+.VPDoc tr:hover td {
+  background: var(--vp-c-bg-soft);
+}
+
+/* === Footer === */
+.VPFooter {
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  background: var(--vp-c-bg-alt);
+  border-top: 1px solid var(--vp-c-border);
+}
+
+.VPFooter .message,
+.VPFooter .copyright {
+  font-size: 14px;
+  color: var(--vp-c-text-3);
+}
+
+/* === Mermaid Diagram Styling === */
+.mermaid {
+  background: var(--vp-c-bg-soft);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  margin: var(--spacing-xl) 0;
+  text-align: center;
+}
+
+/* === Responsive Design === */
+@media (max-width: 960px) {
+  .VPHero {
+    padding: calc(var(--vp-nav-height) + 48px) var(--spacing-lg) 48px;
+  }
+
+  .VPHero .name {
+    font-size: 36px;
+  }
+
+  .VPHero .text {
+    font-size: 18px;
+  }
+
+  .VPDoc h1 {
+    font-size: 36px;
+  }
+
+  .VPDoc h2 {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 640px) {
+  .VPHero .name {
+    font-size: 28px;
+    letter-spacing: -0.5px;
+  }
+
+  .VPHero .text {
+    font-size: 16px;
+  }
+
+  .VPFeatures .VPFeature {
+    padding: var(--spacing-lg);
+  }
+
+  .VPDoc h1 {
+    font-size: 28px;
+  }
+
+  .VPDoc h2 {
+    font-size: 24px;
+  }
+}
+
+/* === Custom Homepage Styles === */
+
+/* Feature Card Grid */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+  margin: var(--spacing-2xl) 0;
+}
+
+.feature-card {
+  background: var(--vp-c-bg);
+  border: 1px solid var(--vp-c-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  transition: all var(--transition-normal);
+}
+
+.feature-card:hover {
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 8px 30px rgba(6, 182, 212, 0.12);
+  transform: translateY(-4px);
+}
+
+.feature-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+  margin-bottom: var(--spacing-sm);
+}
+
+.feature-card-desc {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--vp-c-text-2);
+}
+
+/* Tech Specs Table */
+.tech-specs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+  margin: var(--spacing-xl) 0;
+}
+
+.tech-spec-item {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  background: var(--vp-c-bg-soft);
+  border-radius: var(--radius-md);
+}
+
+.tech-spec-label {
+  font-size: 14px;
+  color: var(--vp-c-text-3);
+}
+
+.tech-spec-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+}
+
+/* Quick Start Code Block */
+.quick-start {
+  background: var(--vp-c-bg-alt);
+  border: 1px solid var(--vp-c-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  margin: var(--spacing-xl) 0;
+}
+
+.quick-start-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+  margin-bottom: var(--spacing-md);
+}
+
+.quick-start code {
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    SF Mono,
+    Menlo,
+    Consolas,
+    monospace;
+  font-size: 14px;
+}
+
+/* Responsive for custom components */
+@media (max-width: 959px) {
+  .feature-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tech-specs {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 639px) {
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+}
