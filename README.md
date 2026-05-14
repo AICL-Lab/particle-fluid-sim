@@ -2,11 +2,11 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-2.0.0-blue.svg" alt="Version">
-  <a href="https://github.com/LessUp/particle-fluid-sim/actions/workflows/ci.yml">
-    <img src="https://github.com/LessUp/particle-fluid-sim/actions/workflows/ci.yml/badge.svg" alt="CI">
+  <a href="https://github.com/AICL-Lab/particle-fluid-sim/actions/workflows/ci.yml">
+    <img src="https://github.com/AICL-Lab/particle-fluid-sim/actions/workflows/ci.yml/badge.svg" alt="CI">
   </a>
-  <a href="https://github.com/LessUp/particle-fluid-sim/actions/workflows/pages.yml">
-    <img src="https://github.com/LessUp/particle-fluid-sim/actions/workflows/pages.yml/badge.svg" alt="Pages">
+  <a href="https://github.com/AICL-Lab/particle-fluid-sim/actions/workflows/pages.yml">
+    <img src="https://github.com/AICL-Lab/particle-fluid-sim/actions/workflows/pages.yml/badge.svg" alt="Pages">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
@@ -26,8 +26,8 @@
 ---
 
 <p align="center">
-  <b>🔮 <a href="https://lessup.github.io/particle-fluid-sim/demo/">Live Demo</a></b> · 
-  <b>📖 <a href="https://lessup.github.io/particle-fluid-sim/docs/">Documentation</a></b> · 
+  <b>🔮 <a href="https://aicl-lab.github.io/particle-fluid-sim/demo/">Live Demo</a></b> · 
+  <b>📖 <a href="https://aicl-lab.github.io/particle-fluid-sim/docs/">Documentation</a></b> · 
   <b>📋 <a href="openspec/specs/product/webgpu-particle-fluid-sim.md">Specifications</a></b>
 </p>
 
@@ -35,7 +35,7 @@
 
 A high-performance particle fluid simulation built with **WebGPU compute shaders**. Watch 10,000 particles interact with realistic physics, all running on your GPU.
 
-> **💡 Try it:** Open the [Live Demo](https://lessup.github.io/particle-fluid-sim/demo/) and move your mouse over the simulation to push particles around!
+> **💡 Try it:** Open the [Live Demo](https://aicl-lab.github.io/particle-fluid-sim/demo/) and move your mouse over the simulation to push particles around!
 
 ## ✨ Highlights
 
@@ -68,7 +68,7 @@ Get the simulation running in under a minute:
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/LessUp/particle-fluid-sim.git
+git clone https://github.com/AICL-Lab/particle-fluid-sim.git
 cd particle-fluid-sim
 
 # 2. Install dependencies
@@ -87,11 +87,11 @@ Then open **http://localhost:5173** in a WebGPU-enabled browser.
 
 ## 🎮 Controls
 
-| Action | Effect |
-|--------|--------|
-| **Move Mouse** | Push particles away from cursor |
-| **Touch (Mobile)** | Same as mouse interaction |
-| **Resize Window** | Automatically adjusts HiDPI scaling |
+| Action             | Effect                              |
+| ------------------ | ----------------------------------- |
+| **Move Mouse**     | Push particles away from cursor     |
+| **Touch (Mobile)** | Same as mouse interaction           |
+| **Resize Window**  | Automatically adjusts HiDPI scaling |
 
 ## 📁 Project Structure
 
@@ -164,26 +164,26 @@ Each particle updates every frame with these steps:
 
 ### Performance Characteristics
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| Particles | 2,500 - 10,000 | Adaptive based on device |
-| Particle Size | 16 bytes | 4 × float32 (x, y, vx, vy) |
-| Compute Workgroup | 64 threads | Optimized for GPU architecture |
-| Frame Budget | < 16ms | Targets 60 FPS |
+| Metric            | Value          | Notes                          |
+| ----------------- | -------------- | ------------------------------ |
+| Particles         | 2,500 - 10,000 | Adaptive based on device       |
+| Particle Size     | 16 bytes       | 4 × float32 (x, y, vx, vy)     |
+| Compute Workgroup | 64 threads     | Optimized for GPU architecture |
+| Frame Budget      | < 16ms         | Targets 60 FPS                 |
 
 ## ⚙️ Configuration
 
 All constants in `src/config/sim.ts`:
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `PARTICLE_COUNT` | 10,000 | Base particle count (scaled by quality) |
-| `GRAVITY` | `{x: 0, y: 600}` | Gravity acceleration (px/s²) |
-| `MAX_SPEED` | 800 | Velocity ceiling (px/s) |
-| `REPULSION_RADIUS` | 200 | Mouse influence radius (px) |
-| `REPULSION_STRENGTH` | 3,000 | Mouse repulsion force (px/s) |
-| `DAMPING` | 0.9 | Bounce energy retention (90%) |
-| `TRAIL_FADE_ALPHA` | 0.05 | Trail persistence per frame |
+| Parameter            | Default          | Description                             |
+| -------------------- | ---------------- | --------------------------------------- |
+| `PARTICLE_COUNT`     | 10,000           | Base particle count (scaled by quality) |
+| `GRAVITY`            | `{x: 0, y: 600}` | Gravity acceleration (px/s²)            |
+| `MAX_SPEED`          | 800              | Velocity ceiling (px/s)                 |
+| `REPULSION_RADIUS`   | 200              | Mouse influence radius (px)             |
+| `REPULSION_STRENGTH` | 3,000            | Mouse repulsion force (px/s)            |
+| `DAMPING`            | 0.9              | Bounce energy retention (90%)           |
+| `TRAIL_FADE_ALPHA`   | 0.05             | Trail persistence per frame             |
 
 ## 🧪 Testing
 
@@ -213,14 +213,14 @@ npm run test:coverage
 
 ### Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server with HMR |
-| `npm run build` | TypeScript check + production build |
-| `npm run preview` | Preview production build locally |
-| `npm run lint` | Run ESLint |
-| `npm run typecheck` | Run TypeScript type checking |
-| `npm run format` | Format code with Prettier |
+| Command             | Description                         |
+| ------------------- | ----------------------------------- |
+| `npm run dev`       | Start development server with HMR   |
+| `npm run build`     | TypeScript check + production build |
+| `npm run preview`   | Preview production build locally    |
+| `npm run lint`      | Run ESLint                          |
+| `npm run typecheck` | Run TypeScript type checking        |
+| `npm run format`    | Format code with Prettier           |
 
 ### Contributing
 
@@ -236,7 +236,7 @@ Quick start for contributors:
 
 ```bash
 # 1. Fork and clone
-git clone https://github.com/LessUp/particle-fluid-sim.git
+git clone https://github.com/AICL-Lab/particle-fluid-sim.git
 cd particle-fluid-sim
 
 # 2. Install dependencies
@@ -259,24 +259,24 @@ git push origin feature/your-feature-name
 
 ### Specifications (Source of Truth)
 
-| Document | Description |
-|----------|-------------|
-| [📋 Product Requirements](openspec/specs/product/webgpu-particle-fluid-sim.md) | Functional & non-functional requirements |
-| [📐 RFC 0001: Core Architecture](openspec/specs/rfc/0001-core-architecture.md) | System architecture & design decisions |
-| [📝 RFC 0002: Implementation Tasks](openspec/specs/rfc/0002-implementation-tasks.md) | Implementation task tracking |
-| [🧪 Testing Specification](openspec/specs/testing/bdd-specifications.md) | BDD test specifications |
+| Document                                                                             | Description                              |
+| ------------------------------------------------------------------------------------ | ---------------------------------------- |
+| [📋 Product Requirements](openspec/specs/product/webgpu-particle-fluid-sim.md)       | Functional & non-functional requirements |
+| [📐 RFC 0001: Core Architecture](openspec/specs/rfc/0001-core-architecture.md)       | System architecture & design decisions   |
+| [📝 RFC 0002: Implementation Tasks](openspec/specs/rfc/0002-implementation-tasks.md) | Implementation task tracking             |
+| [🧪 Testing Specification](openspec/specs/testing/bdd-specifications.md)             | BDD test specifications                  |
 
 ### Guides & Tutorials
 
-| Document | Description |
-|----------|-------------|
-| [📖 API Reference](docs/API.md) | Complete API documentation |
-| [⚡ Performance Guide](docs/PERFORMANCE.md) | Benchmarks and optimization |
-| [🔧 Troubleshooting](docs/TROUBLESHOOTING.md) | Common issues and solutions |
-| [📚 Docs Index](docs/README.md) | Curated map of the durable documentation set |
-| [🏗️ Architecture](docs/architecture/README.md) | System architecture overview |
-| [🚀 Setup Guide](docs/setup/README.md) | Environment setup, LSP, and local tooling |
-| [🛠️ Workflow Guide](docs/maintenance.md) | OpenSpec-first closeout workflow and review gates |
+| Document                                       | Description                                       |
+| ---------------------------------------------- | ------------------------------------------------- |
+| [📖 API Reference](docs/API.md)                | Complete API documentation                        |
+| [⚡ Performance Guide](docs/PERFORMANCE.md)    | Benchmarks and optimization                       |
+| [🔧 Troubleshooting](docs/TROUBLESHOOTING.md)  | Common issues and solutions                       |
+| [📚 Docs Index](docs/README.md)                | Curated map of the durable documentation set      |
+| [🏗️ Architecture](docs/architecture/README.md) | System architecture overview                      |
+| [🚀 Setup Guide](docs/setup/README.md)         | Environment setup, LSP, and local tooling         |
+| [🛠️ Workflow Guide](docs/maintenance.md)       | OpenSpec-first closeout workflow and review gates |
 
 ### Additional Resources
 
@@ -289,13 +289,13 @@ git push origin feature/your-feature-name
 
 WebGPU is required. [Check compatibility](https://caniuse.com/webgpu):
 
-| Browser | Version | Status |
-|---------|---------|--------|
-| Chrome | 113+ | ✅ Recommended |
-| Edge | 113+ | ✅ Recommended |
-| Safari | 17+ | ✅ macOS 14+ |
-| Firefox | Nightly | ⚠️ Enable flag |
-| Opera | 99+ | ✅ Chromium-based |
+| Browser | Version | Status            |
+| ------- | ------- | ----------------- |
+| Chrome  | 113+    | ✅ Recommended    |
+| Edge    | 113+    | ✅ Recommended    |
+| Safari  | 17+     | ✅ macOS 14+      |
+| Firefox | Nightly | ⚠️ Enable flag    |
+| Opera   | 99+     | ✅ Chromium-based |
 
 > **Firefox Users:** Enable WebGPU by setting `dom.webgpu.enabled = true` in `about:config`
 
@@ -311,17 +311,17 @@ Built with modern web technologies:
 
 ## 📄 License
 
-MIT License © 2026 [LessUp](https://github.com/LessUp)
+MIT License © 2026 [AICL-Lab](https://github.com/AICL-Lab)
 
 See [LICENSE](LICENSE) for details.
 
 ## 🔗 Links
 
 <p align="center">
-  <a href="https://lessup.github.io/particle-fluid-sim/demo/">🔮 Live Demo</a> ·
-  <a href="https://github.com/LessUp/particle-fluid-sim">💻 Repository</a> ·
-  <a href="https://github.com/LessUp/particle-fluid-sim/issues">🐛 Issues</a> ·
-  <a href="https://github.com/LessUp/particle-fluid-sim/discussions">💬 Discussions</a>
+  <a href="https://aicl-lab.github.io/particle-fluid-sim/demo/">🔮 Live Demo</a> ·
+  <a href="https://github.com/AICL-Lab/particle-fluid-sim">💻 Repository</a> ·
+  <a href="https://github.com/AICL-Lab/particle-fluid-sim/issues">🐛 Issues</a> ·
+  <a href="https://github.com/AICL-Lab/particle-fluid-sim/discussions">💬 Discussions</a>
 </p>
 
 ---

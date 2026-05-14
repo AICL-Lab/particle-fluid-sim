@@ -2,11 +2,11 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-2.0.0-blue.svg" alt="版本">
-  <a href="https://github.com/LessUp/particle-fluid-sim/actions/workflows/ci.yml">
-    <img src="https://github.com/LessUp/particle-fluid-sim/actions/workflows/ci.yml/badge.svg" alt="CI">
+  <a href="https://github.com/AICL-Lab/particle-fluid-sim/actions/workflows/ci.yml">
+    <img src="https://github.com/AICL-Lab/particle-fluid-sim/actions/workflows/ci.yml/badge.svg" alt="CI">
   </a>
-  <a href="https://github.com/LessUp/particle-fluid-sim/actions/workflows/pages.yml">
-    <img src="https://github.com/LessUp/particle-fluid-sim/actions/workflows/pages.yml/badge.svg" alt="Pages">
+  <a href="https://github.com/AICL-Lab/particle-fluid-sim/actions/workflows/pages.yml">
+    <img src="https://github.com/AICL-Lab/particle-fluid-sim/actions/workflows/pages.yml/badge.svg" alt="Pages">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
@@ -27,9 +27,9 @@
 
 基于 **WebGPU 计算着色器**构建的高性能粒子流体仿真项目。万级粒子实时物理仿真，GPU 加速计算。
 
-🔮 **[在线演示](https://lessup.github.io/particle-fluid-sim/demo/)** | 📖 **[文档](docs/)** | 📋 **[规范](openspec/specs/product/webgpu-particle-fluid-sim.md)**
+🔮 **[在线演示](https://aicl-lab.github.io/particle-fluid-sim/demo/)** | 📖 **[文档](docs/)** | 📋 **[规范](openspec/specs/product/webgpu-particle-fluid-sim.md)**
 
-> **💡 体验提示：** 打开 [在线演示](https://lessup.github.io/particle-fluid-sim/demo/)，移动鼠标与粒子互动！
+> **💡 体验提示：** 打开 [在线演示](https://aicl-lab.github.io/particle-fluid-sim/demo/)，移动鼠标与粒子互动！
 
 ## ✨ 特性
 
@@ -68,7 +68,7 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/LessUp/particle-fluid-sim.git
+git clone https://github.com/AICL-Lab/particle-fluid-sim.git
 cd particle-fluid-sim
 
 # 安装依赖
@@ -263,10 +263,10 @@ npm run test:ui
 
 ## 🔗 链接
 
-- 🌐 **在线演示**: https://lessup.github.io/particle-fluid-sim/demo/
-- 💻 **代码仓库**: https://github.com/LessUp/particle-fluid-sim
-- 🐛 **问题追踪**: https://github.com/LessUp/particle-fluid-sim/issues
-- 💬 **讨论区**: https://github.com/LessUp/particle-fluid-sim/discussions
+- 🌐 **在线演示**: https://aicl-lab.github.io/particle-fluid-sim/demo/
+- 💻 **代码仓库**: https://github.com/AICL-Lab/particle-fluid-sim
+- 🐛 **问题追踪**: https://github.com/AICL-Lab/particle-fluid-sim/issues
+- 💬 **讨论区**: https://github.com/AICL-Lab/particle-fluid-sim/discussions
 
 ---
 

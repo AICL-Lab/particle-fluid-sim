@@ -86,7 +86,7 @@ If the change affects public presentation, CI, hooks, Pages behavior, or reposit
 The repository is managed primarily through GitHub and `gh`. High-value operations include:
 
 ```bash
-gh repo view LessUp/particle-fluid-sim
+gh repo view AICL-Lab/particle-fluid-sim
 gh pr create
 gh pr view --web
 gh repo edit
